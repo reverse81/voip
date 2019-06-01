@@ -12,4 +12,22 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="dialpad">Dialpad</string>
+    <string name="contact">Contact</string>
+    <string name="conference">Conference</string>
+    <string name="dial_0">0</string>
+    <string name="dial_1">1</string>
+    <string name="dial_2">2</string>
+    <string name="dial_3">3</string>
+    <string name="dial_4">4</string>
+    <string name="dial_5">5</string>
+    <string name="dial_6">6</string>
+    <string name="dial_7">7</string>
+    <string name="dial_8">8</string>
+    <string name="dial_9">9</string>
+    <string name="dial_asterisk">*</string>
+    <string name="dial_sharp">#</string>
+    <string name="dial_add">Add</string>
+    <string name="dial_call">Call</string>
+    <string name="dial_del">Del</string>
 </resources>
