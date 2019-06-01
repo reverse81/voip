@@ -18,14 +18,17 @@
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--activity
+        <activity
             android:name=".DialpadActivity"
             android:label="@string/app_name">
-        </activity-->
+            <!--intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter-->
+        </activity>
         <activity
             android:name=".ContactActivity"
             android:label="@string/app_name">

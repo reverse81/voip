@@ -23,6 +23,7 @@ public class MainTabActivity extends AppCompatActivity {
         Log.e(TAG, "onClickDialpad = "+v.getId());
         Intent intent = new Intent(this, DialpadActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
     }
     public void onClickContact(View v)
@@ -30,6 +31,7 @@ public class MainTabActivity extends AppCompatActivity {
         Log.e(TAG, "onClickContact = "+v.getId());
         Intent intent = new Intent(this, ContactActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
     }
     public void onClickConfirence(View v)
@@ -37,6 +39,7 @@ public class MainTabActivity extends AppCompatActivity {
         Log.e(TAG, "onClickConfirence = "+v.getId());
         Intent intent = new Intent(this, ConferenceActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
     }
 }
