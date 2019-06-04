@@ -1,4 +1,4 @@
-package arch3.lge.com.voip;
+package arch3.lge.com.voip.ui;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,7 +7,9 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.text.TextUtils;
+
+import arch3.lge.com.voip.R;
+import arch3.lge.com.voip.model.user.User;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -49,32 +51,31 @@ public class RegisterActivity extends AppCompatActivity {
         retypeText.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = emailText.getText().toString();
-        String password = passwordText.getText().toString();
-        String retype = retypeText.getText().toString();
+        User user = new User(emailText.getText().toString(), passwordText.getText().toString());
+        user.setRetypedPassword(retypeText.getText().toString());
 
         boolean cancel = false;
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (emailText.length() < 4) {
             passwordText.setError(getString(R.string.error_invalid_password));
             focusView = passwordText;
             cancel = true;
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
+        if (emailText.length() == 0) {
             emailText.setError(getString(R.string.error_field_required));
             focusView = emailText;
             cancel = true;
-        } else if (!isEmailValid(email)) {
+        } else if (!user.isEmailValid()) {
             emailText.setError(getString(R.string.error_invalid_email));
             focusView = emailText;
             cancel = true;
         }
 
-        if (!password.equals(retype)) {
+        if (user.isSamePassword()) {
             retypeText.setError(getString(R.string.error_mismatch_retype_password));
             focusView = retypeText;
             cancel = true;
@@ -87,17 +88,12 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
+
+            //@TODO
+            // Request register using controller
             finish();
         }
     }
 
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
 
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
-    }
 }

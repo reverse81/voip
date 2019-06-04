@@ -1,8 +1,10 @@
-package arch3.lge.com.voip;
+package arch3.lge.com.voip.ui;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import arch3.lge.com.voip.R;
 
 public class ConferenceArrayAdapter {
     ArrayAdapter<String> mAdapter;

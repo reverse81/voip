@@ -1,4 +1,4 @@
-package arch3.lge.com.voip;
+package arch3.lge.com.voip.ui;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -30,6 +30,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import arch3.lge.com.voip.R;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
