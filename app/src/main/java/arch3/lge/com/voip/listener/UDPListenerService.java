@@ -14,6 +14,9 @@ import java.util.Locale;
 
 import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.controller.DeviceContorller;
+import arch3.lge.com.voip.model.UDPnetwork.UDPCmd;
+import arch3.lge.com.voip.ui.CallingActivity;
+import arch3.lge.com.voip.ui.ReceivedCallActivity;
 import arch3.lge.com.voip.utils.UDPContstants;
 import arch3.lge.com.voip.utils.Util;
 
@@ -67,20 +70,32 @@ public class UDPListenerService extends Service {
     }
 
     private void ProcessReceivedUdpMessage(final String Sender, String MessageIn) {
-
+        Intent intent = new Intent();
         switch (MessageIn) {
 
             case "/CALLIP/":
                 // Receives Call Requests
+
+                intent.setClassName(this.getPackageName(), ReceivedCallActivity.class.getName());
+                this.startService(intent);
+
                 CallController.incomingCall("AAA");
                 break;
             case "/ANSWER/":
                 // Accept notification received. Start call
+                //finish activity??
+                intent.setClassName(this.getPackageName(), CallingActivity.class.getName());
+                this.startService(intent);
+
                 CallController.startCall("AAA");
                 break;
 
             case "/REFUSE/":
             case "/ENDCALL/":
+
+                //finish activity??
+//                intent.setClassName(this.getPackageName(), CallingActivity.class.getName());
+//                this.startService(intent);
                 CallController.endCall("AAA");
                 break;
 

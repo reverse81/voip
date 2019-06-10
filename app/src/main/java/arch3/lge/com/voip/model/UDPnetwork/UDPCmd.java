@@ -35,6 +35,10 @@ public class UDPCmd extends IntentService {
 
     private static ICallController controller;
 
+    public UDPCmd() {
+        super(GUI_VOIP_CTRL);
+    }
+
     public UDPCmd(String name) {
         super(name);
     }
@@ -47,11 +51,12 @@ public class UDPCmd extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.i(LOG_TAG, "onReceive : "+ intent.getAction());
         if (intent.getAction() == null) {
             return;
         }
         if (intent.getAction().equals(UDPCmd.GUI_VOIP_CTRL)) {
-            Log.i(LOG_TAG, "onReceive");
+            Log.i(LOG_TAG, "onHandleIntent");
             String message = intent.getStringExtra("message");
             String sender = intent.getStringExtra("sender");
             ProcessReceivedGUIMessage(sender, message);
@@ -69,6 +74,7 @@ public class UDPCmd extends IntentService {
                 PhoneState.getInstance().SetPhoneState(PhoneState.CallState.CALLING);
                 UdpSend(Sender, UDPContstants.CONTROL_DATA_PORT, "/CALLIP/");
                 PhoneState.getInstance().NotifyUpdate();
+                Log.i("CALL", "AAAAAAAAAAAAAAAAAAAAAAAAA");
                 break;
             case "/END_CALL_BUTTON/":
                 EndCall();
@@ -158,63 +164,6 @@ public class UDPCmd extends IntentService {
         controller.finish();
     }
 
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        // Get instance of Vibrator from current Context
-
-
-        int LocalIpAddressBin = 0;
-        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-        if (wifiManager != null) {
-            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-            LocalIpAddressBin = wifiInfo.getIpAddress();
-            PhoneState.getInstance().SetLocallP(String.format(Locale.US, "%d.%d.%d.%d", (LocalIpAddressBin & 0xff), (LocalIpAddressBin >> 8 & 0xff), (LocalIpAddressBin >> 16 & 0xff), (LocalIpAddressBin >> 24 & 0xff)));
-        }
-        PhoneState.getInstance().SetCmdIP(String.format(Locale.US, "%d.%d.%d.", (LocalIpAddressBin & 0xff), (LocalIpAddressBin >> 8 & 0xff), (LocalIpAddressBin >> 16 & 0xff)));
-
-//        if (audioManager.isSpeakerphoneOn()) {
-//            MainActivity.AudioOutputTarget = MainActivity.EOutputTarget.SPEAKER;
-//        } else if (audioManager.isBluetoothScoOn()) {
-//            MainActivity.AudioOutputTarget = MainActivity.EOutputTarget.BLUETOOTH;
-//        } else {
-//            MainActivity.AudioOutputTarget = MainActivity.EOutputTarget.EARPIECE;
-//        }
-//
-//        if (audioManager.isMicrophoneMute()) {
-//            PhoneState.getInstance().SetMic(false);
-//        } else {
-//            PhoneState.getInstance().SetMic(true);
-//        }
-//        PhoneState.getInstance().SetRinger(true);
-//
-//        PhoneState.getInstance().SetBoost(false);
-//
-//        PhoneState.getInstance().SetPhoneState(PhoneState.CallState.LISTENING);
-//        startListenerForUDP();
-//        PhoneState.getInstance().NotifyUpdate();
-//        Log.i(LOG_TAG, "Service started");
-    }
-
-    @Override
-    public void onDestroy() {
-//        stopListen();
-//        if (_receiver != null) unregisterReceiver(_receiver);
-//        _receiver = null;
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-
-        return START_STICKY;
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
 
     private void UdpSend(final String RemoteIp, final int port, final String Message) {
         Thread replyThread = new Thread(new Runnable() {
