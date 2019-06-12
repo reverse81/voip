@@ -42,14 +42,16 @@ public class User {
     }
 
     public static void saveLogin(Context context, String token) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
-        sharedPreferences.edit().putString("token", token);
-        sharedPreferences.edit().commit();
+        SharedPreferences.Editor editor = context.getSharedPreferences("user", Context.MODE_PRIVATE).edit();
+        editor.putString("token", token);
+        editor.commit();
     }
+
+
 
     public static String getLogin(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
-        return sharedPreferences.getString("token","no");
+        return sharedPreferences.getString("token","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRkZEBuYXZlci5jb20iLCJtZXNzYWdlIjoiaXQgbWFrZXMgZnJvbSBtaXlhIiwiaWF0IjoxNTYwMzU5NDgxfQ.a3f9CZ5pdGLbmUWEpsrUamas5LzpM2dtjamdNxtjKz8");
 
     }
 }
