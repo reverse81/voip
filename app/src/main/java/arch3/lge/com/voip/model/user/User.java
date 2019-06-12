@@ -1,5 +1,8 @@
 package arch3.lge.com.voip.model.user;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 public class User {
     private String email;
     private String password;
@@ -36,5 +39,17 @@ public class User {
 
     public void setRetypedPassword(String retypedPassword) {
         this.retypedPassword = retypedPassword;
+    }
+
+    public static void saveLogin(Context context, String token) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+        sharedPreferences.edit().putString("token", token);
+        sharedPreferences.edit().commit();
+    }
+
+    public static String getLogin(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("token","no");
+
     }
 }
