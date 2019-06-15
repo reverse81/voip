@@ -6,4 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".ui.RequestCallActivity">
 
+    <ImageView
+        android:id="@+id/selfImage"
+        android:layout_width="338dp"
+        android:layout_height="337dp"
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="33dp" />
 </android.support.constraint.ConstraintLayout>

@@ -2,16 +2,19 @@ package arch3.lge.com.voip.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import org.json.JSONObject;
 
+
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
 import arch3.lge.com.voip.model.serverApi.ServerApi;
+import arch3.lge.com.voip.model.user.User;
 
 public class DialpadActivity  extends MainTabActivity {
     final String TAG = "Dialpad";
@@ -25,13 +28,34 @@ public class DialpadActivity  extends MainTabActivity {
         mNumberView = (TextView)findViewById(R.id.dialInput);
         mNumberView.setText(mNumberString);
 
-        ApiParamBuilder api = new ApiParamBuilder();
-        JSONObject object = api.getLogin("ddd@naver.com","1111");
-        ServerApi ser = new ServerApi();
-        ser.login(getApplicationContext(), ServerApi.API_LOGIN, object );
+//        User.saveLogin(getApplicationContext(),"AAAAbbbbbbbbbbbbAAA");
+//        Log.e("sss",  User.getLogin(getApplicationContext()));
 
 
+//        ApiParamBuilder param = new ApiParamBuilder();
+//        ServerApi server = new ServerApi();
+    //    JSONObject object = param.getLogin("ddd@naver.com","1111");
+//        JSONObject object = param.getIP("117782905");
+//        server.getIP(getApplicationContext(), object);
+
+
+//        JSONObject object = param.setIP("1.1.1.1","117782905");
+//        server.setIP(getApplicationContext(), object);
+   //     server.login(getApplicationContext(), object.toString());
+
+    //    JSONObject object2 = param.getRecovery("ddd@naver.com","117782905");
+     //   server.recovery(getApplicationContext(), object2);
+//
+//        ServerApi server = new ServerApi();
+//        server.login(getApplicationContext(), object.toString());
     }
+
+
+
+
+
+
+
 
     public void onClickDigit(View v)
     {
@@ -66,9 +90,9 @@ public class DialpadActivity  extends MainTabActivity {
     {
         Intent screen = new Intent();
         screen.setClassName(this.getPackageName(), RequestCallActivity.class.getName());
+        screen.putExtra("phoneNumber",  mNumberView.getText().toString());
         this.startActivity(screen);
 
-        CallController.requestCall(this, mNumberView.getText().toString());
         Log.e(TAG, "onClickCall = "+v.getId());
         //finish();
     }

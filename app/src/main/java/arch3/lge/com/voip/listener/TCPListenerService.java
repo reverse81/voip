@@ -7,58 +7,51 @@ import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.util.Log;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Locale;
 
 import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.controller.DeviceContorller;
-import arch3.lge.com.voip.model.UDPnetwork.UDPCmd;
 import arch3.lge.com.voip.ui.CallingActivity;
 import arch3.lge.com.voip.ui.ReceivedCallActivity;
-import arch3.lge.com.voip.utils.UDPContstants;
+import arch3.lge.com.voip.utils.NetworkConstants;
 import arch3.lge.com.voip.utils.Util;
 
-public class UDPListenerService extends Service {
+public class TCPListenerService extends Service {
     private static final String LOG_TAG = "UDPListenerService";
     private static final int BUFFER_SIZE = 128;
     private boolean UdpListenerThreadRun = false;
 
-    private DatagramSocket socket;
+    private ServerSocket serverSocket;
 
 
-    private void startListenerForUDP() {
+    private void startListenerForTCP() {
         UdpListenerThreadRun = true;
         Thread UDPListenThread = new Thread(new Runnable() {
             public void run() {
                 try {
+                    Socket socket = null;
                     // Setup the socket to receive incoming messages
                     byte[] buffer = new byte[BUFFER_SIZE];
-                    socket = new DatagramSocket(null);
-                    socket.setReuseAddress(true);
-                    socket.bind(new InetSocketAddress(UDPContstants.CONTROL_DATA_PORT));
-                    DatagramPacket packet = new DatagramPacket(buffer, BUFFER_SIZE);
+                    serverSocket = new ServerSocket(NetworkConstants.CONTROL_DATA_PORT);
+//                    serverSocket.setReuseAddress(true);
+//                    serverSocket.bind(new InetSocketAddress(NetworkContstants.CONTROL_DATA_PORT));
+                   // DatagramPacket packet = new DatagramPacket(buffer, BUFFER_SIZE);
                     Log.i(LOG_TAG, "Incoming call listener started");
                     while (UdpListenerThreadRun) {
                         // Listen for incoming call requests
                         Log.i(LOG_TAG, "Listening for incoming calls");
-                        socket.receive(packet);
-                        String senderIP = packet.getAddress().getHostAddress();
-                        String message = new String(buffer, 0, packet.getLength());
-                        Log.i(LOG_TAG, "Got UDP message from " + senderIP + ", message: " + message);
-                        ProcessReceivedUdpMessage(senderIP, message);
-                        if (message.equals("/CALLIP/")) {
-                            Log.e(LOG_TAG, "Main activity may not be running so kick it");
-                            Intent i = new Intent();
-                            i.setClassName("lg.dplakosh.lgvoipdemo", "lg.dplakosh.lgvoipdemo.MainActivity");
-                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(i);
-                        }
+
+                        socket = serverSocket.accept();
+
+                        new CommunicationThread(socket).run();
                     }
                     Log.e(LOG_TAG, "Call Listener ending");
-                    socket.disconnect();
-                    socket.close();
+
 
                 } catch (Exception e) {
                     UdpListenerThreadRun = false;
@@ -108,7 +101,7 @@ public class UDPListenerService extends Service {
 
     private void stopListen() {
         UdpListenerThreadRun = false;
-        Util.safetyClose(socket);
+        Util.safetyClose(serverSocket);
     }
 
     @Override
@@ -122,7 +115,7 @@ public class UDPListenerService extends Service {
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
             LocalIpAddressBin = wifiInfo.getIpAddress();
             DeviceContorller.setLocalIP(String.format(Locale.US, "%d.%d.%d.%d", (LocalIpAddressBin & 0xff), (LocalIpAddressBin >> 8 & 0xff), (LocalIpAddressBin >> 16 & 0xff), (LocalIpAddressBin >> 24 & 0xff)));
-            startListenerForUDP();
+            startListenerForTCP();
             Log.i(LOG_TAG, "Service started");
         } else {
 
@@ -144,5 +137,38 @@ public class UDPListenerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    class CommunicationThread implements Runnable {
+
+        private Socket clientSocket;
+        private BufferedReader input;
+        public CommunicationThread(Socket clientSocket) {
+
+            this.clientSocket = clientSocket;
+            try {
+                this.input = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void run() {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    String read = input.readLine();
+                    if (read == null ){
+                        Thread.currentThread().interrupt();
+                    }else{
+                        String senderIP = clientSocket.getInetAddress().getHostAddress();
+                        ProcessReceivedUdpMessage(senderIP, read);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            Util.safetyClose(clientSocket);
+        }
+
     }
 }

@@ -1,6 +1,8 @@
 package arch3.lge.com.voip.model.codec;
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 
 import android.graphics.Rect;
@@ -8,6 +10,7 @@ import android.graphics.SurfaceTexture;
 import android.graphics.YuvImage;
 import android.hardware.* ; // avoid  deprecation warning import android.hardware.Camera;
 import android.util.Log;
+import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,6 +18,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import static android.support.constraint.Constraints.TAG;
@@ -26,25 +30,35 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
     private static final int VOIP_VIDEO_UDP_PORT = 5125;
     private static final int MAX_VIDEO_FRAME_SIZE =640*480*4;
     private DatagramSocket SendUdpSocket;
-    private InetAddress RemoteIp;                   // Address to call
+    private InetAddress remoteIp;                   // Address to call
     private boolean IsRunning = false;
     @SuppressWarnings("FieldCanBeLocal")
     private SurfaceTexture mtexture;
     @SuppressWarnings("deprecation")
     private Camera mCamera;
     private int frame;
+    private ImageView selfView;
 
-    VoIPVideoIo() { }
+    public void attachIP (String RemoteIP) {
+        InetAddress address = null;
+        try {
+            address = InetAddress.getByName(RemoteIP);
+            this.remoteIp = address;
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
 
-    synchronized boolean StartVideo(InetAddress IP) {
+    }
+
+    public  synchronized boolean StartVideo(ImageView view) {
         if (IsRunning) return (true);
-        this.RemoteIp = IP;
+        selfView = view;
         OpenCamera();
         IsRunning = true;
         return (false);
     }
 
-    synchronized boolean EndVideo() {
+    public synchronized boolean EndVideo() {
         if (!IsRunning) return (true);
         Log.i(LOG_TAG, "Ending Viop Audio");
         IsRunning = false;
@@ -131,8 +145,13 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
             Rect rect = new Rect(0, 0, w, h);
             ByteArrayOutputStream output_stream = new ByteArrayOutputStream();
             yuv_image.compressToJpeg(rect, 40, output_stream);
-            byte[] bytes = output_stream.toByteArray();
-            UdpSend(bytes);
+            byte[] imageBytes = output_stream.toByteArray();
+
+            Bitmap image = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+            selfView.setImageBitmap(image);
+            if (remoteIp != null) {
+                UdpSend(imageBytes);
+            }
         }
         camera.addCallbackBuffer(data);
     }
@@ -142,8 +161,8 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
             @Override
             public void run() {
                 try {
-                    DatagramPacket packet = new DatagramPacket(bytes, bytes.length, RemoteIp, VOIP_VIDEO_UDP_PORT);
-                    SendUdpSocket.send(packet);
+                        DatagramPacket packet = new DatagramPacket(bytes, bytes.length, remoteIp, VOIP_VIDEO_UDP_PORT);
+                        SendUdpSocket.send(packet);
                 } catch (SocketException e) {
 
                     Log.e(LOG_TAG, "Failure. SocketException in UdpSend: " + e);
