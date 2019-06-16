@@ -21,6 +21,8 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import arch3.lge.com.voip.model.encrypt.MyEncrypt;
+
 import static android.support.constraint.Constraints.TAG;
 
 @SuppressWarnings("deprecation")
@@ -67,7 +69,10 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
     }
 
 
+    MyEncrypt encipher;
     private void OpenCamera()  {
+
+        encipher = new MyEncrypt();
 
         if (mCamera!=null) return;
         try {
@@ -147,7 +152,10 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
             yuv_image.compressToJpeg(rect, 40, output_stream);
             byte[] imageBytes = output_stream.toByteArray();
 
-            Bitmap image = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+            imageBytes = encipher.encrypt(imageBytes);
+
+            byte[] decrypt = encipher.decrypt(imageBytes);
+            Bitmap image = BitmapFactory.decodeByteArray(decrypt, 0, decrypt.length);
             selfView.setImageBitmap(image);
             if (remoteIp != null) {
                 UdpSend(imageBytes);

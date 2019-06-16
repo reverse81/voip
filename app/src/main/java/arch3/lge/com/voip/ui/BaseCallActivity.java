@@ -1,11 +1,18 @@
 package arch3.lge.com.voip.ui;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import java.io.IOException;
@@ -33,11 +40,48 @@ public class BaseCallActivity extends AppCompatActivity {
     protected void attachImageView(ImageView view) {
         imageViewVideo = view;
     }
+    SensorManager mySensorManager;
+    Sensor myProximitySensor;
+    PowerManager manager;
+    PowerManager.WakeLock wl;
+
+    @Override
+    protected void onDestroy() {
+        Log.i("TAG","onDestroy");
+        super.onDestroy();
+        mySensorManager.unregisterListener(proximitySensorEventListener,myProximitySensor);
+        if (wl !=null && wl.isHeld()) {
+            Log.i("TAG","RELEASE");
+            wl.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+         manager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+
+         if (manager.isWakeLockLevelSupported(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK)){
+             wl = manager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,"VOIP:LOCK");
+         }
+
+//
+        mySensorManager = (SensorManager) getSystemService(
+                Context.SENSOR_SERVICE);
+        myProximitySensor = mySensorManager.getDefaultSensor(
+                Sensor.TYPE_PROXIMITY);
+
+        if (myProximitySensor == null) {
+
+            //
+        } else {
+            mySensorManager.registerListener(proximitySensorEventListener,
+                    myProximitySensor,
+                    SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
+
 
     protected void StartReceiveVideoThread() {
         // Create thread for receiving audio data
@@ -62,7 +106,7 @@ public class BaseCallActivity extends AppCompatActivity {
                         if (packet.getLength() >0) {
                             final Bitmap bitmap = BitmapFactory.decodeByteArray(packet.getData(), 0, packet.getLength());
                             final Matrix mtx = new Matrix();
-                            mtx.postRotate(-90);
+                           // mtx.postRotate(-90);
                             final Bitmap rotator = Bitmap.createBitmap(bitmap, 0, 0,
                                     bitmap.getWidth(), bitmap.getHeight(), mtx,
                                     true);
@@ -127,4 +171,29 @@ public class BaseCallActivity extends AppCompatActivity {
         UdpReceiveVideoThread = null;
         RecvVideoUdpSocket = null;
     }
+
+    SensorEventListener proximitySensorEventListener
+            = new SensorEventListener() {
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            // TODO Auto-generated method stub
+        }
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            // TODO Auto-generated method stub
+            if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+                if (event.values[0] == 0) {
+                    Log.i("Sensor", "nEEEEEEEEEEEEEEEEEEEr");
+                    if (wl !=null && !wl.isHeld()) {
+                        wl.acquire();
+                    }
+                } else {
+                    Log.i("Sensor", "FAAAAAAAAAAAAAAAAAr");
+                    if (wl !=null && wl.isHeld()) {
+                        wl.release();
+                    }
+                }
+            }
+        }
+    };
 }
