@@ -4,7 +4,7 @@ import arch3.lge.com.voip.model.codec.AudioCodec;
 
 public class AudioGSM0610 extends AudioCodec {
     static {
-        System.loadLibrary("native-lib");
+        System.loadLibrary("native-gsm0610-lib");
     }
     @Override
     public boolean open(){

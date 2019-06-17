@@ -15,7 +15,7 @@ include_directories(spandsp/spandsp)
 SET(flags "HAVE_MATH_H")
 
 add_library( # Sets the name of the library.
-             native-lib
+             native-gsm0610-lib
 
              # Sets the library as a shared library.
              SHARED
@@ -49,7 +49,7 @@ find_library( # Sets the name of the path variable.
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-                       native-lib
+                       native-gsm0610-lib
 
                        # Links the target library to the log library
                        # included in the NDK.

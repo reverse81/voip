@@ -44,12 +44,12 @@ public class VoIPAudioIo {
     private ConcurrentLinkedQueue<byte[]> IncommingpacketQueue;
     private AudioCodec mCodec;
 
-    VoIPAudioIo(Context context) {
+    public VoIPAudioIo(Context context) {
         mContext = context;
         mCodec = CodecFacotry.createAudio(CodecFacotry.AudioCodecType.GSM0610);
     }
 
-    synchronized boolean StartAudio(InetAddress IP, int SimVoice) {
+    public synchronized boolean StartAudio(InetAddress IP, int SimVoice) {
         if (IsRunning) return (true);
         if (mCodec.open() == true)
             Log.i(LOG_TAG, "JniGsmOpen() Success");
@@ -264,7 +264,7 @@ public class VoIPAudioIo {
                         if (packet.getLength() == GSM_BUFFER_SIZE) {
                             mCodec.decode(packet.getData(), rawbuf);
                             IncommingpacketQueue.add(rawbuf);
-                            //Log.i(LOG_TAG, "Packet received: " + packet.getLength());
+                            Log.i(LOG_TAG, "[PKJN]Packet received: " + rawbuf.length);
                         } else
                             Log.i(LOG_TAG, "Invalid Packet LengthReceived: " + packet.getLength());
 
