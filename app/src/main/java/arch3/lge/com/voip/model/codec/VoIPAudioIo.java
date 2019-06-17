@@ -42,16 +42,16 @@ public class VoIPAudioIo {
     private boolean AudioIoThreadThreadRun = false;
     private boolean UdpVoipReceiveDataThreadRun = false;
     private ConcurrentLinkedQueue<byte[]> IncommingpacketQueue;
-
+    private AudioCodec mCodec;
 
     VoIPAudioIo(Context context) {
         mContext = context;
-
+        mCodec = CodecFacotry.createAudio(CodecFacotry.AudioCodecType.GSM0610);
     }
 
     synchronized boolean StartAudio(InetAddress IP, int SimVoice) {
         if (IsRunning) return (true);
-        if (JniGsmOpen() == 0)
+        if (mCodec.open() == true)
             Log.i(LOG_TAG, "JniGsmOpen() Success");
         IncommingpacketQueue = new ConcurrentLinkedQueue<>();
         mSimVoice = SimVoice;
@@ -93,7 +93,7 @@ public class VoIPAudioIo {
         UdpReceiveDataThread = null;
         IncommingpacketQueue = null;
         RecvUdpSocket = null;
-        JniGsmClose();
+        mCodec.close();
         IsRunning = false;
         return (false);
     }
@@ -207,10 +207,11 @@ public class VoIPAudioIo {
                             }
                         }
                         if (BytesRead == RAW_BUFFER_SIZE) {
-                            JniGsmEncodeB(rawbuf, gsmbuf);
+                            mCodec.encode(rawbuf, gsmbuf);
                             DatagramPacket packet = new DatagramPacket(gsmbuf, GSM_BUFFER_SIZE, RemoteIp, VOIP_DATA_UDP_PORT);
                             socket.send(packet);
                         }
+                        Log.e(LOG_TAG, "[PKJN]SEND->>>>: " + BytesRead);
                     }
                     // Stop Audio Thread);
                     Recorder.stop();
@@ -261,7 +262,7 @@ public class VoIPAudioIo {
                         DatagramPacket packet = new DatagramPacket(gsmbuf, GSM_BUFFER_SIZE);
                         RecvUdpSocket.receive(packet);
                         if (packet.getLength() == GSM_BUFFER_SIZE) {
-                            JniGsmDecodeB(packet.getData(), rawbuf);
+                            mCodec.decode(packet.getData(), rawbuf);
                             IncommingpacketQueue.add(rawbuf);
                             //Log.i(LOG_TAG, "Packet received: " + packet.getLength());
                         } else
@@ -287,17 +288,6 @@ public class VoIPAudioIo {
         UdpReceiveDataThread.start();
     }
 
-    public static native int JniGsmOpen();
-    // Not Used uncomment to enable
-    //public static native int JniGsmDecode(byte encoded[], short lin[]);
-    // Not Used uncomment to enable
-    //public static native int JniGsmEncode(short lin[], byte encoded[]);
-
-    public static native int JniGsmDecodeB(byte encoded[], byte lin[]);
-
-    public static native int JniGsmEncodeB(byte lin[], byte encoded[]);
-
-    public static native void JniGsmClose();
 }
 
 
