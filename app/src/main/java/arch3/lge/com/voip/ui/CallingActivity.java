@@ -5,11 +5,13 @@ import android.os.Bundle;
 
 import arch3.lge.com.voip.R;
 
-public class CallingActivity extends AppCompatActivity {
+public class CallingActivity extends BaseCallActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calling);
     }
+
+
 }

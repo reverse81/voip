@@ -25,7 +25,7 @@ import java.net.UnknownHostException;
 import java.util.Locale;
 
 import arch3.lge.com.voip.model.call.PhoneState;
-import arch3.lge.com.voip.utils.UDPContstants;
+import arch3.lge.com.voip.utils.NetworkConstants;
 
 public class UDPCmd extends IntentService {
 
@@ -72,7 +72,7 @@ public class UDPCmd extends IntentService {
                 PhoneState.getInstance().SetRemoteIP(Sender);
                 PhoneState.getInstance().SetCmdIP(Sender);
                 PhoneState.getInstance().SetPhoneState(PhoneState.CallState.CALLING);
-                UdpSend(Sender, UDPContstants.CONTROL_DATA_PORT, "/CALLIP/");
+                UdpSend(Sender, NetworkConstants.CONTROL_DATA_PORT, "/CALLIP/");
                 PhoneState.getInstance().NotifyUpdate();
                 Log.i("CALL", "AAAAAAAAAAAAAAAAAAAAAAAAA");
                 break;
@@ -84,7 +84,7 @@ public class UDPCmd extends IntentService {
             case "/ANSWER_CALL_BUTTON/":
                 try {
                 //    EndRinger();
-                    UdpSend(PhoneState.getInstance().GetRemoteIP(), UDPContstants.CONTROL_DATA_PORT, "/ANSWER/");
+                    UdpSend(PhoneState.getInstance().GetRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/ANSWER/");
                     InetAddress address = InetAddress.getByName(PhoneState.getInstance().GetRemoteIP());
                     PhoneState.getInstance().SetInComingIP(PhoneState.getInstance().GetRemoteIP());
                     PhoneState.getInstance().SetPhoneState(PhoneState.CallState.INCALL);
@@ -104,7 +104,7 @@ public class UDPCmd extends IntentService {
                 PhoneState.getInstance().NotifyUpdate();
                 break;
             case "/REFUSE_CALL_BUTTON/":
-                UdpSend(PhoneState.getInstance().GetRemoteIP(), UDPContstants.CONTROL_DATA_PORT, "/REFUSE/");
+                UdpSend(PhoneState.getInstance().GetRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/REFUSE/");
                 EndCall();
                 PhoneState.getInstance().NotifyUpdate();
                 break;

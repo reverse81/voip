@@ -14,8 +14,7 @@ public class BroadcastReceiverOnBootComplete extends BroadcastReceiver {
         String ActionString = intent.getAction();
         if (ActionString != null) {
             if (ActionString.equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
-                // Start UDP listen Service
-                Intent serviceIntent = new Intent(context, UDPListenerService.class);
+                Intent serviceIntent = new Intent(context, TCPListenerService.class);
                 context.startService(serviceIntent);
                 Log.e(LOG_TAG, "Started UDPListenerService.class");
             }
