@@ -18,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import arch3.lge.com.voip.R;
+import arch3.lge.com.voip.model.user.User;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -87,9 +89,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.v("dae", "Login Register");
                 attemptLogin();
             }
         });
+
+        TextView mRegisterID = (TextView)findViewById(R.id.register_id);
+        mRegisterID.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v("dae", "Listner Register");
+                registerID();
+            }
+        });
+
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -182,13 +195,23 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
+            Log.v("dae", "Message1");
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
+            Log.v("dae", "Message1");
+
         }
+    }
+
+    private void registerID(){
+        //Register menu
+        Log.v("dae", "Register11");
+        Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+        startActivity(intent);
     }
 
     private boolean isEmailValid(String email) {
@@ -209,9 +232,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
+        Log.v("dae", "message1-1");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
+            Log.v("dae", "message1-2");
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
             mLoginFormView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
@@ -232,6 +256,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
+            Log.v("dae", "message1-3");
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
@@ -324,11 +349,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
             }
 
+            Log.v("dae", "intent1");
+
             // TODO: register the new account here.
-            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            final AutoCompleteTextView emailText=(AutoCompleteTextView)findViewById(R.id.email);
-            intent.putExtra("email", emailText.getText().toString());
+            //Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            //final AutoCompleteTextView emailText=(AutoCompleteTextView)findViewById(R.id.email);
+            //intent.putExtra("email", emailText.getText().toString());
+            //startActivity(intent);
+
+            // TODO: Save User Information
+
+
+            //TODO : dialog
+            Intent intent = new Intent(LoginActivity.this, DialpadActivity.class);
             startActivity(intent);
+
             return true;
         }
 
@@ -338,6 +373,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
+
+                // Store values at the time of the login attempt.
+                String email = mEmailView.getText().toString();
+                User.saveEmail(getApplicationContext(), email);
+
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

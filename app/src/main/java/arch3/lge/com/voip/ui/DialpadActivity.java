@@ -3,6 +3,8 @@ package arch3.lge.com.voip.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.TextView;
 
@@ -25,10 +27,11 @@ public class DialpadActivity  extends MainTabActivity {
         mNumberView = (TextView)findViewById(R.id.dialInput);
         mNumberView.setText(mNumberString);
 
-        ApiParamBuilder api = new ApiParamBuilder();
-        JSONObject object = api.getLogin("ddd@naver.com","1111");
-        ServerApi ser = new ServerApi();
-        ser.login(getApplicationContext(), ServerApi.API_LOGIN, object );
+        //dhtest
+        //ApiParamBuilder api = new ApiParamBuilder();
+        //JSONObject object = api.getLogin("ddd@naver.com","1111");
+        //ServerApi ser = new ServerApi();
+        //ser.login(getApplicationContext(), ServerApi.API_LOGIN, object );
 
 
     }

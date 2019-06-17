@@ -10,15 +10,18 @@
         style="@style/MainTab"
         android:id="@+id/dialpad_tab"
         android:onClick="onClickDialpad"
-        android:text="@string/dialpad" />
+        android:text="@string/dialpad"
+        android:textSize="14dp"/>
     <Button
         style="@style/MainTab"
         android:id="@+id/contact_tab"
         android:onClick="onClickContact"
-        android:text="@string/contact" />
+        android:text="@string/contact"
+        android:textSize="14dp"/>
     <Button
         style="@style/MainTab"
         android:id="@+id/conference_tab"
         android:onClick="onClickConfirence"
-        android:text="@string/conference" />
+        android:text="@string/conference"
+        android:textSize="14dp"/>
 </LinearLayout>
