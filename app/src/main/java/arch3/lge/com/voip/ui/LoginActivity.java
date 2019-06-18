@@ -29,10 +29,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import arch3.lge.com.voip.R;
+import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
+import arch3.lge.com.voip.model.serverApi.ServerApi;
 import arch3.lge.com.voip.model.user.User;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -204,6 +208,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask.execute((Void) null);
             Log.v("dae", "Message1");
 
+            ApiParamBuilder param = new ApiParamBuilder();
+            ServerApi server = new ServerApi();
+            JSONObject object = param.getLogin(email,password);
+            server.login(getApplicationContext(), object.toString(), email);
+            Log.v("dae", "email : "+email+" Password : "+password);
         }
     }
 
@@ -375,8 +384,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (success) {
 
                 // Store values at the time of the login attempt.
-                String email = mEmailView.getText().toString();
-                User.saveEmail(getApplicationContext(), email);
+                //String email = mEmailView.getText().toString();
+                //User.saveEmail(getApplicationContext(), email);
 
                 finish();
             } else {

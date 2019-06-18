@@ -2,6 +2,7 @@ package arch3.lge.com.voip.model.user;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class User {
     private String email;
@@ -25,6 +26,7 @@ public class User {
 
     public boolean isSamePassword() {
         //TODO: Replace this with your own logic
+        Log.v("dae", "ori : "+password+" retry : "+ retypedPassword);
         return  password.equals(retypedPassword);
     }
 
@@ -41,39 +43,26 @@ public class User {
         this.retypedPassword = retypedPassword;
     }
 
-    public static void saveEmail(Context context, String email){
-        SharedPreferences.Editor editor = context.getSharedPreferences("user", Context.MODE_PRIVATE).edit();
-        editor.putString("eMail", email);
+    public static void saveLogin(Context context, String token, String email, String phoneNumber) {
+		SharedPreferences.Editor editor = context.getSharedPreferences("user", Context.MODE_PRIVATE).edit();
+        editor.putString("token", token);
+        editor.putString("email", email);
+        editor.putString("phoneNumber", phoneNumber);
         editor.commit();
     }
-
-    public static String readEmail(Context context){
+    public static String getEmail(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
         return sharedPreferences.getString("email","");
     }
 
-    public static void saveUserName(Context context, String UserName){
-        SharedPreferences.Editor editor = context.getSharedPreferences("user", Context.MODE_PRIVATE).edit();
-        editor.putString("userName", UserName);
-        editor.commit();
-    }
-
-    public static String readUserName(Context context){
+    public static String getPhoneNumber(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
-        return sharedPreferences.getString("userName","");
+        return sharedPreferences.getString("phoneNumber","");
     }
-
-    public static void saveLogin(Context context, String token) {
-        SharedPreferences.Editor editor = context.getSharedPreferences("user", Context.MODE_PRIVATE).edit();
-        editor.putString("token", token);
-        editor.commit();
-    }
-
-
 
     public static String getLogin(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
-        return sharedPreferences.getString("token","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRkZEBuYXZlci5jb20iLCJtZXNzYWdlIjoiaXQgbWFrZXMgZnJvbSBtaXlhIiwiaWF0IjoxNTYwMzU5NDgxfQ.a3f9CZ5pdGLbmUWEpsrUamas5LzpM2dtjamdNxtjKz8");
+        return sharedPreferences.getString("token","");
 
     }
 }

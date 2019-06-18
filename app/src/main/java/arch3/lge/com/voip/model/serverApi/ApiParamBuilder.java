@@ -48,6 +48,17 @@ public class ApiParamBuilder {
         return mMandatoryParam;
     }
 
+    public JSONObject getCreate(String email, String password) {
+        try {
+            mMandatoryParam.put(KEY_EMAIL, email);
+            mMandatoryParam.put(KEY_PASSWORD, password);
+            Log.i(LOGTAG, mMandatoryParam.toString());
+        } catch (JSONException e) {
+            Log.e(LOGTAG, "JSONException on getRetrieveApplistParam...", e);
+        }
+        return mMandatoryParam;
+    }
+
     public JSONObject getIP(String phonenumber) {
         try {
             mMandatoryParam.put(KEY_PHONENUMBER, phonenumber);

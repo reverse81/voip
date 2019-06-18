@@ -8,7 +8,6 @@ import android.widget.ImageView;
 import org.json.JSONObject;
 
 import arch3.lge.com.voip.model.UDPnetwork.ICallController;
-import arch3.lge.com.voip.model.UDPnetwork.UDPCmd;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
 import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
 import arch3.lge.com.voip.model.serverApi.ServerApi;
@@ -18,8 +17,8 @@ public class CallController implements ICallController {
     private  static ApiParamBuilder param = new ApiParamBuilder();
     private static ServerApi serverApi = new ServerApi();
 
-    static public void requestCall(Context context, String phonenumber, ImageView self) {
-        JSONObject object = param.getIP(phonenumber);
+    static public void requestCall(Context context, String phoneNumber, ImageView self) {
+        JSONObject object = param.getIP(phoneNumber);
         VoIPVideoIo io = new VoIPVideoIo();
         io.StartVideo(self);
         serverApi.getIP(context, object,io);

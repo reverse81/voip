@@ -23,6 +23,7 @@ import java.net.SocketException;
 
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.model.call.PhoneState;
+import arch3.lge.com.voip.model.codec.VoIPAudioIo;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
 import arch3.lge.com.voip.utils.NetworkConstants;
 
@@ -35,7 +36,8 @@ public class BaseCallActivity extends AppCompatActivity {
     private boolean UdpVoipReceiveVideoThreadRun = false;
     private DatagramSocket RecvVideoUdpSocket;
 
-    private arch3.lge.com.voip.model.codec.VoIPVideoIo VoIPVideoIo;
+    public arch3.lge.com.voip.model.codec.VoIPVideoIo mVoIPVideoIo;
+    public arch3.lge.com.voip.model.codec.VoIPAudioIo mVoIPAudioIo;
 
     protected void attachImageView(ImageView view) {
         imageViewVideo = view;

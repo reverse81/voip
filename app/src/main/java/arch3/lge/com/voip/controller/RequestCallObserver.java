@@ -6,8 +6,7 @@ import android.content.Intent;
 import java.util.Observable;
 import java.util.Observer;
 
-import arch3.lge.com.voip.model.UDPnetwork.UDPCmd;
-import arch3.lge.com.voip.ui.RequestCallActivity;
+import arch3.lge.com.voip.model.UDPnetwork.TCPCmd;
 
 public class RequestCallObserver implements Observer {
     Context context;
@@ -21,7 +20,7 @@ public class RequestCallObserver implements Observer {
         //connect UDP
 
         Intent intent = new Intent();
-        intent.setClassName(context.getPackageName(), UDPCmd.class.getName());
+        intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
         intent.putExtra("message", "/CALLIP/");
         intent.putExtra("sender", "IPAFASDFAdf");
         context.startService(intent);

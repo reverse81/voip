@@ -2,21 +2,16 @@ package arch3.lge.com.voip.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.TextView;
 
+
 import org.json.JSONObject;
 
-
 import arch3.lge.com.voip.R;
-import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
 import arch3.lge.com.voip.model.serverApi.ServerApi;
-import arch3.lge.com.voip.model.user.User;
 
 public class DialpadActivity  extends MainTabActivity {
     final String TAG = "Dialpad";
@@ -36,7 +31,8 @@ public class DialpadActivity  extends MainTabActivity {
 
 //        ApiParamBuilder param = new ApiParamBuilder();
 //        ServerApi server = new ServerApi();
-    //    JSONObject object = param.getLogin("ddd@naver.com","1111");
+//        JSONObject object = param.getLogin("aaa@naver.com","1111");
+//        server.login(getApplicationContext(), object.toString(), "aaa@naver.com");
 //        JSONObject object = param.getIP("117782905");
 //        server.getIP(getApplicationContext(), object);
 
@@ -86,7 +82,12 @@ public class DialpadActivity  extends MainTabActivity {
     }
     public void onClickAdd(View v)
     {
+        Intent intent = new Intent(DialpadActivity.this, ContactListMgrActivity.class);
+        intent.putExtra("PhoneNum", mNumberString);
+        startActivity(intent);
         Log.e(TAG, "onClickAdd = "+v.getId());
+        Log.v("dae", "Click Add btn, Phone Number : "+mNumberString);
+
     }
     public void onClickCall(View v)
     {
@@ -119,4 +120,5 @@ public class DialpadActivity  extends MainTabActivity {
             R.id.dialNum8,
             R.id.dialNum9,
     };
+
 }

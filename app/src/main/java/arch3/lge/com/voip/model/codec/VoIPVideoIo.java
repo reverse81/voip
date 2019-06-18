@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.graphics.YuvImage;
 import android.hardware.* ; // avoid  deprecation warning import android.hardware.Camera;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -40,6 +41,11 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
     private Camera mCamera;
     private int frame;
     private ImageView selfView;
+    private VideoCodec mCodec;
+
+    public VoIPVideoIo(){
+        mCodec = CodecFacotry.createVideo(CodecFacotry.VideoCodecType.MJPEG);
+    }
 
     public void attachIP (String RemoteIP) {
         InetAddress address = null;
@@ -139,23 +145,13 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
         //YUV formats require more conversion
         if (format == ImageFormat.NV21 || format == ImageFormat.YUY2 || format == ImageFormat.NV16) {
 
-            int w = parameters.getPreviewSize().width;
-            int h = parameters.getPreviewSize().height;
-
-            // Get the YuV image
-            YuvImage yuv_image = new YuvImage(data, format, w, h, null);
-
-
-            // Convert YuV to Jpeg
-            Rect rect = new Rect(0, 0, w, h);
-            ByteArrayOutputStream output_stream = new ByteArrayOutputStream();
-            yuv_image.compressToJpeg(rect, 40, output_stream);
-            byte[] imageBytes = output_stream.toByteArray();
+            byte[] imageBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height);
 
             imageBytes = encipher.encrypt(imageBytes);
 
             byte[] decrypt = encipher.decrypt(imageBytes);
-            Bitmap image = BitmapFactory.decodeByteArray(decrypt, 0, decrypt.length);
+
+            Bitmap image = mCodec.decode(decrypt);
             selfView.setImageBitmap(image);
             if (remoteIp != null) {
                 UdpSend(imageBytes);

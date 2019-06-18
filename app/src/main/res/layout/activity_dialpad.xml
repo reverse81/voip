@@ -14,11 +14,11 @@
     <TextView
         android:id="@+id/dialInput"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:gravity="left|center_vertical"
-        android:textSize="30dp"
+        android:layout_height="150dp"
+        android:layout_weight="1"
         android:background="@color/cardview_light_background"
-        android:layout_weight="1"/>
+        android:gravity="left|center_vertical"
+        android:textSize="40dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,21 +26,24 @@
         android:orientation="horizontal"
         android:weightSum="3"
         android:layout_weight="1">
-            <Button
-                style="@style/DialpadNum"
-                android:id="@+id/dialNum1"
-                android:onClick="onClickDigit"
-                android:text="@string/dial_1" />
-            <Button
-                style="@style/DialpadNum"
-                android:id="@+id/dialNum2"
-                android:onClick="onClickDigit"
-                android:text="@string/dial_2" />
-            <Button
-                style="@style/DialpadNum"
-                android:id="@+id/dialNum3"
-                android:onClick="onClickDigit"
-                android:text="@string/dial_3" />
+
+        <Button
+            android:id="@+id/dialNum1"
+            style="@style/DialpadNum"
+            android:onClick="onClickDigit"
+            android:text="@string/dial_1" />
+
+        <Button
+            android:id="@+id/dialNum2"
+            style="@style/DialpadNum"
+            android:onClick="onClickDigit"
+            android:text="@string/dial_2" />
+
+        <Button
+            android:id="@+id/dialNum3"
+            style="@style/DialpadNum"
+            android:onClick="onClickDigit"
+            android:text="@string/dial_3" />
     </LinearLayout>
 
     <LinearLayout
@@ -49,19 +52,22 @@
         android:orientation="horizontal"
         android:weightSum="3"
         android:layout_weight="1">
+
         <Button
-            style="@style/DialpadNum"
             android:id="@+id/dialNum4"
+            style="@style/DialpadNum"
             android:onClick="onClickDigit"
             android:text="@string/dial_4" />
+
         <Button
-            style="@style/DialpadNum"
             android:id="@+id/dialNum5"
+            style="@style/DialpadNum"
             android:onClick="onClickDigit"
             android:text="@string/dial_5" />
+
         <Button
-            style="@style/DialpadNum"
             android:id="@+id/dialNum6"
+            style="@style/DialpadNum"
             android:onClick="onClickDigit"
             android:text="@string/dial_6" />
     </LinearLayout>
@@ -73,19 +79,22 @@
         android:orientation="horizontal"
         android:weightSum="3"
         android:layout_weight="1">
+
         <Button
-            style="@style/DialpadNum"
             android:id="@+id/dialNum7"
+            style="@style/DialpadNum"
             android:onClick="onClickDigit"
             android:text="@string/dial_7" />
+
         <Button
-            style="@style/DialpadNum"
             android:id="@+id/dialNum8"
+            style="@style/DialpadNum"
             android:onClick="onClickDigit"
             android:text="@string/dial_8" />
+
         <Button
-            style="@style/DialpadNum"
             android:id="@+id/dialNum9"
+            style="@style/DialpadNum"
             android:onClick="onClickDigit"
             android:text="@string/dial_9" />
     </LinearLayout>

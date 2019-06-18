@@ -3,12 +3,17 @@ package arch3.lge.com.voip.ui;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.json.JSONObject;
+
 import arch3.lge.com.voip.R;
+import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
+import arch3.lge.com.voip.model.serverApi.ServerApi;
 import arch3.lge.com.voip.model.user.User;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -75,7 +80,7 @@ public class RegisterActivity extends AppCompatActivity {
             cancel = true;
         }
 
-        if (user.isSamePassword()) {
+        if (!user.isSamePassword()) {
             retypeText.setError(getString(R.string.error_mismatch_retype_password));
             focusView = retypeText;
             cancel = true;
@@ -91,8 +96,20 @@ public class RegisterActivity extends AppCompatActivity {
 
             //@TODO
             // Request register using controller
-            finish();
+            Log.v("dae", "Transmit email : "+user.getEmail()+" password:"+user.getPassword());
+            ApiParamBuilder createParam = new ApiParamBuilder();
+            JSONObject sendJsonObject = createParam.getCreate(user.getEmail(), user.getPassword());
+
+            ServerApi server = new ServerApi();
+            server.create(this, sendJsonObject);
+
+            //finish();
         }
+    }
+
+    public void successReister(){
+        Log.v("dae", "finish..");
+
     }
 
 
