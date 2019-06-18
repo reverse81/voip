@@ -22,6 +22,9 @@ import android.media.MediaRecorder;
 import android.util.Log;
 import android.os.Process;
 
+import arch3.lge.com.voip.R;
+import arch3.lge.com.voip.model.UDPnetwork.UserDatagramSocket;
+
 public class VoIPAudioIo {
 
     private static final String LOG_TAG = "VoIPAudioIo";
@@ -35,14 +38,12 @@ public class VoIPAudioIo {
     private int mSimVoice;
     private Context mContext;
     private Thread AudioIoThread = null;
-    private Thread UdpReceiveDataThread = null;
-    private DatagramSocket RecvUdpSocket;
-    private InetAddress RemoteIp;                   // Address to call
     private boolean IsRunning = false;
     private boolean AudioIoThreadThreadRun = false;
-    private boolean UdpVoipReceiveDataThreadRun = false;
     private ConcurrentLinkedQueue<byte[]> IncommingpacketQueue;
     private AudioCodec mCodec;
+    private boolean mBoostAudio = false;
+    private UserDatagramSocket mSock = new UserDatagramSocket(VOIP_DATA_UDP_PORT);
 
     public VoIPAudioIo(Context context) {
         mContext = context;
@@ -55,28 +56,19 @@ public class VoIPAudioIo {
             Log.i(LOG_TAG, "JniGsmOpen() Success");
         IncommingpacketQueue = new ConcurrentLinkedQueue<>();
         mSimVoice = SimVoice;
-        this.RemoteIp = IP;
+        mSock.setAddress(IP);
         StartAudioIoThread();
         StartReceiveDataThread();
         IsRunning = true;
         return (false);
     }
 
-    synchronized boolean EndAudio() {
+    public synchronized boolean EndAudio() {
         if (!IsRunning) return (true);
         Log.i(LOG_TAG, "Ending Viop Audio");
-        if (UdpReceiveDataThread != null && UdpReceiveDataThread.isAlive()) {
-            UdpVoipReceiveDataThreadRun = false;
-            RecvUdpSocket.close();
-            Log.i(LOG_TAG, "UdpReceiveDataThread Thread Join started");
-            UdpVoipReceiveDataThreadRun = false;
-            try {
-                UdpReceiveDataThread.join();
-            } catch (InterruptedException e) {
-                Log.i(LOG_TAG, "UdpReceiveDataThread Join interruped");
-            }
-            Log.i(LOG_TAG, " UdpReceiveDataThread Join successs");
-        }
+
+        mSock.setListener(null);
+
         if (AudioIoThread != null && AudioIoThread.isAlive()) {
             AudioIoThreadThreadRun = false;
             Log.i(LOG_TAG, "Audio Thread Join started");
@@ -90,9 +82,7 @@ public class VoIPAudioIo {
         }
 
         AudioIoThread = null;
-        UdpReceiveDataThread = null;
         IncommingpacketQueue = null;
-        RecvUdpSocket = null;
         mCodec.close();
         IsRunning = false;
         return (false);
@@ -100,24 +90,24 @@ public class VoIPAudioIo {
 
     private InputStream OpenSimVoice(int SimVoice) {
         InputStream VoiceFile = null;
-//        switch (SimVoice) {
-//            case 0:
-//                break;
-//            case 1:
-//                VoiceFile = mContext.getResources().openRawResource(R.raw.t18k16bit);
-//                break;
-//            case 2:
-//                VoiceFile = mContext.getResources().openRawResource(R.raw.t28k16bit);
-//                break;
-//            case 3:
-//                VoiceFile = mContext.getResources().openRawResource(R.raw.t38k16bit);
-//                break;
-//            case 4:
-//                VoiceFile = mContext.getResources().openRawResource(R.raw.t48k16bit);
-//                break;
-//            default:
-//                break;
-//        }
+        switch (SimVoice) {
+            case 0:
+                break;
+            case 1:
+                VoiceFile = mContext.getResources().openRawResource(R.raw.t18k16bit);
+                break;
+            case 2:
+                VoiceFile = mContext.getResources().openRawResource(R.raw.t28k16bit);
+                break;
+            case 3:
+                VoiceFile = mContext.getResources().openRawResource(R.raw.t38k16bit);
+                break;
+            case 4:
+                VoiceFile = mContext.getResources().openRawResource(R.raw.t48k16bit);
+                break;
+            default:
+                break;
+        }
         return VoiceFile;
     }
 
@@ -165,18 +155,16 @@ public class VoIPAudioIo {
                 byte[] gsmbuf = new byte[GSM_BUFFER_SIZE];
                 try {
                     // Create a socket and start recording
-                    Log.i(LOG_TAG, "Packet destination: " + RemoteIp.toString());
                     DatagramSocket socket = new DatagramSocket();
                     Recorder.startRecording();
                     OutputTrack.play();
                     while (AudioIoThreadThreadRun) {
-
                         if (IncommingpacketQueue.size() > 0) {
                             byte[] AudioOutputBufferBytes = IncommingpacketQueue.remove();
-                           // if (!MainActivity.BoostAudio) {
-                            //    OutputTrack.write(AudioOutputBufferBytes, 0, RAW_BUFFER_SIZE);
-                           // }
-                         //   else {
+                            if (mBoostAudio) {
+                                OutputTrack.write(AudioOutputBufferBytes, 0, RAW_BUFFER_SIZE);
+                            }
+                            else {
                                 short[] AudioOutputBufferShorts = new short[AudioOutputBufferBytes.length / 2];
                                 // to turn bytes to shorts as either big endian or little endian.
                                 ByteBuffer.wrap(AudioOutputBufferBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(AudioOutputBufferShorts);
@@ -188,7 +176,7 @@ public class VoIPAudioIo {
                                         value = -32767;
                                     }
                                     AudioOutputBufferShorts[i]=(short)value;
-                             //   }
+                                }
                                 // to turn shorts back to bytes.
                                 //byte[] AudioOutputBufferBytes2 = new byte[AudioOutputBufferShorts.length * 2];
                                 //ByteBuffer.wrap(AudioOutputBufferBytes2).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(AudioOutputBufferShorts);
@@ -208,10 +196,8 @@ public class VoIPAudioIo {
                         }
                         if (BytesRead == RAW_BUFFER_SIZE) {
                             mCodec.encode(rawbuf, gsmbuf);
-                            DatagramPacket packet = new DatagramPacket(gsmbuf, GSM_BUFFER_SIZE, RemoteIp, VOIP_DATA_UDP_PORT);
-                            socket.send(packet);
+                            mSock.send(gsmbuf);
                         }
-                        Log.e(LOG_TAG, "[PKJN]SEND->>>>: " + BytesRead);
                     }
                     // Stop Audio Thread);
                     Recorder.stop();
@@ -239,53 +225,18 @@ public class VoIPAudioIo {
         AudioIoThread.start();
     }
 
-    private MediaRecorder mMediaRecorder;
-
     private void StartReceiveDataThread() {
-        // Create thread for receiving audio data
-        UdpVoipReceiveDataThreadRun = true;
-        UdpReceiveDataThread = new Thread(new Runnable() {
-
+        mSock.setListener(new UserDatagramSocket.PacketDataHandler() {
             @Override
-            public void run() {
-                // Create an instance of AudioTrack, used for playing back audio
-                Log.i(LOG_TAG, "Receive Data Thread Started. Thread id: " + Thread.currentThread().getId());
-                try {
-                    // Setup socket to receive the audio data
-                    RecvUdpSocket = new DatagramSocket(null);
-                    RecvUdpSocket.setReuseAddress(true);
-                    RecvUdpSocket.bind(new InetSocketAddress(VOIP_DATA_UDP_PORT));
-
-                    while (UdpVoipReceiveDataThreadRun) {
-                        byte[] rawbuf = new byte[RAW_BUFFER_SIZE];
-                        byte[] gsmbuf = new byte[GSM_BUFFER_SIZE];
-                        DatagramPacket packet = new DatagramPacket(gsmbuf, GSM_BUFFER_SIZE);
-                        RecvUdpSocket.receive(packet);
-                        if (packet.getLength() == GSM_BUFFER_SIZE) {
-                            mCodec.decode(packet.getData(), rawbuf);
-                            IncommingpacketQueue.add(rawbuf);
-                            Log.i(LOG_TAG, "[PKJN]Packet received: " + rawbuf.length);
-                        } else
-                            Log.i(LOG_TAG, "Invalid Packet LengthReceived: " + packet.getLength());
-
-                    }
-                    // close socket
-                    RecvUdpSocket.disconnect();
-                    RecvUdpSocket.close();
-                    mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-
-                } catch (SocketException e) {
-
-
-                    UdpVoipReceiveDataThreadRun = false;
-                    Log.e(LOG_TAG, "SocketException: " + e.toString());
-                } catch (IOException e) {
-                    UdpVoipReceiveDataThreadRun = false;
-                    Log.e(LOG_TAG, "IOException: " + e.toString());
-                }
+            public void onReceive(DatagramPacket packet) {
+                if (packet.getLength() == GSM_BUFFER_SIZE) {
+                    byte[] rawbuf = new byte[RAW_BUFFER_SIZE];
+                    mCodec.decode(packet.getData(), rawbuf);
+                    IncommingpacketQueue.add(rawbuf);
+                } else
+                    Log.i(LOG_TAG, "Invalid Packet LengthReceived: " + packet.getLength());
             }
         });
-        UdpReceiveDataThread.start();
     }
 
 }
