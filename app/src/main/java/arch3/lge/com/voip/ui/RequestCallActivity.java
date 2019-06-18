@@ -27,7 +27,6 @@ public class RequestCallActivity extends BaseCallActivity {
         //if(testCall("172.20.2.146"))//phoneNumber))
         //    return;
         CallController.requestCall(this, phoneNumber, self);
-        //StartReceiveVideoThread();
 
     }
 

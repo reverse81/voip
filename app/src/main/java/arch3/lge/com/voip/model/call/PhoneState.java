@@ -1,5 +1,8 @@
 package arch3.lge.com.voip.model.call;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import java.util.Observable;
 
 public class PhoneState extends Observable {
@@ -14,6 +17,16 @@ public class PhoneState extends Observable {
     private Boolean RingerEnabled;
     private Boolean BoostEnabled;
     private Boolean MicEnabled;
+
+    public static int getUpdatingIP() {
+        return UpdatingIP;
+    }
+
+    public static void setUpdatingIP(int updatingIP) {
+        UpdatingIP = updatingIP;
+    }
+
+    private static int UpdatingIP;
 
 
     private static PhoneState instance = new PhoneState();
@@ -96,5 +109,17 @@ public class PhoneState extends Observable {
     public  void NotifyUpdate() {
         setChanged();
         notifyObservers();
+    }
+
+    public static void setCurrentIP(Context context, String ip) {
+        SharedPreferences.Editor editor = context.getSharedPreferences("network", Context.MODE_PRIVATE).edit();
+        editor.putString("ip", ip);
+        editor.commit();
+    }
+
+    public static String getPreviousIP(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("network", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("ip","");
+
     }
 }

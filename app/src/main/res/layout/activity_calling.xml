@@ -6,4 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".ui.CallingActivity">
 
+    <ImageView
+        android:id="@+id/target"
+        android:layout_width="400dp"
+        android:layout_height="360dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/self"
+        android:layout_width="400dp"
+        android:layout_height="360dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/target" />
 </android.support.constraint.ConstraintLayout>

@@ -41,17 +41,26 @@ public class User {
         this.retypedPassword = retypedPassword;
     }
 
-    public static void saveLogin(Context context, String token) {
+    public static void saveLogin(Context context, String token, String email, String phoneNumber) {
         SharedPreferences.Editor editor = context.getSharedPreferences("user", Context.MODE_PRIVATE).edit();
         editor.putString("token", token);
+        editor.putString("email", email);
+        editor.putString("phoneNumber", phoneNumber);
         editor.commit();
     }
+    public static String getEmail(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("email","");
+    }
 
-
+    public static String getPhoneNumber(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("phoneNumber","");
+    }
 
     public static String getLogin(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
-        return sharedPreferences.getString("token","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRkZEBuYXZlci5jb20iLCJtZXNzYWdlIjoiaXQgbWFrZXMgZnJvbSBtaXlhIiwiaWF0IjoxNTYwMzU5NDgxfQ.a3f9CZ5pdGLbmUWEpsrUamas5LzpM2dtjamdNxtjKz8");
+        return sharedPreferences.getString("token","");
 
     }
 }

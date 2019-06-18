@@ -7,6 +7,8 @@ import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,7 +17,11 @@ import java.net.Socket;
 import java.util.Locale;
 
 import arch3.lge.com.voip.controller.CallController;
-import arch3.lge.com.voip.controller.DeviceContorller;
+import arch3.lge.com.voip.model.call.PhoneState;
+import arch3.lge.com.voip.model.encrypt.MyEncrypt;
+import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
+import arch3.lge.com.voip.model.serverApi.ServerApi;
+import arch3.lge.com.voip.model.user.User;
 import arch3.lge.com.voip.ui.CallingActivity;
 import arch3.lge.com.voip.ui.ReceivedCallActivity;
 import arch3.lge.com.voip.utils.NetworkConstants;
@@ -27,7 +33,8 @@ public class TCPListenerService extends Service {
     private boolean UdpListenerThreadRun = false;
 
     private ServerSocket serverSocket;
-
+    private  static ApiParamBuilder param = new ApiParamBuilder();
+    private static ServerApi serverApi = new ServerApi();
 
     private void startListenerForTCP() {
         UdpListenerThreadRun = true;
@@ -62,15 +69,19 @@ public class TCPListenerService extends Service {
         UDPListenThread.start();
     }
 
-    private void ProcessReceivedUdpMessage(final String Sender, String MessageIn) {
+    private void ProcessReceivedUdpMessage(final String Sender, String message) {
+
+        MyEncrypt encrypt = new MyEncrypt();
+        String messageIn = encrypt.decrypt(message);
+
         Intent intent = new Intent();
-        switch (MessageIn) {
+        switch (messageIn) {
 
             case "/CALLIP/":
                 // Receives Call Requests
 
                 intent.setClassName(this.getPackageName(), ReceivedCallActivity.class.getName());
-                this.startService(intent);
+                this.startActivity(intent);
 
                 CallController.incomingCall("AAA");
                 break;
@@ -94,7 +105,7 @@ public class TCPListenerService extends Service {
 
             default:
                 // Invalid notification received
-                Log.w(LOG_TAG, Sender + " sent invalid message: " + MessageIn);
+                Log.w(LOG_TAG, Sender + " sent invalid message: " + messageIn);
                 break;
         }
     }
@@ -114,8 +125,18 @@ public class TCPListenerService extends Service {
         if (wifiManager != null) {
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
             LocalIpAddressBin = wifiInfo.getIpAddress();
-            DeviceContorller.setLocalIP(String.format(Locale.US, "%d.%d.%d.%d", (LocalIpAddressBin & 0xff), (LocalIpAddressBin >> 8 & 0xff), (LocalIpAddressBin >> 16 & 0xff), (LocalIpAddressBin >> 24 & 0xff)));
+            String ip =String.format(Locale.US, "%d.%d.%d.%d", (LocalIpAddressBin & 0xff), (LocalIpAddressBin >> 8 & 0xff), (LocalIpAddressBin >> 16 & 0xff), (LocalIpAddressBin >> 24 & 0xff));
+
+            if (!PhoneState.getPreviousIP(this).equals(ip)) {
+
+                String phoneNumber = User.getPhoneNumber(this);
+                JSONObject object = param.setIP(ip, phoneNumber);
+                serverApi.setIP(this, object, ip);
+               // PhoneState.setCurrentIP(this, ip);
+            }
             startListenerForTCP();
+
+
             Log.i(LOG_TAG, "Service started");
         } else {
 
@@ -171,4 +192,8 @@ public class TCPListenerService extends Service {
         }
 
     }
+
+
+    //@TODO
+    // job 스케쥴러를 쓸까 말까 고민 중
 }

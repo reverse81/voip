@@ -14,13 +14,16 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 
-import arch3.lge.com.voip.model.UDPnetwork.UDPCmd;
+import arch3.lge.com.voip.model.UDPnetwork.TCPCmd;
+import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.model.user.User;
 import arch3.lge.com.voip.utils.NetworkConstants;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.protocol.HTTP;
 
 public class ServerApi {
 
@@ -29,7 +32,7 @@ public class ServerApi {
     public final static String API_GETIP = "users/ip";  //get
     public final static String API_SETIP = "users/ip";   //post
 
-    public void login (final Context context, String source) {
+    public void login (final Context context, String source,final String email) {
         try {
             MyEncrypt encipher = new MyEncrypt();
             String text = encipher.encrypt(source);
@@ -50,16 +53,24 @@ public class ServerApi {
                     String res = new String(responseBody);
                     Log.e("tag", "응답 RES = " + res);
 
+                    try {
+                        JSONObject object = new JSONObject(res);
+                        String token = object.getString("token");
+                        String phoneNumber = object.getString("phone");
+                        User.saveLogin(context, token, email,phoneNumber);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
 
                     Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
 
-//                    if (RES_CODE.equals("0000")) {
-//                        Intent intent = new Intent(MainActivity.this, Login_success.class);
-//                        context.startActivity(intent);
-//                    } else {
-//                        Toast.makeText(MainActivity.this, "로그인 실패 : " + RES_MSG, Toast.LENGTH_SHORT).show();
-//                    }
+
+                    //@TODO save login & post IP
+                    //User.saveLogin();
+                    //
+
+
 
                 }
 
@@ -84,7 +95,7 @@ public class ServerApi {
             AsyncHttpClient client = new AsyncHttpClient();
             client.addHeader("project","voip");
             client.addHeader("client","app");
-            client.addHeader("Authorization ", "Bearer "+User.getLogin(context));
+            client.addHeader("Authorization", "Bearer "+User.getLogin(context));
 
             client.post(context,  NetworkConstants.serverAddress + API_RECOVERY
                     , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
@@ -118,7 +129,7 @@ public class ServerApi {
             AsyncHttpClient client = new AsyncHttpClient();
             client.addHeader("project","voip");
             client.addHeader("client","app");
-            client.addHeader("Authorization ", "Bearer "+User.getLogin(context));
+            client.addHeader("Authorization", "Bearer "+User.getLogin(context));
 
             client.get(context,  NetworkConstants.serverAddress + API_GETIP
                     , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
@@ -132,8 +143,8 @@ public class ServerApi {
                                 String ip = jsonObject.getString("ip");
                                 io.attachIP(ip);
                                 Intent intent = new Intent();
-                            intent.setClassName(context.getPackageName(), UDPCmd.class.getName());
-                            intent.setAction(UDPCmd.GUI_VOIP_CTRL);
+                            intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
+                            intent.setAction(TCPCmd.GUI_VOIP_CTRL);
                             intent.putExtra("message", "/CALLIP/");
                             intent.putExtra("sender", ip);
                             context.startService(intent);
@@ -155,8 +166,8 @@ public class ServerApi {
                                // io.attachIP(ip);
                                 String ip = "1.1.1.1";
                                 Intent intent = new Intent();
-                                intent.setClassName(context.getPackageName(), UDPCmd.class.getName());
-                                intent.setAction(UDPCmd.GUI_VOIP_CTRL);
+                                intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
+                                intent.setAction(TCPCmd.GUI_VOIP_CTRL);
                                 intent.putExtra("message", "/CALLIP/");
                                 intent.putExtra("sender", ip);
                                 context.startService(intent);
@@ -171,16 +182,18 @@ public class ServerApi {
         }
     }
 
-    public void setIP (final Context context, JSONObject object) {
+    public void setIP (final Context context, JSONObject object, final String ip) {
         try {
 
             StringEntity entity = new StringEntity(object.toString(), "UTF-8");
+            //entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             AsyncHttpClient client = new AsyncHttpClient();
             client.addHeader("project","voip");
             client.addHeader("client","app");
-            client.addHeader("Authorization ", "Bearer "+User.getLogin(context));
+           // Log.e("tag", "token = " + User.getLogin(context));
+            client.addHeader("Authorization", "Bearer "+User.getLogin(context));
 
-            client.post(context,  NetworkConstants.serverAddress + API_GETIP
+            client.post(context,  NetworkConstants.serverAddress + API_SETIP
                     , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -189,6 +202,9 @@ public class ServerApi {
 
 
                             Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
+
+                            PhoneState.setCurrentIP(context, ip);
+                            PhoneState.setUpdatingIP(0);
                         }
 
                         @Override
@@ -196,6 +212,7 @@ public class ServerApi {
                             String res = new String(responseBody);
                             Log.e("tag", "실패 : " + res);
                             Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
+                            PhoneState.setUpdatingIP(0);
                         }
                     }  );
 
