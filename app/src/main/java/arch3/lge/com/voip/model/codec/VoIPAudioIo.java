@@ -152,7 +152,7 @@ public class VoIPAudioIo {
 
                 int BytesRead;
                 byte[] rawbuf = new byte[RAW_BUFFER_SIZE];
-                byte[] gsmbuf = new byte[GSM_BUFFER_SIZE];
+                //byte[] gsmbuf = new byte[GSM_BUFFER_SIZE];
                 try {
                     // Create a socket and start recording
                     DatagramSocket socket = new DatagramSocket();
@@ -195,7 +195,7 @@ public class VoIPAudioIo {
                             }
                         }
                         if (BytesRead == RAW_BUFFER_SIZE) {
-                            mCodec.encode(rawbuf, gsmbuf);
+                            byte[] gsmbuf = mCodec.encode(rawbuf, 0, rawbuf.length);
                             mSock.send(gsmbuf);
                         }
                     }
@@ -230,8 +230,8 @@ public class VoIPAudioIo {
             @Override
             public void onReceive(DatagramPacket packet) {
                 if (packet.getLength() == GSM_BUFFER_SIZE) {
-                    byte[] rawbuf = new byte[RAW_BUFFER_SIZE];
-                    mCodec.decode(packet.getData(), rawbuf);
+                    byte[] coded = packet.getData();
+                    byte[] rawbuf = mCodec.decode(coded, 0, coded.length);
                     IncommingpacketQueue.add(rawbuf);
                 } else
                     Log.i(LOG_TAG, "Invalid Packet LengthReceived: " + packet.getLength());

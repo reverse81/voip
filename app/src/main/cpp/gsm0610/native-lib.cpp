@@ -75,8 +75,7 @@ JNIEXPORT jint JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_Jn
 // JniGsmEncode Normal
 /////////////////////////////////////////////////////////////////////////////////////
 extern "C"
-JNIEXPORT jint JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_JniGsmEncode
-        (JNIEnv *env, jobject obj, jshortArray lin, jbyteArray encoded) {
+JNIEXPORT jint JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_JniGsmEncode(JNIEnv *env, jobject obj, jshortArray lin, jbyteArray encoded) {
 
     jshort pre_amp[BLOCK_LEN];
     jbyte gsm0610_data[GSM_BYTE_LEN];
@@ -122,9 +121,9 @@ JNIEXPORT jint JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_Jn
 // All bytes JniGsmEncode
 /////////////////////////////////////////////////////////////////////////////////////
 extern "C"
-JNIEXPORT jint JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_JniGsmEncodeB
-        (JNIEnv *env, jobject obj, jbyteArray lin, jbyteArray encoded) {
+JNIEXPORT jbyteArray JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_JniGsmEncodeB(JNIEnv *env, jobject obj, jbyteArray data, jint offset, jint size) {
 
+    jbyteArray result;
     jbyte pre_amp[BLOCK_LEN*2];
     jbyte gsm0610_data[GSM_BYTE_LEN];
     int ret;
@@ -142,7 +141,7 @@ JNIEXPORT jint JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_Jn
             "encoding frame size: %d\toffset: %d i: %d\n", size, offset, i);
 #endif
 
-        env->GetByteArrayRegion(lin, 0,BLOCK_LEN*2, pre_amp);
+        env->GetByteArrayRegion(data, 0,BLOCK_LEN*2, pre_amp);
 
         ret=gsm0610_encode(gsm0610_enc_state, (uint8_t *) gsm0610_data, (int16_t *)pre_amp, BLOCK_LEN);
 
@@ -151,14 +150,15 @@ JNIEXPORT jint JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_Jn
 				"Enocded Bytes: %d\n", ret);
 #endif
         /* Write payload */
-        env->SetByteArrayRegion(encoded,0, ret, gsm0610_data);
+        result = env->NewByteArray(ret);
+        env->SetByteArrayRegion(result,0, ret, gsm0610_data);
 
 #ifdef DEBUG_GSM
     __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG,
         "encoding **END** frame size: %d\toffset: %d i: %d lin_pos: %d\n", size, offset, i, lin_pos);
 #endif
 
-    return (jint)ret;
+    return result;
 }
 /////////////////////////////////////////////////////////////////////////////////////
 // End All bytes JniGsmEncode
@@ -167,8 +167,7 @@ JNIEXPORT jint JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_Jn
 // JniGsmDecode Normal
 /////////////////////////////////////////////////////////////////////////////////////
 extern "C"
-JNIEXPORT jint JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_JniGsmDecode
-        (JNIEnv *env, jobject obj, jbyteArray encoded, jshortArray lin) {
+JNIEXPORT jint JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_JniGsmDecode(JNIEnv *env, jobject obj, jbyteArray encoded, jshortArray lin) {
 
     jshort post_amp[BLOCK_LEN];
     jbyte gsm0610_data[GSM_BYTE_LEN];
@@ -201,9 +200,9 @@ JNIEXPORT jint JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_Jn
 // All Bytes JniGsmDecode
 /////////////////////////////////////////////////////////////////////////////////////
 extern "C"
-JNIEXPORT jint JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_JniGsmDecodeB
-        (JNIEnv *env, jobject obj, jbyteArray encoded, jbyteArray lin) {
+JNIEXPORT jbyteArray JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_JniGsmDecodeB(JNIEnv *env, jobject obj, jbyteArray data, jint offset, jint size) {
 
+    jbyteArray result;
     jbyte post_amp[BLOCK_LEN*2];
     jbyte gsm0610_data[GSM_BYTE_LEN];
 
@@ -217,7 +216,7 @@ JNIEXPORT jint JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_Jn
         "##### BEGIN DECODE ********  decoding frame size: %d\n", size);
 #endif
 
-    env->GetByteArrayRegion(encoded, 0, GSM_BYTE_LEN, gsm0610_data);
+    env->GetByteArrayRegion(data, 0, GSM_BYTE_LEN, gsm0610_data);
     len = gsm0610_decode(gsm0610_dec_state,(int16_t *) post_amp,(uint8_t *) gsm0610_data,GSM_BYTE_LEN);
 
 #ifdef DEBUG_GSM
@@ -225,8 +224,9 @@ JNIEXPORT jint JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_Jn
 			"##### DECODED length: %d\n", len);
 #endif
 
-    env->SetByteArrayRegion(lin, 0, len*2,post_amp);
-    return (jint)len;
+    result = env->NewByteArray(len*2);
+    env->SetByteArrayRegion(result, 0, len*2,post_amp);
+    return result;
 }
 /////////////////////////////////////////////////////////////////////////////////////
 // End All Bytes JniGsmDecode
@@ -235,8 +235,7 @@ JNIEXPORT jint JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_Jn
 // JniGsmClose
 /////////////////////////////////////////////////////////////////////////////////////
 extern "C"
-JNIEXPORT void JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_JniGsmClose
-        (JNIEnv *env, jobject obj) {
+JNIEXPORT void JNICALL Java_arch3_lge_com_voip_model_codec_audio_AudioGSM0610_JniGsmClose(JNIEnv *env, jobject obj) {
 
     if (--codec_open != 0)
         return;

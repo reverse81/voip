@@ -13,32 +13,27 @@ public class AudioGSM0610 extends AudioCodec {
     }
 
     @Override
-    public boolean decode(byte encoded[], byte lin[]){
-        JniGsmDecodeB(encoded, lin);
-        return true;
-    }
-
-    @Override
-    public boolean encode(byte lin[], byte encoded[]){
-        JniGsmEncodeB(lin, encoded);
-        return true;
-    }
-
-    @Override
     public boolean close(){
         JniGsmClose();
         return true;
     }
 
+    @Override
+    public byte[] encode(byte data[], int offset, int size){
+
+        return JniGsmEncodeB(data, offset, size);
+    }
+
+    @Override
+    public byte[] decode(byte data[], int offset, int size){
+        return JniGsmDecodeB(data, offset, size);
+    }
+
     public static native int JniGsmOpen();
-    // Not Used uncomment to enable
-    //public static native int JniGsmDecode(byte encoded[], short lin[]);
-    // Not Used uncomment to enable
-    //public static native int JniGsmEncode(short lin[], byte encoded[]);
-
-    public static native int JniGsmDecodeB(byte encoded[], byte lin[]);
-
-    public static native int JniGsmEncodeB(byte lin[], byte encoded[]);
 
     public static native void JniGsmClose();
+
+    public static native byte[] JniGsmDecodeB(byte data[], int offset, int size);
+
+    public static native byte[] JniGsmEncodeB(byte data[], int offset, int size);
 }
