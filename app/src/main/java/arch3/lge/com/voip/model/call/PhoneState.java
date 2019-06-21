@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 import java.util.Observable;
 
-public class PhoneState extends Observable {
+public class PhoneState { //extends Observable {
     public enum CallState {LISTENING, CALLING, INCOMMING, INCALL}
     public enum VideoState {START_VIDEO, RECEIVING_VIDEO, STOP_VIDEO,VIDEO_STOPPED}
     private CallState CallStatel = CallState.LISTENING;
@@ -14,8 +14,8 @@ public class PhoneState extends Observable {
     private String LocalIP;
     private String InComingIP;
     private String CmdIP;
-    private Boolean RingerEnabled;
-    private Boolean BoostEnabled;
+   // private Boolean RingerEnabled;
+   // private Boolean BoostEnabled;
     private Boolean MicEnabled;
 
     public static int getUpdatingIP() {
@@ -82,13 +82,13 @@ public class PhoneState extends Observable {
         return LocalIP;
     }
 
-    public   void SetRinger(Boolean value) {
-        RingerEnabled = value;
-    }
-
-    public  Boolean GetRinger() {
-        return RingerEnabled;
-    }
+//    public   void SetRinger(Boolean value) {
+//        RingerEnabled = value;
+//    }
+//
+//    public  Boolean GetRinger() {
+//        return RingerEnabled;
+//    }
 
     public  void SetMic(Boolean value) {
         MicEnabled = value;
@@ -98,18 +98,18 @@ public class PhoneState extends Observable {
         return MicEnabled;
     }
 
-    public void SetBoost(Boolean value) {
-        BoostEnabled = value;
-    }
+//    public void SetBoost(Boolean value) {
+//        BoostEnabled = value;
+//    }
+//
+//    public   Boolean GetBoost() {
+//        return BoostEnabled;
+//    }
 
-    public   Boolean GetBoost() {
-        return BoostEnabled;
-    }
-
-    public  void NotifyUpdate() {
-        setChanged();
-        notifyObservers();
-    }
+//    public  void NotifyUpdate() {
+//        setChanged();
+//        notifyObservers();
+//    }
 
     public static void setCurrentIP(Context context, String ip) {
         SharedPreferences.Editor editor = context.getSharedPreferences("network", Context.MODE_PRIVATE).edit();
@@ -120,6 +120,6 @@ public class PhoneState extends Observable {
     public static String getPreviousIP(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("network", Context.MODE_PRIVATE);
         return sharedPreferences.getString("ip","");
-
     }
+
 }

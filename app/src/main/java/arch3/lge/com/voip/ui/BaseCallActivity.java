@@ -22,19 +22,19 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 
 import arch3.lge.com.voip.R;
+import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.codec.VoIPAudioIo;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
+import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.utils.NetworkConstants;
 
 import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 
 
 public class BaseCallActivity extends AppCompatActivity {
-    private ImageView imageViewVideo;
-    private Thread UdpReceiveVideoThread = null;
-    private boolean UdpVoipReceiveVideoThreadRun = false;
-    private DatagramSocket RecvVideoUdpSocket;
+
+
 
     public arch3.lge.com.voip.model.codec.VoIPVideoIo mVoIPVideoIo;
     public arch3.lge.com.voip.model.codec.VoIPAudioIo mVoIPAudioIo;
@@ -62,6 +62,8 @@ public class BaseCallActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        CallController.setCurrent(this);
+
          manager = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
          if (manager.isWakeLockLevelSupported(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK)){
@@ -84,7 +86,11 @@ public class BaseCallActivity extends AppCompatActivity {
         }
     }
 
-
+    static  private ImageView imageViewVideo;
+    static private Thread UdpReceiveVideoThread = null;
+    static private boolean UdpVoipReceiveVideoThreadRun = false;
+    static private DatagramSocket RecvVideoUdpSocket;
+    MyEncrypt encipher = new MyEncrypt();
     protected void StartReceiveVideoThread() {
         // Create thread for receiving audio data
         PhoneState.getInstance().SetRecvVideoState(PhoneState.VideoState.RECEIVING_VIDEO);
@@ -104,9 +110,20 @@ public class BaseCallActivity extends AppCompatActivity {
                     while (UdpVoipReceiveVideoThreadRun) {
                         byte[] jpegbuf = new byte[NetworkConstants.VIDEO_BUFFER_SIZE];
                         DatagramPacket packet = new DatagramPacket(jpegbuf, NetworkConstants.VIDEO_BUFFER_SIZE);
+
                         RecvVideoUdpSocket.receive(packet);
+
+                        Log.i(LOG_TAG, ":"+packet.getLength());
+
+
                         if (packet.getLength() >0) {
-                            final Bitmap bitmap = BitmapFactory.decodeByteArray(packet.getData(), 0, packet.getLength());
+
+                            byte[] decrypt = encipher.decrypt(packet.getData(),0, packet.getLength());
+                            if (decrypt == null || decrypt.length == 0) {
+                                continue;
+                            }
+                            final Bitmap bitmap = BitmapFactory.decodeByteArray(decrypt, 0, decrypt.length);
+                          //  final Bitmap bitmap = BitmapFactory.decodeByteArray(packet.getData(), 0, packet.getLength());
                             final Matrix mtx = new Matrix();
                            // mtx.postRotate(-90);
                             final Bitmap rotator = Bitmap.createBitmap(bitmap, 0, 0,

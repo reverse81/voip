@@ -2,6 +2,8 @@ package arch3.lge.com.voip.model.encrypt;
 
 import android.util.Base64;
 
+import java.util.Arrays;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -62,10 +64,12 @@ public class MyEncrypt extends AbstractEncryt {
         return null;
     }
 
-    public byte[] decrypt(byte[] bytesToEncrypt)
+    public byte[] decrypt(byte[] bytesToEncrypt,int offset, int length)
     {
         try
         {
+
+            bytesToEncrypt = Arrays.copyOfRange(bytesToEncrypt, offset, offset+length);
             SecretKeySpec secretKey =  new SecretKeySpec(clientKey.getBytes("UTF-8"), "AES");
 
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");

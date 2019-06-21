@@ -22,6 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light">
         <service android:name=".model.UDPnetwork.TCPCmd" />
+        <service android:name=".listener.TCPListenerService" />
         <activity android:name=".ui.RequestCallActivity" />
         <activity android:name=".ui.CallingActivity" />
         <activity

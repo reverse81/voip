@@ -28,7 +28,7 @@ import arch3.lge.com.voip.utils.NetworkConstants;
 import arch3.lge.com.voip.utils.Util;
 
 public class TCPListenerService extends Service {
-    private static final String LOG_TAG = "UDPListenerService";
+    private static final String LOG_TAG = "TCPListenerService";
     private static final int BUFFER_SIZE = 128;
     private boolean UdpListenerThreadRun = false;
 
@@ -75,6 +75,8 @@ public class TCPListenerService extends Service {
         String messageIn = encrypt.decrypt(message);
 
         Intent intent = new Intent();
+        Log.w(LOG_TAG, Sender + " sent message: " +message + ":"+messageIn);
+
         switch (messageIn) {
 
             case "/CALLIP/":
@@ -91,7 +93,7 @@ public class TCPListenerService extends Service {
                 intent.setClassName(this.getPackageName(), CallingActivity.class.getName());
                 this.startService(intent);
 
-                CallController.startCall("AAA");
+               // CallController.startCall("AAA");
                 break;
 
             case "/REFUSE/":
@@ -100,7 +102,7 @@ public class TCPListenerService extends Service {
                 //finish activity??
 //                intent.setClassName(this.getPackageName(), CallingActivity.class.getName());
 //                this.startService(intent);
-                CallController.endCall("AAA");
+                CallController.endCall(this);
                 break;
 
             default:
@@ -139,7 +141,7 @@ public class TCPListenerService extends Service {
 
             Log.i(LOG_TAG, "Service started");
         } else {
-
+            startListenerForTCP();
             //start volte
             Log.i(LOG_TAG, "Service started");
         }

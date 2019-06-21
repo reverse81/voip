@@ -31,6 +31,7 @@ public class ServerApi {
     public final static String API_RECOVERY = "users/recovery"; // post
     public final static String API_GETIP = "users/ip";  //get
     public final static String API_SETIP = "users/ip";   //post
+    public final static String API_REGISTER = "users/create"; // post
 
     public void login (final Context context, String source,final String email) {
         try {
@@ -145,7 +146,7 @@ public class ServerApi {
                                 Intent intent = new Intent();
                             intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
                             intent.setAction(TCPCmd.GUI_VOIP_CTRL);
-                            intent.putExtra("message", "/CALLIP/");
+                            intent.putExtra("message", "/CALL_BUTTON/");
                             intent.putExtra("sender", ip);
                             context.startService(intent);
 
@@ -213,6 +214,39 @@ public class ServerApi {
                             Log.e("tag", "실패 : " + res);
                             Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
                             PhoneState.setUpdatingIP(0);
+                        }
+                    }  );
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void create (final Context context, JSONObject object) {
+        try {
+
+            StringEntity entity = new StringEntity(object.toString(), "UTF-8");
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.addHeader("project","voip");
+            client.addHeader("client","app");
+
+            client.post(context,  NetworkConstants.serverAddress + API_REGISTER
+                    , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            String res = new String(responseBody);
+                            Log.e("tag", "응답 RES = " + res);
+
+
+                            Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            String res = new String(responseBody);
+                            Log.e("tag", "실패 : " + res);
+                            Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
                         }
                     }  );
 

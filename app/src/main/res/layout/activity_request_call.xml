@@ -12,4 +12,13 @@
         android:layout_height="337dp"
         tools:layout_editor_absoluteX="38dp"
         tools:layout_editor_absoluteY="33dp" />
+
+    <Button
+        android:id="@+id/end_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="end_call"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="162dp" />
 </android.support.constraint.ConstraintLayout>

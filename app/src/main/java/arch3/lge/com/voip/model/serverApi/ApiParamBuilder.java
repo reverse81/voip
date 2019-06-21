@@ -4,11 +4,6 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * 
- * @author mini.lee
- * 
- */
 public class ApiParamBuilder {
 
     private final static String LOGTAG = "AppUp4:ApiParamBuilder";

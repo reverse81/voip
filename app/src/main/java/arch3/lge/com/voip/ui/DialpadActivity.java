@@ -31,11 +31,19 @@ public class DialpadActivity  extends MainTabActivity {
 
         ApiParamBuilder param = new ApiParamBuilder();
         ServerApi server = new ServerApi();
-        JSONObject object = param.getLogin("aaa@naver.com","1111");
-                server.login(getApplicationContext(), object.toString(), "aaa@naver.com");
+        JSONObject object = param.getLogin("ddd@naver.com","1111");
+                server.login(getApplicationContext(), object.toString(), "ddd@naver.com");
+
+//        JSONObject object = param.getLogin("fff@naver.com","1111");
+//        server.create(getApplicationContext(),object);
+              //  server.login(getApplicationContext(), object.toString(), "aaa@naver.com");
+
+//        ApiParamBuilder param = new ApiParamBuilder();
+//        ServerApi server = new ServerApi();
+
 //        JSONObject object = param.getIP("117782905");
 //        server.getIP(getApplicationContext(), object);
-
+//1234567892
 
 //        JSONObject object = param.setIP("1.1.1.1","117782905");
 //        server.setIP(getApplicationContext(), object);

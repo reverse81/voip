@@ -26,6 +26,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Locale;
 
+import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.utils.NetworkConstants;
@@ -37,8 +38,6 @@ public class TCPCmd extends IntentService {
     private static final String LOG_TAG = "UDPListenerService";
     private static final int BUFFER_SIZE = 128;
 
-    private static ICallController controller;
-
     public TCPCmd() {
         super(GUI_VOIP_CTRL);
     }
@@ -49,9 +48,7 @@ public class TCPCmd extends IntentService {
 
     // private DatagramSocket socket;
 
-    public static void setController ( ICallController controller) {
-        TCPCmd.controller = controller;
-    }
+
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -77,12 +74,13 @@ public class TCPCmd extends IntentService {
                 PhoneState.getInstance().SetCmdIP(Sender);
                 PhoneState.getInstance().SetPhoneState(PhoneState.CallState.CALLING);
                 TCPSend(Sender, NetworkConstants.CONTROL_DATA_PORT, "/CALLIP/");
-                PhoneState.getInstance().NotifyUpdate();
+                //PhoneState.getInstance().NotifyUpdate();
                 Log.i("CALL", "AAAAAAAAAAAAAAAAAAAAAAAAA");
                 break;
             case "/END_CALL_BUTTON/":
-                EndCall();
-                PhoneState.getInstance().NotifyUpdate();
+                TCPSend(PhoneState.getInstance().GetRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/ENDCALL/");
+                CallController.finish();
+                //PhoneState.getInstance().NotifyUpdate();
                 break;
 
             case "/ANSWER_CALL_BUTTON/":
@@ -105,12 +103,12 @@ public class TCPCmd extends IntentService {
 
                     Log.e(LOG_TAG, "Exception Answer Button: " + e);
                 }
-                PhoneState.getInstance().NotifyUpdate();
+               // PhoneState.getInstance().NotifyUpdate();
                 break;
             case "/REFUSE_CALL_BUTTON/":
                 TCPSend(PhoneState.getInstance().GetRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/REFUSE/");
-                EndCall();
-                PhoneState.getInstance().NotifyUpdate();
+                CallController.finish();
+             //   PhoneState.getInstance().NotifyUpdate();
                 break;
 //            case "/Audio_Output_Menu_Button/":
 //                if (MainActivity.AudioOutputTarget == MainActivity.EOutputTarget.SPEAKER) {
@@ -128,9 +126,9 @@ public class TCPCmd extends IntentService {
 //                }
 //                PhoneState.getInstance().NotifyUpdate();
 //                break;
-            case "/Sim_Voice_Menu_Button/":
-                PhoneState.getInstance().NotifyUpdate();
-                break;
+//            case "/Sim_Voice_Menu_Button/":
+//                PhoneState.getInstance().NotifyUpdate();
+//                break;
 //            case "/TOGGLE_MIC_BUTTON/":
 //                if (Sender.equals("true")) {
 //                    PhoneState.getInstance().SetMic(true);
@@ -141,31 +139,11 @@ public class TCPCmd extends IntentService {
 //                }
 //                PhoneState.getInstance().NotifyUpdate();
 //                break;
-            case "/TOGGLE_BOOST_BUTTON/":
-                if (Sender.equals("true")) {
-                    PhoneState.getInstance().SetBoost(true);
-                } else if (Sender.equals("false")) {
-                    PhoneState.getInstance().SetBoost(false);
-                }
-                PhoneState.getInstance().NotifyUpdate();
-                break;
-            case "/TOGGLE_RINGER_BUTTON/":
-                if (Sender.equals("true")) {
-                    PhoneState.getInstance().SetRinger(true);
-                } else if (Sender.equals("false")) {
-                    PhoneState.getInstance().SetRinger(false);
-                }
-                PhoneState.getInstance().NotifyUpdate();
-                break;
             default:
                 // Invalid notification received
                 Log.w(LOG_TAG, Sender + " sent invalid message: " + MessageIn);
                 break;
         }
-    }
-
-    private synchronized void EndCall() {
-        controller.finish();
     }
 
 

@@ -1,15 +1,19 @@
 package arch3.lge.com.voip.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import arch3.lge.com.voip.R;
+import arch3.lge.com.voip.controller.CallController;
 
 public class ReceivedCallActivity extends BaseCallActivity {
 
@@ -24,6 +28,30 @@ public class ReceivedCallActivity extends BaseCallActivity {
         StartReceiveVideoThread();
         this.attachImageView((ImageView)findViewById(R.id.target));
         StartRinger();
+
+        Button accept = (Button) findViewById(R.id.accept);
+        accept.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                CallController.acceptCall(ReceivedCallActivity.this);
+                Intent intent = new Intent();
+                intent.setClass(ReceivedCallActivity.this, CallingActivity.class);
+                ReceivedCallActivity.this.startActivity(intent);
+                ReceivedCallActivity.this.finish();
+            }
+        });
+
+        Button reject = (Button) findViewById(R.id.reject);
+        reject.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                StopReceiveVideoThread();
+                CallController.rejectCall(ReceivedCallActivity.this);
+                ReceivedCallActivity.this.finish();
+            }
+        });
     }
 
     @Override

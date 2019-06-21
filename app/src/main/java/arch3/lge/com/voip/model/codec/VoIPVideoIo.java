@@ -25,6 +25,7 @@ import java.util.List;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 
 import static android.support.constraint.Constraints.TAG;
+import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 
 @SuppressWarnings("deprecation")
 public class VoIPVideoIo implements  Camera.PreviewCallback{
@@ -43,8 +44,16 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
     private ImageView selfView;
     private VideoCodec mCodec;
 
-    public VoIPVideoIo(){
+    private VoIPVideoIo(){
         mCodec = CodecFacotry.createVideo(CodecFacotry.VideoCodecType.MJPEG);
+    }
+
+    private static VoIPVideoIo mVoIPVideoIo;
+    public static VoIPVideoIo getInstance() {
+        if (mVoIPVideoIo ==null) {
+            mVoIPVideoIo = new VoIPVideoIo();
+        }
+        return mVoIPVideoIo;
     }
 
     public void attachIP (String RemoteIP) {
@@ -147,14 +156,17 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
 
             byte[] imageBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height);
 
-            imageBytes = encipher.encrypt(imageBytes);
+            byte[] encryptedImageBytes = encipher.encrypt(imageBytes);
 
-            byte[] decrypt = encipher.decrypt(imageBytes);
+            //byte[] decrypt = encipher.decrypt(imageBytes);
 
-            Bitmap image = mCodec.decode(decrypt);
+            Bitmap image = mCodec.decode(imageBytes);
             selfView.setImageBitmap(image);
+
             if (remoteIp != null) {
-                UdpSend(imageBytes);
+                Log.i(LOG_TAG, ":"+encryptedImageBytes.length + " vs "+ imageBytes.length);
+                UdpSend(encryptedImageBytes);
+               // UdpSend(imageBytes);
             }
         }
         camera.addCallbackBuffer(data);
