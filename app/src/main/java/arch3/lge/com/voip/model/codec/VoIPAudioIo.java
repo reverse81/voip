@@ -19,6 +19,9 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder;
+import android.media.audiofx.AcousticEchoCanceler;
+import android.media.audiofx.AutomaticGainControl;
+import android.media.audiofx.NoiseSuppressor;
 import android.util.Log;
 import android.os.Process;
 
@@ -50,13 +53,13 @@ public class VoIPAudioIo {
         mCodec = CodecFacotry.createAudio(CodecFacotry.AudioCodecType.GSM0610);
     }
 
-    public synchronized boolean StartAudio(InetAddress IP, int SimVoice) {
+    public synchronized boolean StartAudio(String ip, int SimVoice) {
         if (IsRunning) return (true);
         if (mCodec.open() == true)
             Log.i(LOG_TAG, "JniGsmOpen() Success");
         IncommingpacketQueue = new ConcurrentLinkedQueue<>();
         mSimVoice = SimVoice;
-        mSock.setAddress(IP);
+        mSock.setAddress(ip);
         StartAudioIoThread();
         StartReceiveDataThread();
         IsRunning = true;
@@ -133,6 +136,22 @@ public class VoIPAudioIo {
                 AudioRecord Recorder = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE,
                         AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT,
                         AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT));
+
+                int audioSessionId = Recorder.getAudioSessionId();
+                if(NoiseSuppressor.isAvailable())
+                {
+                    NoiseSuppressor ns = NoiseSuppressor.create(audioSessionId);
+                    Log.i(LOG_TAG, "NoiseSuppressor : "+ ns.getEnabled() );
+                }
+//                if(AutomaticGainControl.isAvailable())
+//                {
+//                    AutomaticGainControl agc = AutomaticGainControl.create(audioSessionId);
+//                    Log.i(LOG_TAG, "AutomaticGainControl : "+ agc.getEnabled() );
+//                }
+                if(AcousticEchoCanceler.isAvailable()){
+                    AcousticEchoCanceler aec = AcousticEchoCanceler.create(audioSessionId);
+                    Log.i(LOG_TAG, "AcousticEchoCanceler : "+ aec.getEnabled() );
+                }
 
                 AudioTrack OutputTrack = new AudioTrack.Builder()
                         .setAudioAttributes(new AudioAttributes.Builder()

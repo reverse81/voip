@@ -19,7 +19,7 @@ import arch3.lge.com.voip.model.user.User;
 
 public class WifiReceiver  extends BroadcastReceiver {
 
-
+    public final static String LOG_TAG = "VoIP:WiFiReceiver";
     @Override
     public void onReceive(Context context, Intent intent) {
 
@@ -31,9 +31,6 @@ public class WifiReceiver  extends BroadcastReceiver {
             return;
         }
 
-        Log.i("REeeee","RRRRRRRRRRRRRRRRRRRRRRr " + intent.toString());
-
-
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         if (wifiManager != null) {
             int LocalIpAddressBin = 0;
@@ -41,10 +38,10 @@ public class WifiReceiver  extends BroadcastReceiver {
             LocalIpAddressBin = wifiInfo.getIpAddress();
             if (LocalIpAddressBin != 0) {
                 String ip = String.format(Locale.US, "%d.%d.%d.%d", (LocalIpAddressBin & 0xff), (LocalIpAddressBin >> 8 & 0xff), (LocalIpAddressBin >> 16 & 0xff), (LocalIpAddressBin >> 24 & 0xff));
-                Log.i("REeeee","we have ip "+ip +"   "  + wifiInfo.toString());
-                if (!PhoneState.getPreviousIP(context).equals(ip)) {
+               // Log.i("REeeee","we have ip "+ip +"   "  + wifiInfo.toString());
+                if (!PhoneState.getInstance().getPreviousIP(context).equals(ip)) {
                     if (PhoneState.getUpdatingIP() != LocalIpAddressBin ) {
-                        Log.i("REeeee","we try update once ");
+                        Log.i("LOG_TAG","we try update "+ ip);
                         PhoneState.setUpdatingIP(LocalIpAddressBin);
                         ApiParamBuilder param = new ApiParamBuilder();
                         ServerApi serverApi = new ServerApi();
@@ -54,8 +51,6 @@ public class WifiReceiver  extends BroadcastReceiver {
                     }
 
                 }
-            } else {
-                Log.i("REeeee","No ip");
             }
         }
 

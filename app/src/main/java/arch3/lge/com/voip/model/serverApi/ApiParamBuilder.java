@@ -17,7 +17,7 @@ public class ApiParamBuilder {
     protected final static String KEY_EMAIL = "email";
     protected final static String KEY_PASSWORD = "pwd";
 
-    protected final static String KEY_PHONENUMBER = "phoneNumber";
+    protected final static String KEY_PHONENUMBER = "phone";
     protected final static String KEY_IP = "ip";
 
 

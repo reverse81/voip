@@ -30,7 +30,7 @@ public class CallController {
         intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
         intent.setAction(TCPCmd.GUI_VOIP_CTRL);
         intent.putExtra("message", "/ANSWER_CALL_BUTTON/");
-        intent.putExtra("sender", PhoneState.getInstance().GetRemoteIP());
+        intent.putExtra("sender", PhoneState.getInstance().getRemoteIP());
         context.startService(intent);
     }
 
@@ -39,7 +39,7 @@ public class CallController {
         intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
         intent.setAction(TCPCmd.GUI_VOIP_CTRL);
         intent.putExtra("message", "/REFUSE_CALL_BUTTON/");
-        intent.putExtra("sender", PhoneState.getInstance().GetRemoteIP());
+        intent.putExtra("sender", PhoneState.getInstance().getRemoteIP());
         context.startService(intent);
     }
 
@@ -56,7 +56,7 @@ public class CallController {
         intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
         intent.setAction(TCPCmd.GUI_VOIP_CTRL);
         intent.putExtra("message", "/END_CALL_BUTTON/");
-        intent.putExtra("sender", PhoneState.getInstance().GetRemoteIP());
+        intent.putExtra("sender", PhoneState.getInstance().getRemoteIP());
         context.startService(intent);
 
     }

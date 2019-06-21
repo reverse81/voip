@@ -23,6 +23,7 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
+import arch3.lge.com.voip.utils.Util;
 
 import static android.support.constraint.Constraints.TAG;
 import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
@@ -138,7 +139,7 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
         mCamera.release();
         mCamera=null;
         SendUdpSocket.disconnect();
-        SendUdpSocket.close();
+        Util.safetyClose(SendUdpSocket);
         SendUdpSocket=null;
     }
     

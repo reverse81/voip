@@ -1,30 +1,14 @@
 package arch3.lge.com.voip.model.UDPnetwork;
 
 import android.app.IntentService;
-import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.IntentSender;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.os.IBinder;
-import android.os.Vibrator;
 import android.util.Log;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.Locale;
 
 import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.model.call.PhoneState;
@@ -70,15 +54,14 @@ public class TCPCmd extends IntentService {
 
             case "/CALL_BUTTON/":
 
-                PhoneState.getInstance().SetRemoteIP(Sender);
-                PhoneState.getInstance().SetCmdIP(Sender);
+                PhoneState.getInstance().setRemoteIP(Sender);
                 PhoneState.getInstance().SetPhoneState(PhoneState.CallState.CALLING);
                 TCPSend(Sender, NetworkConstants.CONTROL_DATA_PORT, "/CALLIP/");
                 //PhoneState.getInstance().NotifyUpdate();
                 Log.i("CALL", "AAAAAAAAAAAAAAAAAAAAAAAAA");
                 break;
             case "/END_CALL_BUTTON/":
-                TCPSend(PhoneState.getInstance().GetRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/ENDCALL/");
+                TCPSend(PhoneState.getInstance().getRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/ENDCALL/");
                 CallController.finish();
                 //PhoneState.getInstance().NotifyUpdate();
                 break;
@@ -86,19 +69,15 @@ public class TCPCmd extends IntentService {
             case "/ANSWER_CALL_BUTTON/":
                 try {
                 //    EndRinger();
-                    TCPSend(PhoneState.getInstance().GetRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/ANSWER/");
-                    InetAddress address = InetAddress.getByName(PhoneState.getInstance().GetRemoteIP());
-                    PhoneState.getInstance().SetInComingIP(PhoneState.getInstance().GetRemoteIP());
+                    TCPSend(PhoneState.getInstance().getRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/ANSWER/");
+                    //InetAddress address = InetAddress.getByName(PhoneState.getInstance().GetRemoteIP());
                     PhoneState.getInstance().SetPhoneState(PhoneState.CallState.INCALL);
 //                    if (Audio.StartAudio(address, MainActivity.SimVoice))
 //                        Log.e(LOG_TAG, "Audio Already started (Answer Button)");
 //                    if (Video.StartVideo(address))
 //                        Log.e(LOG_TAG, "Video Already started (Answer Button)");
                     PhoneState.getInstance().SetRecvVideoState(PhoneState.VideoState.START_VIDEO);
-                    Log.i(LOG_TAG, "Answered " + address.toString());
-                } catch (UnknownHostException e) {
-
-                    Log.e(LOG_TAG, "UnknownHostException Answer Button: " + e);
+                    Log.i(LOG_TAG, "Answered " + PhoneState.getInstance().getRemoteIP());
                 } catch (Exception e) {
 
                     Log.e(LOG_TAG, "Exception Answer Button: " + e);
@@ -106,7 +85,7 @@ public class TCPCmd extends IntentService {
                // PhoneState.getInstance().NotifyUpdate();
                 break;
             case "/REFUSE_CALL_BUTTON/":
-                TCPSend(PhoneState.getInstance().GetRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/REFUSE/");
+                TCPSend(PhoneState.getInstance().getRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/REFUSE/");
                 CallController.finish();
              //   PhoneState.getInstance().NotifyUpdate();
                 break;

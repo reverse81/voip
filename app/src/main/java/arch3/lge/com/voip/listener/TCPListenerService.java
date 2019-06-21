@@ -28,7 +28,7 @@ import arch3.lge.com.voip.utils.NetworkConstants;
 import arch3.lge.com.voip.utils.Util;
 
 public class TCPListenerService extends Service {
-    private static final String LOG_TAG = "TCPListenerService";
+    private static final String LOG_TAG = "VoIP:TCPListenerService";
     private static final int BUFFER_SIZE = 128;
     private boolean UdpListenerThreadRun = false;
 
@@ -69,23 +69,23 @@ public class TCPListenerService extends Service {
         UDPListenThread.start();
     }
 
-    private void ProcessReceivedUdpMessage(final String Sender, String message) {
+    private void ProcessReceivedUdpMessage(final String sender, String message) {
 
         MyEncrypt encrypt = new MyEncrypt();
         String messageIn = encrypt.decrypt(message);
 
         Intent intent = new Intent();
-        Log.w(LOG_TAG, Sender + " sent message: " +message + ":"+messageIn);
+        Log.w(LOG_TAG, sender + " sent message: " +message + ":"+messageIn);
 
         switch (messageIn) {
 
             case "/CALLIP/":
                 // Receives Call Requests
 
+                PhoneState.getInstance().setRemoteIP(sender);
                 intent.setClassName(this.getPackageName(), ReceivedCallActivity.class.getName());
                 this.startActivity(intent);
 
-                CallController.incomingCall("AAA");
                 break;
             case "/ANSWER/":
                 // Accept notification received. Start call
@@ -107,7 +107,7 @@ public class TCPListenerService extends Service {
 
             default:
                 // Invalid notification received
-                Log.w(LOG_TAG, Sender + " sent invalid message: " + messageIn);
+                Log.w(LOG_TAG, sender + " sent invalid message: " + messageIn);
                 break;
         }
     }
@@ -120,20 +120,19 @@ public class TCPListenerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
-
         int LocalIpAddressBin = 0;
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
         if (wifiManager != null) {
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
             LocalIpAddressBin = wifiInfo.getIpAddress();
             String ip =String.format(Locale.US, "%d.%d.%d.%d", (LocalIpAddressBin & 0xff), (LocalIpAddressBin >> 8 & 0xff), (LocalIpAddressBin >> 16 & 0xff), (LocalIpAddressBin >> 24 & 0xff));
-
-            if (!PhoneState.getPreviousIP(this).equals(ip)) {
-
-                String phoneNumber = User.getPhoneNumber(this);
-                JSONObject object = param.setIP(ip, phoneNumber);
-                serverApi.setIP(this, object, ip);
+            if (!PhoneState.getInstance().getPreviousIP(this).equals(ip)) {
+                if (PhoneState.getUpdatingIP() != LocalIpAddressBin ) {
+                    PhoneState.setUpdatingIP(LocalIpAddressBin);
+                    String phoneNumber = User.getPhoneNumber(this);
+                    JSONObject object = param.setIP(ip, phoneNumber);
+                    serverApi.setIP(this, object, ip);
+                }
                // PhoneState.setCurrentIP(this, ip);
             }
             startListenerForTCP();

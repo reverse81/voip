@@ -50,9 +50,9 @@ public class RequestCallActivity extends BaseCallActivity {
         mVoIPAudioIo = new VoIPAudioIo(getApplicationContext());
      //   mVoIPVideoIo = new VoIPVideoIo();
 
-        if (mVoIPAudioIo.StartAudio(address,0)) {
-            Log.e(LOG_TAG, "Audio Already started (Answer Button)");
-        }
+//        if (mVoIPAudioIo.StartAudio(address,0)) {
+//            Log.e(LOG_TAG, "Audio Already started (Answer Button)");
+//        }
       //  if (mVoIPVideoIo.StartVideo(address))
         //    Log.e(LOG_TAG, "Video Already started (Answer Button)");
         return true;
