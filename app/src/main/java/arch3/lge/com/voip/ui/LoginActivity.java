@@ -370,10 +370,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
             //TODO : dialog
-            Intent intent = new Intent(LoginActivity.this, DialpadActivity.class);
-            startActivity(intent);
-
-            return true;
+            //Intent intent = new Intent(LoginActivity.this, DialpadActivity.class);
+            //startActivity(intent);
+            return false;
         }
 
         @Override
