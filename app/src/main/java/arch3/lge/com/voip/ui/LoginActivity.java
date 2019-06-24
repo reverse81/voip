@@ -110,6 +110,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        //Login 상태이면 바로 Dialpad로 이동.
+        if(!User.getLogin(this).isEmpty()) {
+            Intent intent = new Intent(this, DialpadActivity.class);
+            this.startActivity(intent);
+            finish();
+        }
     }
 
     private void populateAutoComplete() {

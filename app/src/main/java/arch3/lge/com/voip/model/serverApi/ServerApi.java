@@ -19,6 +19,7 @@ import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.model.user.User;
+import arch3.lge.com.voip.ui.DialpadActivity;
 import arch3.lge.com.voip.ui.LoginActivity;
 import arch3.lge.com.voip.ui.RegisterActivity;
 import arch3.lge.com.voip.utils.NetworkConstants;
@@ -66,6 +67,13 @@ public class ServerApi {
                                 Intent serviceIntent = new Intent(context, TCPListenerService.class);
                                 context.startService(serviceIntent);
                                 Log.e(LOG_TAG, "Started TCPListenerService.class");
+
+
+                                Intent intent = new Intent(context, DialpadActivity.class);
+                                context.startActivity(intent);
+                                Log.v("dae", "Success Transmit res : "+res);//dhtest
+
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
