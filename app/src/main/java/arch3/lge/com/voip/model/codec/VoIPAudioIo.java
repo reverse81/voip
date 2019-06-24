@@ -33,7 +33,7 @@ public class VoIPAudioIo {
     private static final String LOG_TAG = "VoIPAudioIo";
     private static final int MILLISECONDS_IN_A_SECOND = 1000;
     private static final int SAMPLE_RATE = 8000; // Hertz
-    private static final int SAMPLE_INTERVAL = 20;   // Milliseconds
+    private static final int SAMPLE_INTERVAL = 10;   // Milliseconds
     private static final int BYTES_PER_SAMPLE = 2;    // Bytes Per Sampl;e
     private static final int RAW_BUFFER_SIZE = SAMPLE_RATE / (MILLISECONDS_IN_A_SECOND / SAMPLE_INTERVAL) * BYTES_PER_SAMPLE;
     private static final int GSM_BUFFER_SIZE = 33;
@@ -50,7 +50,7 @@ public class VoIPAudioIo {
 
     public VoIPAudioIo(Context context) {
         mContext = context;
-        mCodec = CodecFacotry.createAudio(CodecFacotry.AudioCodecType.GSM0610);
+        mCodec = CodecFacotry.createAudio(CodecFacotry.AudioCodecType.G729B);
     }
 
     public synchronized boolean StartAudio(String ip, int SimVoice) {
@@ -216,8 +216,8 @@ public class VoIPAudioIo {
                         if (BytesRead == RAW_BUFFER_SIZE) {
                             byte[] gsmbuf = mCodec.encode(rawbuf, 0, rawbuf.length);
                             mSock.send(gsmbuf);
+                            }
                         }
-                    }
                     // Stop Audio Thread);
                     Recorder.stop();
                     Recorder.release();
@@ -248,12 +248,12 @@ public class VoIPAudioIo {
         mSock.setListener(new UserDatagramSocket.PacketDataHandler() {
             @Override
             public void onReceive(DatagramPacket packet) {
-                if (packet.getLength() == GSM_BUFFER_SIZE) {
+               // if (packet.getLength() == GSM_BUFFER_SIZE) {
                     byte[] coded = packet.getData();
-                    byte[] rawbuf = mCodec.decode(coded, 0, coded.length);
+                    byte[] rawbuf = mCodec.decode(coded, 0, packet.getLength());
                     IncommingpacketQueue.add(rawbuf);
-                } else
-                    Log.i(LOG_TAG, "Invalid Packet LengthReceived: " + packet.getLength());
+              //  } else
+               //     Log.i(LOG_TAG, "Invalid Packet LengthReceived: " + packet.getLength());
             }
         });
     }

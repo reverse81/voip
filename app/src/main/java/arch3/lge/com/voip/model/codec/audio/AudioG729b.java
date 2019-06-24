@@ -30,6 +30,11 @@ public class AudioG729b extends AudioCodec {
         return JniG729Decode(data, offset, size);
     }
 
+    @Override
+    public int  getFrameLength(){
+        return 80*2;
+    }
+
 
     public static native boolean JniG729DecodeInit();
     public static native byte [] JniG729Decode(byte data[], int offset, int size);

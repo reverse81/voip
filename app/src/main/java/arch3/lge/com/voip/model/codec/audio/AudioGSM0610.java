@@ -29,6 +29,12 @@ public class AudioGSM0610 extends AudioCodec {
         return JniGsmDecodeB(data, offset, size);
     }
 
+    @Override
+    public int  getFrameLength(){
+        return 320;
+    }
+
+
     public static native int JniGsmOpen();
 
     public static native void JniGsmClose();
