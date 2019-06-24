@@ -1,6 +1,8 @@
 package arch3.lge.com.voip.model.serverApi;
 
 import android.util.Log;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -8,10 +10,10 @@ public class ApiParamBuilder {
 
     private final static String LOGTAG = "AppUp4:ApiParamBuilder";
 
-    protected final JSONObject mMandatoryParam;
+   // protected final JSONObject mMandatoryParam;
 
     public ApiParamBuilder() {
-        mMandatoryParam = new JSONObject();
+
     }
 
     protected final static String KEY_EMAIL = "email";
@@ -20,8 +22,12 @@ public class ApiParamBuilder {
     protected final static String KEY_PHONENUMBER = "phone";
     protected final static String KEY_IP = "ip";
 
+    protected final static String KEY_PARTICIPANTS = "participants";
+    protected final static String KEY_FROM = "from";
+    protected final static String KEY_TO = "to";
 
     public JSONObject getLogin(String email, String password) {
+        JSONObject mMandatoryParam = new JSONObject();
         try {
             mMandatoryParam.put(KEY_EMAIL, email);
             mMandatoryParam.put(KEY_PASSWORD, password);
@@ -33,6 +39,7 @@ public class ApiParamBuilder {
     }
 
     public JSONObject getRecovery(String email, String phonenumber) {
+        JSONObject mMandatoryParam = new JSONObject();
         try {
             mMandatoryParam.put(KEY_EMAIL, email);
             mMandatoryParam.put(KEY_PHONENUMBER, phonenumber);
@@ -43,9 +50,10 @@ public class ApiParamBuilder {
         return mMandatoryParam;
     }
 
-    public JSONObject getIP(String phonenumber) {
+    public JSONObject getPhoneParam(String phoneNumber) {
+        JSONObject mMandatoryParam = new JSONObject();
         try {
-            mMandatoryParam.put(KEY_PHONENUMBER, phonenumber);
+            mMandatoryParam.put(KEY_PHONENUMBER, phoneNumber);
             Log.i(LOGTAG, mMandatoryParam.toString());
         } catch (JSONException e) {
             Log.e(LOGTAG, "JSONException on getRetrieveApplistParam...", e);
@@ -54,6 +62,7 @@ public class ApiParamBuilder {
     }
 
     public JSONObject setIP(String ip,String phonenumber) {
+        JSONObject mMandatoryParam = new JSONObject();
         try {
             mMandatoryParam.put(KEY_IP, ip);
             mMandatoryParam.put(KEY_PHONENUMBER, phonenumber);
@@ -63,4 +72,23 @@ public class ApiParamBuilder {
         }
         return mMandatoryParam;
     }
+
+    public JSONObject requestCC(String[] parti,String from, String to) {
+        JSONObject mMandatoryParam = new JSONObject();
+        try {
+            StringBuilder sb = new StringBuilder();
+            for (String value : parti) {
+                sb.append(value);
+                sb.append(",");
+            }
+            mMandatoryParam.put(KEY_PARTICIPANTS,sb.substring(0,sb.length()-1));
+            mMandatoryParam.put(KEY_FROM, from);
+            mMandatoryParam.put(KEY_TO, to);
+            Log.i(LOGTAG, mMandatoryParam.toString());
+        } catch (JSONException e) {
+            Log.e(LOGTAG, "JSONException on getRetrieveApplistParam...", e);
+        }
+        return mMandatoryParam;
+    }
+
 }

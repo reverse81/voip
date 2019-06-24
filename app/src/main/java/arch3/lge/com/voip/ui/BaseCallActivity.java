@@ -33,10 +33,6 @@ import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 
 
 public class BaseCallActivity extends AppCompatActivity {
-
-
-
-    public arch3.lge.com.voip.model.codec.VoIPVideoIo mVoIPVideoIo;
     public arch3.lge.com.voip.model.codec.VoIPAudioIo mVoIPAudioIo;
 
     protected void attachImageView(ImageView view) {
@@ -50,6 +46,9 @@ public class BaseCallActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         Log.i("TAG","onDestroy");
+        StopReceiveVideoThread();
+        VoIPVideoIo.getInstance().EndVideo();
+
         super.onDestroy();
         mySensorManager.unregisterListener(proximitySensorEventListener,myProximitySensor);
         if (wl !=null && wl.isHeld()) {

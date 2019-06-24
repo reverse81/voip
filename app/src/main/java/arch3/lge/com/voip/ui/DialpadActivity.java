@@ -9,6 +9,8 @@ import android.widget.TextView;
 import org.json.JSONObject;
 
 
+import java.text.SimpleDateFormat;
+
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
 import arch3.lge.com.voip.model.serverApi.ServerApi;
@@ -25,18 +27,28 @@ public class DialpadActivity  extends MainTabActivity {
         mNumberView = (TextView)findViewById(R.id.dialInput);
         mNumberView.setText(mNumberString);
 
-//        User.saveLogin(getApplicationContext(),"AAAAbbbbbbbbbbbbAAA");
-//        Log.e("sss",  User.getLogin(getApplicationContext()));
-
-
         ApiParamBuilder param = new ApiParamBuilder();
         ServerApi server = new ServerApi();
+        JSONObject object = param.getLogin("reverse81@naver.com","1111");
+        server.login(getApplicationContext(), object.toString(), "reverse81@naver.com");
+
+
+//
+//        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD HH:mm");
+//
+//        String[] memebers = {"11111","2222","33333","44444"};
+//
+//        JSONObject object = param.requestCC(memebers,"2019-11-11 11:22","2019-11-11 11:22"
+//        );
+
+
+//        Log.e("sss", object.toString());
 //        JSONObject object = param.getLogin("ddd@naver.com","1111");
 //                server.login(getApplicationContext(), object.toString(), "ddd@naver.com");
 
-        JSONObject object = param.getLogin("reverse81@naver.com","1111");
+
+
 //        server.create(getApplicationContext(),object);
-             server.login(getApplicationContext(), object.toString(), "reverse81@naver.com");
 
 //        ApiParamBuilder param = new ApiParamBuilder();
 //        ServerApi server = new ServerApi();
@@ -94,12 +106,23 @@ public class DialpadActivity  extends MainTabActivity {
     }
     public void onClickCall(View v)
     {
+        String phone = mNumberView.getText().toString();
         Intent screen = new Intent();
-        screen.setClassName(this.getPackageName(), RequestCallActivity.class.getName());
-        screen.putExtra("phoneNumber",  mNumberView.getText().toString());
-        this.startActivity(screen);
+
+        if (phone.startsWith("xxxx")) {
+            screen.setClassName(this.getPackageName(), ConferenceCallingActivity.class.getName());
+            screen.putExtra("phoneNumber",  phone);
+            this.startActivity(screen);
+        } else {
+            screen.setClassName(this.getPackageName(), RequestCallActivity.class.getName());
+            screen.putExtra("phoneNumber",  phone);
+            this.startActivity(screen);
+        }
+
 
         Log.e(TAG, "onClickCall = "+v.getId());
+
+
         //finish();
     }
     public void onClickDell(View v)

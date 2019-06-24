@@ -102,7 +102,8 @@ public class TCPListenerService extends Service {
                 //finish activity??
 //                intent.setClassName(this.getPackageName(), CallingActivity.class.getName());
 //                this.startService(intent);
-                CallController.endCall(this);
+                //CallController.endCall(this);
+                CallController.finish();
                 break;
 
             default:

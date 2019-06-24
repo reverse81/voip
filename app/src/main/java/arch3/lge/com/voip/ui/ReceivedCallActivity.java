@@ -47,7 +47,6 @@ public class ReceivedCallActivity extends BaseCallActivity {
 
             @Override
             public void onClick(View view) {
-                StopReceiveVideoThread();
                 CallController.rejectCall(ReceivedCallActivity.this);
                 ReceivedCallActivity.this.finish();
             }

@@ -27,6 +27,7 @@ import android.os.Process;
 
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.model.UDPnetwork.UserDatagramSocket;
+import arch3.lge.com.voip.utils.NetworkConstants;
 
 public class VoIPAudioIo {
 
@@ -37,7 +38,6 @@ public class VoIPAudioIo {
     private static final int BYTES_PER_SAMPLE = 2;    // Bytes Per Sampl;e
     private static final int RAW_BUFFER_SIZE = SAMPLE_RATE / (MILLISECONDS_IN_A_SECOND / SAMPLE_INTERVAL) * BYTES_PER_SAMPLE;
     private static final int GSM_BUFFER_SIZE = 33;
-    private static final int VOIP_DATA_UDP_PORT = 5124;
     private int mSimVoice;
     private Context mContext;
     private Thread AudioIoThread = null;
@@ -46,7 +46,7 @@ public class VoIPAudioIo {
     private ConcurrentLinkedQueue<byte[]> IncommingpacketQueue;
     private AudioCodec mCodec;
     private boolean mBoostAudio = false;
-    private UserDatagramSocket mSock = new UserDatagramSocket(VOIP_DATA_UDP_PORT);
+    private UserDatagramSocket mSock = new UserDatagramSocket(NetworkConstants.VOIP_AUDIO_UDP_PORT);
 
     public VoIPAudioIo(Context context) {
         mContext = context;
@@ -141,6 +141,7 @@ public class VoIPAudioIo {
                 if(NoiseSuppressor.isAvailable())
                 {
                     NoiseSuppressor ns = NoiseSuppressor.create(audioSessionId);
+                    ns.setEnabled(true);
                     Log.i(LOG_TAG, "NoiseSuppressor : "+ ns.getEnabled() );
                 }
 //                if(AutomaticGainControl.isAvailable())
@@ -150,6 +151,7 @@ public class VoIPAudioIo {
 //                }
                 if(AcousticEchoCanceler.isAvailable()){
                     AcousticEchoCanceler aec = AcousticEchoCanceler.create(audioSessionId);
+                    aec.setEnabled(true);
                     Log.i(LOG_TAG, "AcousticEchoCanceler : "+ aec.getEnabled() );
                 }
 

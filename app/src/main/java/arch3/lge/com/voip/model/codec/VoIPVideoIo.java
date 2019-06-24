@@ -23,6 +23,7 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
+import arch3.lge.com.voip.utils.NetworkConstants;
 import arch3.lge.com.voip.utils.Util;
 
 import static android.support.constraint.Constraints.TAG;
@@ -32,7 +33,6 @@ import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 public class VoIPVideoIo implements  Camera.PreviewCallback{
     private static final String LOG_TAG = "VoIPVideoIo";
 
-    private static final int VOIP_VIDEO_UDP_PORT = 5125;
     private static final int MAX_VIDEO_FRAME_SIZE =640*480*4;
     private DatagramSocket SendUdpSocket;
     private InetAddress remoteIp;                   // Address to call
@@ -69,16 +69,20 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
     }
 
     public  synchronized boolean StartVideo(ImageView view) {
-        if (IsRunning) return (true);
+        if (IsRunning) {
+            return true;
+        }
         selfView = view;
         OpenCamera();
         IsRunning = true;
-        return (false);
+        return false;
     }
 
     public synchronized boolean EndVideo() {
-        if (!IsRunning) return (true);
         Log.i(LOG_TAG, "Ending Viop Audio");
+        if (!IsRunning) {
+            return true;
+        }
         IsRunning = false;
         CloseCamera();
         return (false);
@@ -178,7 +182,7 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
             @Override
             public void run() {
                 try {
-                        DatagramPacket packet = new DatagramPacket(bytes, bytes.length, remoteIp, VOIP_VIDEO_UDP_PORT);
+                        DatagramPacket packet = new DatagramPacket(bytes, bytes.length, remoteIp, NetworkConstants.VOIP_VIDEO_UDP_PORT);
                         SendUdpSocket.send(packet);
                 } catch (SocketException e) {
 

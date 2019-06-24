@@ -19,7 +19,7 @@ public class CallController {
     private static ServerApi serverApi = new ServerApi();
 
     static public void requestCall(Context context, String phoneNumber, ImageView self) {
-        JSONObject object = param.getIP(phoneNumber);
+        JSONObject object = param.getPhoneParam(phoneNumber);
         VoIPVideoIo io = VoIPVideoIo.getInstance();
         io.StartVideo(self);
         serverApi.getIP(context, object,io);
@@ -43,14 +43,6 @@ public class CallController {
         context.startService(intent);
     }
 
-    static public void terminateCall(String phonenumber) {
-
-    }
-
-    static public void incomingCall(String phonenumber) {
-
-    }
-
     static public void endCall(Context context) {
         Intent intent = new Intent();
         intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
@@ -58,11 +50,6 @@ public class CallController {
         intent.putExtra("message", "/END_CALL_BUTTON/");
         intent.putExtra("sender", PhoneState.getInstance().getRemoteIP());
         context.startService(intent);
-
-    }
-
-    static public void startCall(String phonenumber) {
-
     }
 
     static private Activity mCurrent;

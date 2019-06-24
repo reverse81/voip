@@ -3,9 +3,12 @@ package arch3.lge.com.voip.ui;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import arch3.lge.com.voip.R;
+import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.codec.VoIPAudioIo;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
@@ -27,6 +30,14 @@ public class CallingActivity extends BaseCallActivity {
         if (mVoIPAudioIo.StartAudio(PhoneState.getInstance().getRemoteIP(),0)) {
             Log.e(LOG_TAG, "Audio Already started (Answer Button)");
         }
+
+        Button endCall = (Button)findViewById(R.id.end_call);
+        endCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CallController.endCall(CallingActivity.this);
+            }
+        });
     }
 
 
