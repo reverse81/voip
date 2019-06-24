@@ -27,13 +27,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="Name"
-                android:textSize="24dp"/>
+                android:textSize="18dp"/>
             <EditText
                 android:id="@+id/contact_mgr_phone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="Phone Number"
-                android:textSize="24dp"/>
+                android:textSize="18dp"/>
             <Button
                 android:id="@+id/contact_mgr_add"
                 android:layout_width="150dp"
@@ -41,6 +41,7 @@
                 android:layout_gravity="center"
                 android:text="@string/dial_add"
                 android:textAlignment="center"
+                android:textSize="18dp"
                 android:layout_marginTop="5dp"/>
         </LinearLayout>
     </ScrollView>

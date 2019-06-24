@@ -13,7 +13,7 @@ public class ConferenceArrayAdapter {
 
     public void onCreate(Context context, ListView listView)
     {
-        mAdapter = new ArrayAdapter<String>(context, R.layout.activity_conference_list, R.id.textView, mobileArray);
+        mAdapter = new ArrayAdapter<String>(context, R.layout.activity_conference_list, R.id.list_item_name, mobileArray);
         listView.setAdapter(mAdapter);
     }
 }

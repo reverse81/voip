@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <LinearLayout
@@ -33,16 +33,15 @@
         </LinearLayout>
 
         <ImageButton
-            android:id="@+id/image_call_btn"
+            android:id="@+id/image_delete_btn"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:backgroundTint="#00FFFFFF"
             android:tint="#00FFFFFF"
-            app:srcCompat="@drawable/call"
-            android:scaleType="fitCenter"
-            android:focusable="false"/>
+            app:srcCompat="@drawable/delete_icon"
+            android:scaleType="fitCenter"/>
 
     </LinearLayout>
 </LinearLayout>
