@@ -33,4 +33,11 @@
     <string name="dial_add">Add</string>
     <string name="dial_call">Call</string>
     <string name="dial_del">Del</string>
+    <string name="register">Register</string>
+    <string name="account">Account Information</string>
+    <string name="changeEmail">Change E-mail</string>
+    <string name="changePassword">Change Password</string>
+    <string name="updateUserInfo">Update</string>
+    <string name="edit_contact_list">Edit Contact List</string>
+    <string name="log_out">Log Out</string>
 </resources>

@@ -6,8 +6,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import org.json.JSONObject;
 
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 
@@ -102,7 +102,12 @@ public class DialpadActivity  extends MainTabActivity {
     }
     public void onClickAdd(View v)
     {
+        Intent intent = new Intent(DialpadActivity.this, ContactListMgrActivity.class);
+        intent.putExtra("PhoneNum", mNumberString);
+        startActivity(intent);
         Log.e(TAG, "onClickAdd = "+v.getId());
+        Log.v("dae", "Click Add btn, Phone Number : "+mNumberString);
+
     }
     public void onClickCall(View v)
     {
@@ -146,4 +151,5 @@ public class DialpadActivity  extends MainTabActivity {
             R.id.dialNum8,
             R.id.dialNum9,
     };
+
 }

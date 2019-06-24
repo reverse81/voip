@@ -1,10 +1,20 @@
 package arch3.lge.com.voip.model.serverApi;
 
+import android.app.Activity;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import arch3.lge.com.voip.model.user.User;
+import arch3.lge.com.voip.utils.NetworkConstants;
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
 
 public class ApiParamBuilder {
 
@@ -43,6 +53,18 @@ public class ApiParamBuilder {
         try {
             mMandatoryParam.put(KEY_EMAIL, email);
             mMandatoryParam.put(KEY_PHONENUMBER, phonenumber);
+            Log.i(LOGTAG, mMandatoryParam.toString());
+        } catch (JSONException e) {
+            Log.e(LOGTAG, "JSONException on getRetrieveApplistParam...", e);
+        }
+        return mMandatoryParam;
+    }
+
+    public JSONObject getCreate(String email, String password) {
+        JSONObject mMandatoryParam = new JSONObject();
+        try {
+            mMandatoryParam.put(KEY_EMAIL, email);
+            mMandatoryParam.put(KEY_PASSWORD, password);
             Log.i(LOGTAG, mMandatoryParam.toString());
         } catch (JSONException e) {
             Log.e(LOGTAG, "JSONException on getRetrieveApplistParam...", e);
@@ -90,5 +112,4 @@ public class ApiParamBuilder {
         }
         return mMandatoryParam;
     }
-
 }

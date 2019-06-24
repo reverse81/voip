@@ -3,7 +3,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+
+import arch3.lge.com.voip.R;
 
 public class MainTabActivity extends AppCompatActivity {
     final String TAG = "MainTab";
@@ -35,5 +40,33 @@ public class MainTabActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //dhtest 상단 Menu Test
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.mainmenu, menu);
+        return true;
+        //return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.v("dae", "Option Item select");
+        switch(item.getItemId()){
+            case R.id.accountSetting:
+                Log.v("dae", "Menu option1");
+                Intent intent = new Intent(this, UserInfoActive.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        //return super.onOptionsItemSelected(item);
+        //return true;
     }
 }

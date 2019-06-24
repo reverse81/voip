@@ -2,6 +2,7 @@ package arch3.lge.com.voip.model.user;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class User {
     private String email;
@@ -25,6 +26,7 @@ public class User {
 
     public boolean isSamePassword() {
         //TODO: Replace this with your own logic
+        Log.v("dae", "ori : "+password+" retry : "+ retypedPassword);
         return  password.equals(retypedPassword);
     }
 
@@ -42,7 +44,7 @@ public class User {
     }
 
     public static void saveLogin(Context context, String token, String email, String phoneNumber) {
-        SharedPreferences.Editor editor = context.getSharedPreferences("user", Context.MODE_PRIVATE).edit();
+		SharedPreferences.Editor editor = context.getSharedPreferences("user", Context.MODE_PRIVATE).edit();
         editor.putString("token", token);
         editor.putString("email", email);
         editor.putString("phoneNumber", phoneNumber);

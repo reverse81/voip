@@ -1,5 +1,6 @@
 package arch3.lge.com.voip.model.serverApi;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -18,6 +19,8 @@ import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.model.user.User;
+import arch3.lge.com.voip.ui.LoginActivity;
+import arch3.lge.com.voip.ui.RegisterActivity;
 import arch3.lge.com.voip.utils.NetworkConstants;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
@@ -31,6 +34,7 @@ public class ServerApi {
     public final static String API_REGISTER = "users/create"; // post
     public final static String API_CREATE_CC = "schedule/create";  // post
     public final static String API_GET_CC = "schedule/myschedule";  // get
+    public final static String API_CREATE = "users/create";   //post
 
     public void login (final Context context, String source,final String email) {
         try {
@@ -117,6 +121,49 @@ public class ServerApi {
                             String res = new String(responseBody);
                             Log.e(LOG_TAG, "실패 : " + res);
                             Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
+                        }
+                    }  );
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void create (final Activity activity, JSONObject object) {
+        try {
+
+            StringEntity entity = new StringEntity(object.toString(), "UTF-8");
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.addHeader("project","voip");
+            client.addHeader("client","app");
+            client.addHeader("Authorization ", "Bearer "+User.getLogin(activity));
+
+            client.post(activity,  NetworkConstants.serverAddress + API_CREATE
+                    , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            String res = new String(responseBody);
+                            String duplicated = "User duplicated.";
+                            Log.e("tag", "응답 RES = " + res);
+
+                            if (res.equals(duplicated))
+                                Toast.makeText(activity, "이메일 중복", Toast.LENGTH_SHORT).show();
+                            else {
+                                Toast.makeText(activity, "생성완료", Toast.LENGTH_SHORT).show();
+                                //RegisterActivity register = new RegisterActivity();
+                                //register.successReister();
+                                //Intent intent = new Intent(context, LoginActivity.class);
+                                //context.startActivity(intent);
+                                activity.finish();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            String res = new String(responseBody);
+                            Log.e("tag", "실패 : " + res);
+                            Toast.makeText(activity, "전송실패", Toast.LENGTH_SHORT).show();
                         }
                     }  );
 
