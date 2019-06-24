@@ -63,6 +63,5 @@ public class CallController {
             mCurrent.finish();
         }
         mCurrent = null;
-        //CallController.endCall(context);
     }
 }

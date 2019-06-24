@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class BroadcastReceiverOnBootComplete extends BroadcastReceiver {
 
-    static final String LOG_TAG = "VoipDemo-BROB";
+    static final String LOG_TAG = "VoIP:BootCompleted";
 
     @Override
     public void onReceive(Context context, Intent intent) {

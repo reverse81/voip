@@ -16,6 +16,6 @@ public class NetworkConstants {
 
     public static final int VIDEO_BUFFER_SIZE = 65507;
 
-    public static final  String serverAddress = "http://128.237.216.163:3000/";
+    public static final  String serverAddress = "http://128.237.133.85:3000/";
     public static final String ContentsType = "application/json";
 }

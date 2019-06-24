@@ -46,8 +46,8 @@ public class BaseCallActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         Log.i("TAG","onDestroy");
-        StopReceiveVideoThread();
-        VoIPVideoIo.getInstance().EndVideo();
+//        StopReceiveVideoThread();
+//        VoIPVideoIo.getInstance().EndVideo();
 
         super.onDestroy();
         mySensorManager.unregisterListener(proximitySensorEventListener,myProximitySensor);

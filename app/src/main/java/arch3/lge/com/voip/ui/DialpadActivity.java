@@ -26,46 +26,6 @@ public class DialpadActivity  extends MainTabActivity {
         Log.e("sss", "enter");
         mNumberView = (TextView)findViewById(R.id.dialInput);
         mNumberView.setText(mNumberString);
-
-        ApiParamBuilder param = new ApiParamBuilder();
-        ServerApi server = new ServerApi();
-        JSONObject object = param.getLogin("reverse81@naver.com","1111");
-        server.login(getApplicationContext(), object.toString(), "reverse81@naver.com");
-
-
-//
-//        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD HH:mm");
-//
-//        String[] memebers = {"11111","2222","33333","44444"};
-//
-//        JSONObject object = param.requestCC(memebers,"2019-11-11 11:22","2019-11-11 11:22"
-//        );
-
-
-//        Log.e("sss", object.toString());
-//        JSONObject object = param.getLogin("ddd@naver.com","1111");
-//                server.login(getApplicationContext(), object.toString(), "ddd@naver.com");
-
-
-
-//        server.create(getApplicationContext(),object);
-
-//        ApiParamBuilder param = new ApiParamBuilder();
-//        ServerApi server = new ServerApi();
-
-//        JSONObject object = param.getIP("117782905");
-//        server.getIP(getApplicationContext(), object);
-//1234567892
-
-//        JSONObject object = param.setIP("1.1.1.1","117782905");
-//        server.setIP(getApplicationContext(), object);
-   //     server.login(getApplicationContext(), object.toString());
-
-    //    JSONObject object2 = param.getRecovery("ddd@naver.com","117782905");
-     //   server.recovery(getApplicationContext(), object2);
-//
-//        ServerApi server = new ServerApi();
-//        server.login(getApplicationContext(), object.toString());
     }
 
 
