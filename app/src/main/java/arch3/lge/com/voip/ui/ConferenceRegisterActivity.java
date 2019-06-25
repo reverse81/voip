@@ -15,6 +15,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import arch3.lge.com.voip.R;
+import arch3.lge.com.voip.model.database.ConferenceDatabaseHelper;
+import arch3.lge.com.voip.model.database.ContactListDataHelper;
 
 public class ConferenceRegisterActivity extends Activity {
 
@@ -120,6 +122,14 @@ public class ConferenceRegisterActivity extends Activity {
                 Log.v("dae", "Time "+ mStartHour +" "+ mStartMinute);
                 //ApiParamBuilder createParam = new ApiParamBuilder();
                 //JSONObject sendJsonObject = createParam.requestCC(user.getEmail(), user.getPassword());
+
+                String startTime = (mYear+"/"+mMonth+"/"+mDay+" "+mStartHour+":"+mStartMinute);
+                String endTime = (mYear+"/"+mMonth+"/"+mDay+" "+mEndHour+":"+mEndMinute);
+                ConferenceDatabaseHelper ConferenceDB = new ConferenceDatabaseHelper(getApplicationContext());
+                ConferenceDB.insert(startTime, endTime, "1111"+mEndMinute);
+                ConferenceDB.showList();
+                Log.v("dae", "data : "+ConferenceDB.conferenceList.toString());
+
 
                 Intent intent1 = new Intent(ConferenceRegisterActivity.this, ConferenceActivity.class);
                 startActivity(intent1);
