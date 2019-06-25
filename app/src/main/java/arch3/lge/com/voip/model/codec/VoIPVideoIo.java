@@ -70,16 +70,32 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
 
     public  synchronized boolean StartVideo(ImageView view) {
         if (IsRunning) {
+            Log.i(LOG_TAG, "Already Start VoIP Video");
+            selfView = view;
             return true;
+        } else {
+            Log.i(LOG_TAG, "Start VoIP Video");
+            selfView = view;
+            OpenCamera();
+            IsRunning = true;
+            return false;
         }
-        selfView = view;
-        OpenCamera();
-        IsRunning = true;
-        return false;
+    }
+
+    public  synchronized boolean restartVideo() {
+        if (IsRunning) {
+            Log.i(LOG_TAG, "Already Start VoIP Video");
+            return true;
+        } else {
+            Log.i(LOG_TAG, "Start VoIP Video");
+            OpenCamera();
+            IsRunning = true;
+            return false;
+        }
     }
 
     public synchronized boolean EndVideo() {
-        Log.i(LOG_TAG, "Ending Viop Audio");
+        Log.i(LOG_TAG, "Ending VoIp Video");
         if (!IsRunning) {
             return true;
         }
@@ -166,10 +182,12 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
             //byte[] decrypt = encipher.decrypt(imageBytes);
 
             Bitmap image = mCodec.decode(imageBytes);
-            selfView.setImageBitmap(image);
+            if (selfView!= null) {
+                selfView.setImageBitmap(image);
+            }
 
             if (remoteIp != null) {
-                Log.i(LOG_TAG, ":"+encryptedImageBytes.length + " vs "+ imageBytes.length);
+              //  Log.i(LOG_TAG, ":"+encryptedImageBytes.length + " vs "+ imageBytes.length);
                 UdpSend(encryptedImageBytes);
                // UdpSend(imageBytes);
             }
@@ -182,6 +200,7 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
             @Override
             public void run() {
                 try {
+                 //   Log.i(LOG_TAG, "Send UDP Video : " + bytes.length);
                         DatagramPacket packet = new DatagramPacket(bytes, bytes.length, remoteIp, NetworkConstants.VOIP_VIDEO_UDP_PORT);
                         SendUdpSocket.send(packet);
                 } catch (SocketException e) {

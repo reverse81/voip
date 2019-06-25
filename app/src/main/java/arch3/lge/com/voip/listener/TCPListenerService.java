@@ -7,6 +7,7 @@ import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.util.Log;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -22,6 +23,7 @@ import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
 import arch3.lge.com.voip.model.serverApi.ServerApi;
 import arch3.lge.com.voip.model.user.User;
+import arch3.lge.com.voip.ui.BaseCallActivity;
 import arch3.lge.com.voip.ui.CallingActivity;
 import arch3.lge.com.voip.ui.ReceivedCallActivity;
 import arch3.lge.com.voip.utils.NetworkConstants;
@@ -43,7 +45,7 @@ public class TCPListenerService extends Service {
                 try {
                     Socket socket = null;
                     // Setup the socket to receive incoming messages
-                    byte[] buffer = new byte[BUFFER_SIZE];
+                   // byte[] buffer = new byte[BUFFER_SIZE];
                     serverSocket = new ServerSocket(NetworkConstants.CONTROL_DATA_PORT);
 //                    serverSocket.setReuseAddress(true);
 //                    serverSocket.bind(new InetSocketAddress(NetworkContstants.CONTROL_DATA_PORT));
@@ -69,6 +71,7 @@ public class TCPListenerService extends Service {
         UDPListenThread.start();
     }
 
+    // {"phoneNumber":"08055461638","schedule":{"from":"2019-06-25T16:30:00.000Z","to":"2019-06-25T16:50:00.000Z"}}
     private void ProcessReceivedUdpMessage(final String sender, String message) {
 
         MyEncrypt encrypt = new MyEncrypt();
@@ -83,32 +86,43 @@ public class TCPListenerService extends Service {
                 // Receives Call Requests
 
                 PhoneState.getInstance().setRemoteIP(sender);
-                intent.setClassName(this.getPackageName(), ReceivedCallActivity.class.getName());
+                intent.setClass(this, ReceivedCallActivity.class);
                 this.startActivity(intent);
 
                 break;
             case "/ANSWER/":
                 // Accept notification received. Start call
                 //finish activity??
-                intent.setClassName(this.getPackageName(), CallingActivity.class.getName());
-                this.startService(intent);
+                BaseCallActivity current =  CallController.getCurrent();
+                intent.setClass(this, CallingActivity.class);
+                this.startActivity(intent);
+                current.finish();
 
                // CallController.startCall("AAA");
                 break;
 
             case "/REFUSE/":
             case "/ENDCALL/":
-
-                //finish activity??
-//                intent.setClassName(this.getPackageName(), CallingActivity.class.getName());
-//                this.startService(intent);
-                //CallController.endCall(this);
                 CallController.finish();
                 break;
 
             default:
                 // Invalid notification received
-                Log.w(LOG_TAG, sender + " sent invalid message: " + messageIn);
+                if (messageIn.startsWith("{"))
+                {
+                    try {
+                        JSONObject object = new JSONObject(messageIn);
+                        String phoneNumber = object.getString("phoneNumber");
+                        JSONObject schedule = object.getJSONObject("schedule");
+                        String from = schedule.getString("from");
+                        String to = schedule.getString("to");
+
+                    } catch (JSONException e) {
+                        Log.e(LOG_TAG, sender + " sent invalid message: " + messageIn,e);
+                    }
+                } else {
+                    Log.w(LOG_TAG, sender + " sent invalid message: " + messageIn);
+                }
                 break;
         }
     }
@@ -172,22 +186,24 @@ public class TCPListenerService extends Service {
             try {
                 this.input = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(LOG_TAG, "IOException",e);
             }
         }
 
         public void run() {
-            while (!Thread.currentThread().isInterrupted()) {
+            while (true) {
                 try {
                     String read = input.readLine();
                     if (read == null ){
-                        Thread.currentThread().interrupt();
+                        break;
                     }else{
                         String senderIP = clientSocket.getInetAddress().getHostAddress();
                         ProcessReceivedUdpMessage(senderIP, read);
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(LOG_TAG, "IOException",e);
+                }catch (Exception e) {
+                    Log.e(LOG_TAG, "Exception",e);
                 }
             }
             Util.safetyClose(clientSocket);

@@ -8,17 +8,24 @@
 
     <ImageView
         android:id="@+id/selfImage"
-        android:layout_width="338dp"
-        android:layout_height="337dp"
-        tools:layout_editor_absoluteX="38dp"
-        tools:layout_editor_absoluteY="33dp" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitStart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars"
+        />
 
-    <Button
+    <ImageButton
         android:id="@+id/end_call"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="end_call"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/end_call"
+        android:background="@color/colorTransparency"
+        android:scaleType="fitCenter"
+        android:text="reject"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="162dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 </android.support.constraint.ConstraintLayout>

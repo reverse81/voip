@@ -220,17 +220,16 @@ public class ServerApi {
 //                            String res = new String(responseBody);
 //                            Log.e("tag", "실패 : " + res);
                             Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
-                            //JSONObject jsonObject = new JSONObject(res);
-                            // String ip = jsonObject.getString("ip");
-                            // io.attachIP(ip);
-                            String ip = "1.1.1.1";
-                            Intent intent = new Intent();
-                            intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
-                            intent.setAction(TCPCmd.GUI_VOIP_CTRL);
-                            intent.putExtra("message", "/CALLIP/");
-                            intent.putExtra("sender", ip);
-                            context.startService(intent);
 
+                                //JSONObject jsonObject = new JSONObject(res);
+                                String ip = "10.0.1.2";
+                                io.attachIP(ip);
+                                Intent intent = new Intent();
+                                intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
+                                intent.setAction(TCPCmd.GUI_VOIP_CTRL);
+                                intent.putExtra("message", "/CALL_BUTTON/");
+                                intent.putExtra("sender", ip);
+                                context.startService(intent);
 
                         }
                     }  );

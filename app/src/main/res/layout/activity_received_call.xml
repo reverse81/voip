@@ -7,33 +7,36 @@
     tools:context=".ui.ReceivedCallActivity">
 
     <ImageView
-        android:id="@+id/target"
-        android:layout_width="407dp"
-        android:layout_height="376dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:id="@+id/targetImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitStart"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <Button
+    <ImageButton
         android:id="@+id/accept"
-        android:layout_width="132dp"
-        android:layout_height="58dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/request_call"
+        android:background="@color/colorTransparency"
+        android:scaleType="fitCenter"
         android:text="accept"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/reject" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
+    <ImageButton
         android:id="@+id/reject"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/end_call"
+        android:background="@color/colorTransparency"
+        android:scaleType="fitCenter"
         android:text="reject"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

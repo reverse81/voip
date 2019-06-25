@@ -5,5 +5,7 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorCall">#0043B934</color>
     <color name="cardview_light_background">#FFFFFFFF</color>
+    <color name="colorTransparency">#00000000</color>
+
 
 </resources>

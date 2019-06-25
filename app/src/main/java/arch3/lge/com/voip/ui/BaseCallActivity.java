@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.WindowManager;
 import android.widget.ImageView;
 
 import java.io.IOException;
@@ -21,10 +20,8 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 
-import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.model.call.PhoneState;
-import arch3.lge.com.voip.model.codec.VoIPAudioIo;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.utils.NetworkConstants;
@@ -33,6 +30,7 @@ import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 
 
 public class BaseCallActivity extends AppCompatActivity {
+    public final static String LOG_TAG = "VoIP:BaseCallActivity";
     public arch3.lge.com.voip.model.codec.VoIPAudioIo mVoIPAudioIo;
 
     protected void attachImageView(ImageView view) {
@@ -85,7 +83,7 @@ public class BaseCallActivity extends AppCompatActivity {
         }
     }
 
-    static  private ImageView imageViewVideo;
+    static private ImageView imageViewVideo;
     static private Thread UdpReceiveVideoThread = null;
     static private boolean UdpVoipReceiveVideoThreadRun = false;
     static private DatagramSocket RecvVideoUdpSocket;
@@ -112,7 +110,7 @@ public class BaseCallActivity extends AppCompatActivity {
 
                         RecvVideoUdpSocket.receive(packet);
 
-                        Log.i(LOG_TAG, ":"+packet.getLength());
+                       // Log.i(LOG_TAG, ":"+packet.getLength());
 
 
                         if (packet.getLength() >0) {
@@ -170,7 +168,7 @@ public class BaseCallActivity extends AppCompatActivity {
 
     }
 
-    protected void StopReceiveVideoThread() {
+    public void StopReceiveVideoThread() {
         PhoneState.getInstance().SetRecvVideoState(PhoneState.VideoState.VIDEO_STOPPED);
         if (!UdpVoipReceiveVideoThreadRun) return;
         if (UdpReceiveVideoThread != null && UdpReceiveVideoThread.isAlive()) {
@@ -201,14 +199,16 @@ public class BaseCallActivity extends AppCompatActivity {
             // TODO Auto-generated method stub
             if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
                 if (event.values[0] == 0) {
-                    Log.i("Sensor", "nEEEEEEEEEEEEEEEEEEEr");
+                  // Log.i("Sensor", "nEEEEEEEEEEEEEEEEEEEr");
                     if (wl !=null && !wl.isHeld()) {
                         wl.acquire();
+                        VoIPVideoIo.getInstance().EndVideo();
                     }
                 } else {
-                    Log.i("Sensor", "FAAAAAAAAAAAAAAAAAr");
+               //     Log.i("Sensor", "FAAAAAAAAAAAAAAAAAr");
                     if (wl !=null && wl.isHeld()) {
                         wl.release();
+                        VoIPVideoIo.getInstance().restartVideo();
                     }
                 }
             }

@@ -48,9 +48,17 @@ public class VoIPAudioIo {
     private boolean mBoostAudio = false;
     private UserDatagramSocket mSock = new UserDatagramSocket(NetworkConstants.VOIP_AUDIO_UDP_PORT);
 
-    public VoIPAudioIo(Context context) {
+    private VoIPAudioIo(Context context) {
         mContext = context;
         mCodec = CodecFacotry.createAudio(CodecFacotry.AudioCodecType.G729B);
+    }
+
+    private static VoIPAudioIo mVoIPAudioIo;
+    public static VoIPAudioIo getInstance(Context context) {
+        if (mVoIPAudioIo == null) {
+            mVoIPAudioIo = new VoIPAudioIo(context);
+        }
+        return mVoIPAudioIo;
     }
 
     public synchronized boolean StartAudio(String ip, int SimVoice) {
@@ -68,10 +76,13 @@ public class VoIPAudioIo {
 
     public synchronized boolean EndAudio() {
         if (!IsRunning) return (true);
-        Log.i(LOG_TAG, "Ending Viop Audio");
+        Log.i(LOG_TAG, "Ending VoIp Audio");
 
+        mSock.closeSendSocket();
         mSock.setListener(null);
 
+
+        Log.i(LOG_TAG, "Ending VoIp Audio");
         if (AudioIoThread != null && AudioIoThread.isAlive()) {
             AudioIoThreadThreadRun = false;
             Log.i(LOG_TAG, "Audio Thread Join started");
@@ -133,10 +144,9 @@ public class VoIPAudioIo {
                 // Create an instance of the AudioRecord class
                 Log.i(LOG_TAG, "Audio Thread started. Thread id: " + Thread.currentThread().getId());
                 InputPlayFile = OpenSimVoice(mSimVoice);
-                AudioRecord Recorder = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE,
+                AudioRecord Recorder = new AudioRecord(MediaRecorder.AudioSource.VOICE_COMMUNICATION, SAMPLE_RATE,
                         AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT,
                         AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT));
-
                 int audioSessionId = Recorder.getAudioSessionId();
                 if(NoiseSuppressor.isAvailable())
                 {
@@ -150,7 +160,9 @@ public class VoIPAudioIo {
 //                    Log.i(LOG_TAG, "AutomaticGainControl : "+ agc.getEnabled() );
 //                }
                 if(AcousticEchoCanceler.isAvailable()){
+
                     AcousticEchoCanceler aec = AcousticEchoCanceler.create(audioSessionId);
+                    Log.i(LOG_TAG, "AcousticEchoCanceler : "+ aec.getEnabled() );
                     aec.setEnabled(true);
                     Log.i(LOG_TAG, "AcousticEchoCanceler : "+ aec.getEnabled() );
                 }
@@ -176,7 +188,7 @@ public class VoIPAudioIo {
                 //byte[] gsmbuf = new byte[GSM_BUFFER_SIZE];
                 try {
                     // Create a socket and start recording
-                    DatagramSocket socket = new DatagramSocket();
+                   // DatagramSocket socket = new DatagramSocket();
                     Recorder.startRecording();
                     OutputTrack.play();
                     while (AudioIoThreadThreadRun) {
@@ -226,8 +238,8 @@ public class VoIPAudioIo {
                     OutputTrack.stop();
                     OutputTrack.flush();
                     OutputTrack.release();
-                    socket.disconnect();
-                    socket.close();
+//                    socket.disconnect();
+//                    socket.close();
                     if (InputPlayFile != null) InputPlayFile.close();
                     if (audioManager != null) audioManager.setMode(PreviousAudioManagerMode);
                     Log.i(LOG_TAG, "Audio Thread Stopped");

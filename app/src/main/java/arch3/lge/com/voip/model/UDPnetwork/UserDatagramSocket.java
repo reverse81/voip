@@ -65,11 +65,20 @@ public class UserDatagramSocket {
             DatagramPacket request = new DatagramPacket(buffer, buffer.length, mAddress, mPort);
             mSendSock.send(request);
 
-            Log.e(TAG, "send = ok"+ mAddress);
+            //Log.e(TAG, "send = ok"+ mAddress);
         }catch (IOException ex) {
             System.out.println("Client error: " + ex.getMessage());
             ex.printStackTrace();
         }
+    }
+
+    public  void closeSendSocket() {
+        if (mSendSock != null) {
+            mSendSock.disconnect();
+            mSendSock.close();
+            mSendSock = null;
+        }
+
     }
 
     public boolean setListener(PacketDataHandler handler ) {
@@ -102,15 +111,15 @@ public class UserDatagramSocket {
                             mHander.onReceive(packet);
                         }
                     }
-                    // close socket
-                    mRecvSock.disconnect();
-                    mRecvSock.close();
                 } catch (SocketException e) {
                     mThreadRun = false;
-                    Log.e(TAG, "SocketException: " + e.toString());
+                    Log.e(TAG, "SocketException: ",e);
                 } catch (IOException e) {
                     mThreadRun = false;
-                    Log.e(TAG, "IOException: " + e.toString());
+                    Log.e(TAG, "IOException: ",e);
+                } finally {
+                    mRecvSock.disconnect();
+                    mRecvSock.close();
                 }
             }
         });
@@ -120,12 +129,7 @@ public class UserDatagramSocket {
     private boolean stopReceive(){
         if(mThread == null)
             return true;
-        mThreadRun = false;
-        try {
-            mThread.join();
-        } catch (InterruptedException e) {
-            Log.i(TAG, "UdpReceiveDataThread Join interruped");
-        }
+        mThread.interrupt();
         mThread = null;
         return true;
     }

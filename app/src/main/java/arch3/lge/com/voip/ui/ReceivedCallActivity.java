@@ -14,6 +14,7 @@ import android.widget.ImageView;
 
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.controller.CallController;
+import arch3.lge.com.voip.controller.DeviceContorller;
 
 public class ReceivedCallActivity extends BaseCallActivity {
 
@@ -26,8 +27,10 @@ public class ReceivedCallActivity extends BaseCallActivity {
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         StartReceiveVideoThread();
-        this.attachImageView((ImageView)findViewById(R.id.target));
+        this.attachImageView((ImageView)findViewById(R.id.targetImage));
         StartRinger();
+
+        DeviceContorller.initDevice(this);
 
         Button accept = (Button) findViewById(R.id.accept);
         accept.setOnClickListener(new View.OnClickListener() {

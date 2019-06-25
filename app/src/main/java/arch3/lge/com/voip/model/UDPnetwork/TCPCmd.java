@@ -19,7 +19,7 @@ import arch3.lge.com.voip.utils.Util;
 public class TCPCmd extends IntentService {
 
     public final static String GUI_VOIP_CTRL = "GuiVoIpControl";
-    private static final String LOG_TAG = "UDPListenerService";
+    private static final String LOG_TAG = "VoIP:TCPCmd";
     private static final int BUFFER_SIZE = 128;
 
     public TCPCmd() {
@@ -62,6 +62,7 @@ public class TCPCmd extends IntentService {
                 break;
             case "/END_CALL_BUTTON/":
                 TCPSend(PhoneState.getInstance().getRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/ENDCALL/");
+
                 CallController.finish();
                 //PhoneState.getInstance().NotifyUpdate();
                 break;
@@ -135,6 +136,7 @@ public class TCPCmd extends IntentService {
                 OutputStream outputStream=null;
                 try {
 
+                    Log.i(LOG_TAG, " we will send to "+ RemoteIp + ":" + message);
                     InetAddress address = InetAddress.getByName(RemoteIp);
                     MyEncrypt encrypt = new MyEncrypt();
                     String messageOut = encrypt.encrypt(message);
@@ -146,7 +148,7 @@ public class TCPCmd extends IntentService {
 
                     outputStream = socket.getOutputStream();
                     outputStream.write(buffer);
-                    outputStream.flush();;
+                    outputStream.flush();
 
                     Log.i(LOG_TAG, "UdpSend( " + messageOut + " ) to " + RemoteIp);
 
