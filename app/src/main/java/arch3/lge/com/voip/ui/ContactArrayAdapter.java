@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import arch3.lge.com.voip.R;
@@ -34,23 +35,6 @@ public class ContactArrayAdapter {
 
         listView.setAdapter(mAdapter);
 
-        Log.v("dae", "create contact List");
-
-        //Click listener
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Log.v("dae", "Position:");
-                // position이 클릭된 위치입니다.
-                // 컬렉션에서 적절하게 꺼내서 사용하시면 됩니다.
-                //Toast.makeText(activity, itemList.get(position).getSomethingColumn(), Toast.LENGTH_LONG).show();
-
-                // 추가된 부분
-                //InfoClass selectedInfoClass = weatherList.get(position);
-                //selectedInfoClass.getXXX();
-            }
-        });
 
 
     }

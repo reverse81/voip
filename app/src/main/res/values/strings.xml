@@ -40,4 +40,6 @@
     <string name="updateUserInfo">Update</string>
     <string name="edit_contact_list">Edit Contact List</string>
     <string name="log_out">Log Out</string>
+    <string name="new_conference_call">New</string>
+    <string name="new_conference_cancel">Cancel</string>
 </resources>

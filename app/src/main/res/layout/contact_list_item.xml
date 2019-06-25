@@ -31,7 +31,7 @@
                 android:padding="@dimen/activity_horizontal_margin"
                 android:textColor="#000" />
         </LinearLayout>
-
+<!--
         <ImageButton
             android:id="@+id/image_call_btn"
             android:layout_width="match_parent"
@@ -43,6 +43,6 @@
             app:srcCompat="@drawable/call"
             android:scaleType="fitCenter"
             android:focusable="false"/>
-
+-->
     </LinearLayout>
 </LinearLayout>
