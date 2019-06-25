@@ -182,6 +182,7 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
             //byte[] decrypt = encipher.decrypt(imageBytes);
 
             Bitmap image = mCodec.decode(imageBytes);
+
             if (selfView!= null) {
                 selfView.setImageBitmap(image);
             }

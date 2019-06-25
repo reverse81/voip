@@ -38,7 +38,7 @@ public class CallingActivity extends BaseCallActivity {
             Log.e(LOG_TAG, "Audio Already started (Answer Button)");
         }
 
-        Button endCall = (Button)findViewById(R.id.end_call);
+        ImageButton endCall = (ImageButton)findViewById(R.id.end_call);
         endCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

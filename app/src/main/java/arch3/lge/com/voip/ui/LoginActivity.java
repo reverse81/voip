@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import arch3.lge.com.voip.R;
+import arch3.lge.com.voip.listener.TCPListenerService;
 import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
 import arch3.lge.com.voip.model.serverApi.ServerApi;
 import arch3.lge.com.voip.model.user.User;
@@ -113,6 +114,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         //Login 상태이면 바로 Dialpad로 이동.
         if(!User.getLogin(this).isEmpty()) {
+            Intent serviceIntent = new Intent(this, TCPListenerService.class);
+            this.startService(serviceIntent);
+            Log.i("dae", "Started TCPListenerService.class");
+
             Intent intent = new Intent(this, DialpadActivity.class);
             this.startActivity(intent);
             finish();

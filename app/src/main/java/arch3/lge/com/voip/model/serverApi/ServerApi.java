@@ -145,7 +145,7 @@ public class ServerApi {
             AsyncHttpClient client = new AsyncHttpClient();
             client.addHeader("project","voip");
             client.addHeader("client","app");
-            client.addHeader("Authorization ", "Bearer "+User.getLogin(activity));
+           // client.addHeader("Authorization ", "Bearer "+User.getLogin(activity));
 
             client.post(activity,  NetworkConstants.serverAddress + API_CREATE
                     , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
@@ -169,8 +169,8 @@ public class ServerApi {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            String res = new String(responseBody);
-                            Log.e("tag", "실패 : " + res);
+                         //   String res = new String(responseBody);
+                          //  Log.e("tag", "실패 : " + res);
                             Toast.makeText(activity, "전송실패", Toast.LENGTH_SHORT).show();
                         }
                     }  );
@@ -222,14 +222,14 @@ public class ServerApi {
                             Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
 
                                 //JSONObject jsonObject = new JSONObject(res);
-                                String ip = "10.0.1.2";
-                                io.attachIP(ip);
-                                Intent intent = new Intent();
-                                intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
-                                intent.setAction(TCPCmd.GUI_VOIP_CTRL);
-                                intent.putExtra("message", "/CALL_BUTTON/");
-                                intent.putExtra("sender", ip);
-                                context.startService(intent);
+//                                String ip = "10.0.1.2";
+//                                io.attachIP(ip);
+//                                Intent intent = new Intent();
+//                                intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
+//                                intent.setAction(TCPCmd.GUI_VOIP_CTRL);
+//                                intent.putExtra("message", "/CALL_BUTTON/");
+//                                intent.putExtra("sender", ip);
+//                                context.startService(intent);
 
                         }
                     }  );
@@ -320,6 +320,7 @@ public class ServerApi {
             AsyncHttpClient client = new AsyncHttpClient();
             client.addHeader("project","voip");
             client.addHeader("client","app");
+            client.addHeader("Authorization", "Bearer "+User.getLogin(context));
 
             client.post(context,  NetworkConstants.serverAddress + API_CREATE_CC
                     , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
@@ -353,6 +354,7 @@ public class ServerApi {
             AsyncHttpClient client = new AsyncHttpClient();
             client.addHeader("project","voip");
             client.addHeader("client","app");
+            client.addHeader("Authorization", "Bearer "+User.getLogin(context));
 
             client.get(context,  NetworkConstants.serverAddress + API_GET_CC
                     , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {

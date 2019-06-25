@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import arch3.lge.com.voip.R;
@@ -32,7 +33,7 @@ public class ReceivedCallActivity extends BaseCallActivity {
 
         DeviceContorller.initDevice(this);
 
-        Button accept = (Button) findViewById(R.id.accept);
+        ImageButton accept = (ImageButton) findViewById(R.id.accept);
         accept.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -45,7 +46,7 @@ public class ReceivedCallActivity extends BaseCallActivity {
             }
         });
 
-        Button reject = (Button) findViewById(R.id.reject);
+        ImageButton reject = (ImageButton) findViewById(R.id.reject);
         reject.setOnClickListener(new View.OnClickListener() {
 
             @Override

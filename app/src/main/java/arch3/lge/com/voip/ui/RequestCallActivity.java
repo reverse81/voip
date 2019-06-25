@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,7 +32,7 @@ public class RequestCallActivity extends BaseCallActivity {
         ImageView self = (ImageView)findViewById(R.id.selfImage);
         CallController.requestCall(this, phoneNumber, self);
 
-        Button reject = (Button) findViewById(R.id.end_call);
+        ImageButton reject = (ImageButton) findViewById(R.id.end_call);
         reject.setOnClickListener(new View.OnClickListener() {
 
             @Override

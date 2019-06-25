@@ -45,7 +45,7 @@ public class VoIPAudioIo {
     private boolean AudioIoThreadThreadRun = false;
     private ConcurrentLinkedQueue<byte[]> IncommingpacketQueue;
     private AudioCodec mCodec;
-    private boolean mBoostAudio = false;
+   // private boolean mBoostAudio = false;
     private UserDatagramSocket mSock = new UserDatagramSocket(NetworkConstants.VOIP_AUDIO_UDP_PORT);
 
     private VoIPAudioIo(Context context) {
@@ -162,7 +162,6 @@ public class VoIPAudioIo {
                 if(AcousticEchoCanceler.isAvailable()){
 
                     AcousticEchoCanceler aec = AcousticEchoCanceler.create(audioSessionId);
-                    Log.i(LOG_TAG, "AcousticEchoCanceler : "+ aec.getEnabled() );
                     aec.setEnabled(true);
                     Log.i(LOG_TAG, "AcousticEchoCanceler : "+ aec.getEnabled() );
                 }
@@ -194,30 +193,31 @@ public class VoIPAudioIo {
                     while (AudioIoThreadThreadRun) {
                         if (IncommingpacketQueue.size() > 0) {
                             byte[] AudioOutputBufferBytes = IncommingpacketQueue.remove();
-                            if (mBoostAudio) {
+                         //   if (mBoostAudio) {
                                 OutputTrack.write(AudioOutputBufferBytes, 0, RAW_BUFFER_SIZE);
-                            }
-                            else {
-                                short[] AudioOutputBufferShorts = new short[AudioOutputBufferBytes.length / 2];
-                                // to turn bytes to shorts as either big endian or little endian.
-                                ByteBuffer.wrap(AudioOutputBufferBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(AudioOutputBufferShorts);
-                                for (int i = 0; i < AudioOutputBufferShorts.length; i++) { // 16bit sample size
-                                    int value=AudioOutputBufferShorts[i]*10; //increase level by gain=20dB: Math.pow(10., dB/20.);  dB to gain factor
-                                    if(value > 32767) {
-                                        value = 32767;
-                                    } else if(value < -32767) {
-                                        value = -32767;
-                                    }
-                                    AudioOutputBufferShorts[i]=(short)value;
-                                }
-                                // to turn shorts back to bytes.
-                                //byte[] AudioOutputBufferBytes2 = new byte[AudioOutputBufferShorts.length * 2];
-                                //ByteBuffer.wrap(AudioOutputBufferBytes2).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(AudioOutputBufferShorts);
-                                //OutputTrack.write(AudioOutputBufferBytes2, 0, RAW_BUFFER_SIZE);
-                                OutputTrack.write( AudioOutputBufferShorts, 0,  AudioOutputBufferShorts.length);
-                            }
+//                            }
+//                            else {
+//                                short[] AudioOutputBufferShorts = new short[AudioOutputBufferBytes.length / 2];
+//                                // to turn bytes to shorts as either big endian or little endian.
+//                                ByteBuffer.wrap(AudioOutputBufferBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(AudioOutputBufferShorts);
+//                                for (int i = 0; i < AudioOutputBufferShorts.length; i++) { // 16bit sample size
+//                                    int value=AudioOutputBufferShorts[i]*10; //increase level by gain=20dB: Math.pow(10., dB/20.);  dB to gain factor
+//                                    if(value > 32767) {
+//                                        value = 32767;
+//                                    } else if(value < -32767) {
+//                                        value = -32767;
+//                                    }
+//                                    AudioOutputBufferShorts[i]=(short)value;
+//                                }
+//                                // to turn shorts back to bytes.
+//                                //byte[] AudioOutputBufferBytes2 = new byte[AudioOutputBufferShorts.length * 2];
+//                                //ByteBuffer.wrap(AudioOutputBufferBytes2).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(AudioOutputBufferShorts);
+//                                //OutputTrack.write(AudioOutputBufferBytes2, 0, RAW_BUFFER_SIZE);
+//                                OutputTrack.write( AudioOutputBufferShorts, 0,  AudioOutputBufferShorts.length);
+//                            }
                         }
                         // Capture audio from microphone and send
+                        long start = System.currentTimeMillis();
                         BytesRead = Recorder.read(rawbuf, 0, RAW_BUFFER_SIZE);
                         if (InputPlayFile != null) {
                             BytesRead = InputPlayFile.read(rawbuf, 0, RAW_BUFFER_SIZE);

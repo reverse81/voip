@@ -58,7 +58,7 @@ public class TCPCmd extends IntentService {
                 PhoneState.getInstance().SetPhoneState(PhoneState.CallState.CALLING);
                 TCPSend(Sender, NetworkConstants.CONTROL_DATA_PORT, "/CALLIP/");
                 //PhoneState.getInstance().NotifyUpdate();
-                Log.i("CALL", "AAAAAAAAAAAAAAAAAAAAAAAAA");
+               // Log.i("CALL", "AAAAAAAAAAAAAAAAAAAAAAAAA");
                 break;
             case "/END_CALL_BUTTON/":
                 TCPSend(PhoneState.getInstance().getRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/ENDCALL/");

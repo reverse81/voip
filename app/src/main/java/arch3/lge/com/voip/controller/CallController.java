@@ -25,17 +25,17 @@ public class CallController {
         JSONObject object = param.getPhoneParam(phoneNumber);
         VoIPVideoIo io = VoIPVideoIo.getInstance();
         io.StartVideo(self);
-        //serverApi.getIP(context, object,io);
-        {
-            String ip = "10.0.1.2";
-            io.attachIP(ip);
-            Intent intent = new Intent();
-            intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
-            intent.setAction(TCPCmd.GUI_VOIP_CTRL);
-            intent.putExtra("message", "/CALL_BUTTON/");
-            intent.putExtra("sender", ip);
-            context.startService(intent);
-        }
+        serverApi.getIP(context, object,io);
+//        {
+//            String ip = "10.0.1.2";
+//            io.attachIP(ip);
+//            Intent intent = new Intent();
+//            intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
+//            intent.setAction(TCPCmd.GUI_VOIP_CTRL);
+//            intent.putExtra("message", "/CALL_BUTTON/");
+//            intent.putExtra("sender", ip);
+//            context.startService(intent);
+//        }
     }
 
     static public void acceptCall(Context context) {
@@ -84,13 +84,9 @@ public class CallController {
     static public void finish () {
         if (mCurrent != null) {
             DeviceContorller.initDevice(mCurrent);
-
-            Log.i(LOG_TAG,"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
             mCurrent.StopReceiveVideoThread();
             VoIPVideoIo.getInstance().EndVideo();
-            Log.i(LOG_TAG,"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
             VoIPAudioIo.getInstance(mCurrent).EndAudio();
-            Log.i(LOG_TAG,"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
             mCurrent.finish();
         }
         mCurrent = null;

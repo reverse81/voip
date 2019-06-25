@@ -121,16 +121,16 @@ public class BaseCallActivity extends AppCompatActivity {
                             }
                             final Bitmap bitmap = BitmapFactory.decodeByteArray(decrypt, 0, decrypt.length);
                           //  final Bitmap bitmap = BitmapFactory.decodeByteArray(packet.getData(), 0, packet.getLength());
-                            final Matrix mtx = new Matrix();
-                           // mtx.postRotate(-90);
-                            final Bitmap rotator = Bitmap.createBitmap(bitmap, 0, 0,
-                                    bitmap.getWidth(), bitmap.getHeight(), mtx,
-                                    true);
+//                            final Matrix mtx = new Matrix();
+//                           // mtx.postRotate(-90);
+//                            final Bitmap rotator = Bitmap.createBitmap(bitmap, 0, 0,
+//                                    bitmap.getWidth(), bitmap.getHeight(), mtx,
+//                                    true);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     if (imageViewVideo!= null) {
-                                        imageViewVideo.setImageBitmap(rotator);
+                                        imageViewVideo.setImageBitmap(bitmap);
                                     }
                                 }
                             });
