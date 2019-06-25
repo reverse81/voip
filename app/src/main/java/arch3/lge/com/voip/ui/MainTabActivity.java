@@ -31,7 +31,9 @@ public class MainTabActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ContactActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        intent.putExtra("type","noraml"); /*송신*/
         startActivity(intent);
+
     }
     public void onClickConfirence(View v)
     {

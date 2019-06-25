@@ -96,7 +96,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             //@TODO
             // Request register using controller
-            Log.v("dae", "Transmit email : "+user.getEmail()+" password:"+user.getPassword());
+            Log.v("dae", "Transmit email : "+user.getEmail()+" password:"+user.getPassword());//dhtest
             ApiParamBuilder createParam = new ApiParamBuilder();
             JSONObject sendJsonObject = createParam.getCreate(user.getEmail(), user.getPassword());
 
@@ -108,7 +108,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void successReister(){
-        Log.v("dae", "finish..");
+        Log.v("dae", "finish..");//dhtest
 
     }
 
