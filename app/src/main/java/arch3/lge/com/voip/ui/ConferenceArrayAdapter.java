@@ -24,7 +24,7 @@ public class ConferenceArrayAdapter {
         ConferenceDatabaseHelper ConferenceDB = new ConferenceDatabaseHelper(activity);
         ConferenceDB.showList();
         mAdapter = new SimpleAdapter(activity, ConferenceDB.conferenceList, R.layout.conference_item,
-                new String[]{"timeInfo", "phone"},
+                new String[]{"startTime", "phone"},
                 new int[]{R.id.conference_item_time, R.id.conference_item_phone});
 
         listView.setAdapter(mAdapter);

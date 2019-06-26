@@ -45,9 +45,12 @@ public class User {
 
     public static void saveLogin(Context context, String token, String email, String phoneNumber) {
 		SharedPreferences.Editor editor = context.getSharedPreferences("user", Context.MODE_PRIVATE).edit();
-        editor.putString("token", token);
-        editor.putString("email", email);
-        editor.putString("phoneNumber", phoneNumber);
+        if (token != null)
+		    editor.putString("token", token);
+        if (email != null)
+            editor.putString("email", email);
+        if (phoneNumber != null)
+            editor.putString("phoneNumber", phoneNumber);
         editor.commit();
     }
     public static String getEmail(Context context) {
@@ -64,5 +67,10 @@ public class User {
         SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
         return sharedPreferences.getString("token","");
 
+    }
+    public static void setLogout(Context context) {
+        SharedPreferences.Editor editor = context.getSharedPreferences("user", Context.MODE_PRIVATE).edit();
+        editor.putString("token", null);
+        editor.commit();
     }
 }

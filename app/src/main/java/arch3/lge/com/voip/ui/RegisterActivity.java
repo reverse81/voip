@@ -63,7 +63,7 @@ public class RegisterActivity extends AppCompatActivity {
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (emailText.length() < 4) {
+        if (passwordText.length() < 8) {
             passwordText.setError(getString(R.string.error_invalid_password));
             focusView = passwordText;
             cancel = true;
@@ -101,7 +101,7 @@ public class RegisterActivity extends AppCompatActivity {
             JSONObject sendJsonObject = createParam.getCreate(user.getEmail(), user.getPassword());
 
             ServerApi server = new ServerApi();
-            server.create(this, sendJsonObject);
+            server.create(this, sendJsonObject, user.getEmail());
 
             //finish();
         }

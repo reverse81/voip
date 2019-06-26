@@ -42,4 +42,8 @@
     <string name="log_out">Log Out</string>
     <string name="new_conference_call">New</string>
     <string name="new_conference_cancel">Cancel</string>
+    <string name="new_conference_attendee1">Attendee 1</string>
+    <string name="new_conference_attendee2">Attendee 2</string>
+    <string name="new_conference_attendee3">Attendee 3</string>
+    <string name="new_conference_Add">Add</string>
 </resources>

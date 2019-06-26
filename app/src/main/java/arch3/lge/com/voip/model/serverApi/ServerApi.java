@@ -17,8 +17,11 @@ import arch3.lge.com.voip.listener.TCPListenerService;
 import arch3.lge.com.voip.model.UDPnetwork.TCPCmd;
 import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
+import arch3.lge.com.voip.model.database.ConferenceDatabaseHelper;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.model.user.User;
+import arch3.lge.com.voip.ui.ConferenceActivity;
+import arch3.lge.com.voip.ui.ConferenceRegisterActivity;
 import arch3.lge.com.voip.ui.DialpadActivity;
 import arch3.lge.com.voip.ui.LoginActivity;
 import arch3.lge.com.voip.ui.RegisterActivity;
@@ -138,7 +141,7 @@ public class ServerApi {
         }
     }
 
-    public void create (final Activity activity, JSONObject object) {
+    public void create (final Activity activity, JSONObject object, final String email) {
         try {
 
             StringEntity entity = new StringEntity(object.toString(), "UTF-8");
@@ -159,18 +162,17 @@ public class ServerApi {
                                 Toast.makeText(activity, "이메일 중복", Toast.LENGTH_SHORT).show();
                             else {
                                 Toast.makeText(activity, "생성완료", Toast.LENGTH_SHORT).show();
-                                //RegisterActivity register = new RegisterActivity();
-                                //register.successReister();
-                                //Intent intent = new Intent(context, LoginActivity.class);
-                                //context.startActivity(intent);
+                                User.saveLogin(activity, null, email, null);
+                                Intent intent = new Intent(activity, LoginActivity.class);
+                                activity.startActivity(intent);
                                 activity.finish();
                             }
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                         //   String res = new String(responseBody);
-                          //  Log.e("tag", "실패 : " + res);
+                            String res = new String(responseBody);
+                            Log.e("tag", "실패 : " + res);
                             Toast.makeText(activity, "전송실패", Toast.LENGTH_SHORT).show();
                         }
                     }  );
@@ -280,64 +282,91 @@ public class ServerApi {
         }
     }
 
-    public void create (final Context context, JSONObject object) {
+//    public void create (final Context context, JSONObject object) {
+//        try {
+//
+//            StringEntity entity = new StringEntity(object.toString(), "UTF-8");
+//            AsyncHttpClient client = new AsyncHttpClient();
+//            client.addHeader("project","voip");
+//            client.addHeader("client","app");
+//
+//            client.post(context,  NetworkConstants.serverAddress + API_REGISTER
+//                    , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
+//                        @Override
+//                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+//                            String res = new String(responseBody);
+//                            Log.e("tag", "응답 RES = " + res);
+//
+//
+//                            Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
+//                        }
+//
+//                        @Override
+//                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+//                            String res = new String(responseBody);
+//                            Log.e("tag", "실패 : " + res);
+//                            Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }  );
+//
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+    public void requestConfernceCall (final Activity activity, JSONObject object, final String startTime, final String endTime) {
         try {
 
             StringEntity entity = new StringEntity(object.toString(), "UTF-8");
             AsyncHttpClient client = new AsyncHttpClient();
             client.addHeader("project","voip");
             client.addHeader("client","app");
+            client.addHeader("Authorization", "Bearer "+User.getLogin(activity));
 
-            client.post(context,  NetworkConstants.serverAddress + API_REGISTER
+            client.post(activity,  NetworkConstants.serverAddress + API_CREATE_CC
                     , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             String res = new String(responseBody);
                             Log.e("tag", "응답 RES = " + res);
+                            Log.v("dae", "응답 RES = " + res);//dhtest
+
+//                            ConferenceDatabaseHelper ConferenceDB = new ConferenceDatabaseHelper(getApplicationContext());
+//                            ConferenceDB.insert(startTime, endTime, "1111"+mEndMinute);
+//                            ConferenceDB.showList();
+//                            Log.v("dae", "data : "+ConferenceDB.conferenceList.toString());
+
+//                            Intent intent1 = new Intent(context, ConferenceActivity.class);
+
+                            try {
+                                JSONObject object = new JSONObject(res);
+                                String phoneNumber = object.getString("phone");
+                                String startTimeDB = startTime.substring(0, 10) + " " + startTime.substring(11, 16);
+                                String endTimeDB = endTime.substring(0, 10) + " " + endTime.substring(11, 16);
+
+                                ConferenceDatabaseHelper ConferenceDB = new ConferenceDatabaseHelper(activity);
+                                ConferenceDB.insert(startTimeDB, endTimeDB, phoneNumber);
+                                ConferenceDB.showList();
+                                Log.v("dae", "data : "+ConferenceDB.conferenceList.toString());
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
 
-                            Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
+
+                            Intent intent1 = new Intent(activity, ConferenceActivity.class);
+                            activity.startActivity(intent1);
+                            activity.finish();
+                            Toast.makeText(activity, "전송완료", Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                             String res = new String(responseBody);
                             Log.e("tag", "실패 : " + res);
-                            Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
-                        }
-                    }  );
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void requestConfernceCall (final Context context, JSONObject object) {
-        try {
-
-            StringEntity entity = new StringEntity(object.toString(), "UTF-8");
-            AsyncHttpClient client = new AsyncHttpClient();
-            client.addHeader("project","voip");
-            client.addHeader("client","app");
-            client.addHeader("Authorization", "Bearer "+User.getLogin(context));
-
-            client.post(context,  NetworkConstants.serverAddress + API_CREATE_CC
-                    , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                            String res = new String(responseBody);
-                            Log.e("tag", "응답 RES = " + res);
-
-
-                            Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            String res = new String(responseBody);
-                            Log.e("tag", "실패 : " + res);
-                            Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "전송실패", Toast.LENGTH_SHORT).show();
                         }
                     }  );
 

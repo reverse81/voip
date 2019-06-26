@@ -11,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import arch3.lge.com.voip.model.user.User;
 import arch3.lge.com.voip.utils.NetworkConstants;
 import cz.msebera.android.httpclient.Header;
@@ -95,7 +97,8 @@ public class ApiParamBuilder {
         return mMandatoryParam;
     }
 
-    public JSONObject requestCC(String[] parti,String from, String to) {
+    //{"phoneNumber":"08055461638","schedule":{"from":"2019-06-25T16:30:00.000Z","to":"2019-06-25T16:50:00.000Z"}}
+    public JSONObject requestCC(ArrayList<String> parti, String from, String to) {
         JSONObject mMandatoryParam = new JSONObject();
         try {
             StringBuilder sb = new StringBuilder();

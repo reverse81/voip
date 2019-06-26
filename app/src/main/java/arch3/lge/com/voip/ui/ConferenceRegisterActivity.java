@@ -14,9 +14,16 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.model.database.ConferenceDatabaseHelper;
 import arch3.lge.com.voip.model.database.ContactListDataHelper;
+import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
+import arch3.lge.com.voip.model.serverApi.ServerApi;
+import arch3.lge.com.voip.model.user.User;
 
 public class ConferenceRegisterActivity extends Activity {
 
@@ -62,6 +69,7 @@ public class ConferenceRegisterActivity extends Activity {
             mPhoneNum1 = null;
             mPhoneNum2 = null;
             mPhoneNum3 = null;
+            Log.v("dae", "Initialize conference data");
         }
         UpdateNow();
 
@@ -118,22 +126,42 @@ public class ConferenceRegisterActivity extends Activity {
 
             case R.id.conference_register_done_btn:
                 Log.v("dae", "onClick conference_register_done_btn");
-                Log.v("dae", "Date "+mYear+" "+mMonth+" "+mDay);
-                Log.v("dae", "Time "+ mStartHour +" "+ mStartMinute);
+
                 //ApiParamBuilder createParam = new ApiParamBuilder();
                 //JSONObject sendJsonObject = createParam.requestCC(user.getEmail(), user.getPassword());
 
-                String startTime = (mYear+"/"+mMonth+"/"+mDay+" "+mStartHour+":"+mStartMinute);
-                String endTime = (mYear+"/"+mMonth+"/"+mDay+" "+mEndHour+":"+mEndMinute);
-                ConferenceDatabaseHelper ConferenceDB = new ConferenceDatabaseHelper(getApplicationContext());
-                ConferenceDB.insert(startTime, endTime, "1111"+mEndMinute);
-                ConferenceDB.showList();
-                Log.v("dae", "data : "+ConferenceDB.conferenceList.toString());
+                String startTime = String.format("%d-%02d-%02dT%02d:%02d:00.000Z", mYear, mMonth+1, mDay, mStartHour, mStartMinute);
+                String endTime = String.format("%d-%02d-%02dT%02d:%02d:00.000Z", mYear, mMonth+1, mDay, mEndHour, mEndMinute);
 
+                Log.v("dae", "Start Time :"+startTime);
+                Log.v("dae", "End Time :"+ endTime);
 
-                Intent intent1 = new Intent(ConferenceRegisterActivity.this, ConferenceActivity.class);
-                startActivity(intent1);
-                finish();
+                ArrayList<String> arrayList = new ArrayList<>();
+
+                arrayList.add(User.getPhoneNumber(this));
+                if (mPhoneNum1 != null) {
+                    arrayList.add(mPhoneNum1);
+                }
+                if (mPhoneNum2 != null) {
+                    arrayList.add(mPhoneNum2);
+                }
+                if (mPhoneNum3 != null) {
+                    arrayList.add(mPhoneNum3);
+                }
+
+                ApiParamBuilder param = new ApiParamBuilder();
+                ServerApi server = new ServerApi();
+                JSONObject object = param.requestCC(arrayList, startTime, endTime);
+                server.requestConfernceCall(this, object, startTime, endTime);
+
+//                ConferenceDatabaseHelper ConferenceDB = new ConferenceDatabaseHelper(getApplicationContext());
+//                ConferenceDB.insert(startTime, endTime, "1111"+mEndMinute);
+//                ConferenceDB.showList();
+//                Log.v("dae", "data : "+ConferenceDB.conferenceList.toString());
+//
+//                Intent intent1 = new Intent(ConferenceRegisterActivity.this, ConferenceActivity.class);
+//                startActivity(intent1);
+//                finish();
                 break;
             case R.id.conference_register_cancle_btn:
                 Log.v("dae", "onClick conference_register_cancle_btn");
@@ -222,9 +250,9 @@ public class ConferenceRegisterActivity extends Activity {
             };
     //텍스트뷰의 값을 업데이트 하는 메소드
     void UpdateNow(){
-        mTxtDate.setText(String.format("%d/%d/%d", mYear, mMonth + 1, mDay));
-        mTxtStartTime.setText(String.format("%d:%d", mStartHour, mStartMinute));
-        mTxtEndTime.setText(String.format("%d:%d", mEndHour, mEndMinute));
+        mTxtDate.setText(String.format("%d/%02d/%02d", mYear, mMonth + 1, mDay));
+        mTxtStartTime.setText(String.format("%02d:%02d", mStartHour, mStartMinute));
+        mTxtEndTime.setText(String.format("%02d:%02d", mEndHour, mEndMinute));
     }
 
 }

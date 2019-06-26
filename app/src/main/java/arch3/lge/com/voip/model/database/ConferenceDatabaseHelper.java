@@ -88,13 +88,13 @@ public class ConferenceDatabaseHelper extends SQLiteOpenHelper {
                     do {
 
                         //테이블에서 두개의 컬럼값을 가져와서
-                        String Time = c.getString(c.getColumnIndex("timeInfo"));
+                        String Time = c.getString(c.getColumnIndex("startTime"));
                         String Phone = c.getString(c.getColumnIndex("phone"));
 
                         //HashMap에 넣습니다.
                         HashMap<String,String> persons = new HashMap<String,String>();
 
-                        persons.put(TIME_INFO,Time);
+                        persons.put(START_TIME,Time);
                         persons.put(PHONE,Phone);
 
                         //ArrayList에 추가합니다..

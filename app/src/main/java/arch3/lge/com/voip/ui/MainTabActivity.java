@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import arch3.lge.com.voip.R;
+import arch3.lge.com.voip.model.user.User;
 
 public class MainTabActivity extends AppCompatActivity {
     final String TAG = "MainTab";
@@ -63,6 +64,15 @@ public class MainTabActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
+                return true;
+            case R.id.log_out:
+                Log.v("dae", "log out");
+                Intent intent2 = new Intent(this, LoginActivity.class);
+                intent2.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent2);
+                User.setLogout(getApplicationContext());
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
