@@ -3,6 +3,7 @@ package arch3.lge.com.voip.model.call;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Observable;
 
@@ -12,6 +13,7 @@ public class PhoneState { //extends Observable {
     private CallState CallStatel = CallState.LISTENING;
     private VideoState  RecVideoState = VideoState.VIDEO_STOPPED;
     private String RemoteIP;
+    private ArrayList<String> RemoteIPs;
    // private String LocalIP;
     private String InComingIP;
     private String CmdIP;
@@ -59,34 +61,25 @@ public class PhoneState { //extends Observable {
         return RemoteIP;
     }
 
-//    public   void SetRinger(Boolean value) {
-//        RingerEnabled = value;
-//    }
-//
-//    public  Boolean GetRinger() {
-//        return RingerEnabled;
-//    }
-
-    public  void SetMic(Boolean value) {
-        MicEnabled = value;
+    public void setRemoteIPs(ArrayList<String> value) {
+        RemoteIPs = value;
     }
 
-    public  Boolean GetMic() {
-        return MicEnabled;
+    public ArrayList<String> getRemoteIPs() {
+        return RemoteIPs;
     }
 
-//    public void SetBoost(Boolean value) {
-//        BoostEnabled = value;
-//    }
-//
-//    public   Boolean GetBoost() {
-//        return BoostEnabled;
-//    }
-
-//    public  void NotifyUpdate() {
-//        setChanged();
-//        notifyObservers();
-//    }
+    public int myIndex(Context context) {
+        if (RemoteIPs == null) {
+            return  0;
+        }
+        for (int i = 0 ; i<RemoteIPs.size() ;i++) {
+            if (getPreviousIP(context).equals(RemoteIPs.get(i))) {
+                return i+1;
+            }
+        }
+        return  0;
+    }
 
     public void setCurrentIP(Context context, String ip) {
         SharedPreferences.Editor editor = context.getSharedPreferences("network", Context.MODE_PRIVATE).edit();

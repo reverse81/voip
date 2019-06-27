@@ -12,6 +12,10 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 
 import arch3.lge.com.voip.R;
+import arch3.lge.com.voip.controller.CallController;
+import arch3.lge.com.voip.listener.TCPListenerService;
+import arch3.lge.com.voip.model.UDPnetwork.TCPCmd;
+import arch3.lge.com.voip.model.codec.VoIPVideoIo;
 import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
 import arch3.lge.com.voip.model.serverApi.ServerApi;
 
@@ -26,14 +30,13 @@ public class DialpadActivity  extends MainTabActivity {
         Log.e("sss", "enter");
         mNumberView = (TextView)findViewById(R.id.dialInput);
         mNumberView.setText(mNumberString);
+
+        {
+            Intent serviceIntent = new Intent(this, TCPListenerService.class);
+            this.startService(serviceIntent);
+            Log.i("dae", "Started TCPListenerService.class");
+        }
     }
-
-
-
-
-
-
-
 
     public void onClickDigit(View v)
     {
@@ -74,7 +77,9 @@ public class DialpadActivity  extends MainTabActivity {
         String phone = mNumberView.getText().toString();
         Intent screen = new Intent();
 
-        if (phone.startsWith("xxxx")) {
+        if (phone.startsWith("070")) {
+
+
             screen.setClassName(this.getPackageName(), ConferenceCallingActivity.class.getName());
             screen.putExtra("phoneNumber",  phone);
             this.startActivity(screen);
@@ -84,6 +89,17 @@ public class DialpadActivity  extends MainTabActivity {
             this.startActivity(screen);
         }
 
+//        {
+//            VoIPVideoIo io = VoIPVideoIo.getInstance();
+//            String ip = "10.0.2.21";
+//            io.attachIP(ip);
+//            Intent intent = new Intent();
+//            intent.setClassName(this.getPackageName(), TCPCmd.class.getName());
+//            intent.setAction(TCPCmd.GUI_VOIP_CTRL);
+//            intent.putExtra("message", "/CALL_BUTTON/");
+//            intent.putExtra("sender", ip);
+//            this.startService(intent);
+//        }
 
         Log.e(TAG, "onClickCall = "+v.getId());
 

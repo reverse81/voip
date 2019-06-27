@@ -7,24 +7,22 @@
     tools:context=".ui.CallingActivity">
 
     <ImageView
-        tools:srcCompat="@tools:sample/avatars"
         android:id="@+id/target"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:rotation="-90"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@id/self"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        tools:srcCompat="@tools:sample/avatars"
         android:id="@+id/self"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:rotation="-90"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/target" />
 
@@ -47,7 +45,7 @@
         android:id="@+id/bluetooth"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="64dp"
+        android:layout_marginStart="48dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/bluetooth_disable"
         android:background="@color/colorTransparency"
@@ -60,7 +58,7 @@
         android:id="@+id/mic"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="64dp"
+        android:layout_marginStart="48dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/mic_on"
         android:background="@color/colorTransparency"
@@ -72,7 +70,7 @@
         android:id="@+id/end_call"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="64dp"
+        android:layout_marginStart="48dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/end_call"
         android:background="@color/colorTransparency"

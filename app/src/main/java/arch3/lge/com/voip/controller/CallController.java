@@ -11,10 +11,13 @@ import org.json.JSONObject;
 import arch3.lge.com.voip.model.UDPnetwork.TCPCmd;
 import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.codec.VoIPAudioIo;
+import arch3.lge.com.voip.model.codec.VoIPAudioIoCC;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
+import arch3.lge.com.voip.model.codec.VoIPVideoIoCC;
 import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
 import arch3.lge.com.voip.model.serverApi.ServerApi;
 import arch3.lge.com.voip.ui.BaseCallActivity;
+import arch3.lge.com.voip.ui.ConferenceCallingActivity;
 
 public class CallController {
     public final static String LOG_TAG = "VoIP:CallController";
@@ -69,6 +72,19 @@ public class CallController {
 
         mCurrent.StopReceiveVideoThread();
         VoIPVideoIo.getInstance().EndVideo();
+    }
+
+    static public void startCCCall(Context context, String phoneNumber) {
+        JSONObject object = param.getPhoneParam(phoneNumber);
+        serverApi.getIPforCC(context, object);
+    }
+
+    static public void endCCCall(ConferenceCallingActivity ccActivity) {
+        ccActivity.StopReceiveVideoThread();
+        VoIPVideoIoCC.getInstance(ccActivity).EndVideo();
+        //VoIPAudioIoCC.getInstance(ccActivity).EndAudio();
+        ccActivity.finish();
+
     }
 
     static private BaseCallActivity mCurrent;

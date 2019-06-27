@@ -1,36 +1,34 @@
 package arch3.lge.com.voip.model.codec;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.net.InetSocketAddress;
-import java.io.InputStream;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import android.content.Context;
-import android.media.AudioManager;
 import android.media.AudioAttributes;
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.media.audiofx.AcousticEchoCanceler;
-import android.media.audiofx.AutomaticGainControl;
 import android.media.audiofx.NoiseSuppressor;
-import android.util.Log;
 import android.os.Process;
+import android.util.Log;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.model.UDPnetwork.UserDatagramSocket;
+import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.utils.NetworkConstants;
+import arch3.lge.com.voip.utils.Util;
 
-public class VoIPAudioIo {
+public class VoIPAudioIoCC {
 
     private static final String LOG_TAG = "VoIPAudioIo";
     private static final int MILLISECONDS_IN_A_SECOND = 1000;
@@ -44,31 +42,55 @@ public class VoIPAudioIo {
     private Thread AudioIoThread = null;
     private boolean IsRunning = false;
     private boolean AudioIoThreadThreadRun = false;
-    private LinkedBlockingQueue<byte[]> IncommingpacketQueue;
+   // private LinkedBlockingQueue<byte[]> IncommingpacketQueue1;
+   private LinkedBlockingQueue<byte[]> IncommingpacketQueue;
     private AudioCodec mCodec;
-    // private boolean mBoostAudio = false;
-    private UserDatagramSocket mSock = new UserDatagramSocket(NetworkConstants.VOIP_AUDIO_UDP_PORT);
 
-    private VoIPAudioIo(Context context) {
+    private DatagramSocket sendUdpSocket;
+    private ArrayList<DatagramSocket> receiveUDPSocketList = new ArrayList<>();
+    private ArrayList<LinkedBlockingQueue<byte[]>> IncommingpacketQueueList = new ArrayList<>();
+
+    // private boolean mBoostAudio = false;
+   // private UserDatagramSocket mSock = new UserDatagramSocket(NetworkConstants.VOIP_AUDIO_UDP_PORT);
+
+    private VoIPAudioIoCC(Context context) {
         mContext = context;
         mCodec = CodecFacotry.createAudio(CodecFacotry.AudioCodecType.G729B);
     }
 
-    private static VoIPAudioIo mVoIPAudioIo;
-    public static VoIPAudioIo getInstance(Context context) {
+    private static VoIPAudioIoCC mVoIPAudioIo;
+    public static VoIPAudioIoCC getInstance(Context context) {
         if (mVoIPAudioIo == null) {
-            mVoIPAudioIo = new VoIPAudioIo(context);
+            mVoIPAudioIo = new VoIPAudioIoCC(context);
         }
         return mVoIPAudioIo;
     }
 
-    public synchronized boolean StartAudio(String ip, int SimVoice) {
+    public synchronized boolean StartAudio() {
         if (IsRunning) return (true);
         if (mCodec.open() == true)
             Log.i(LOG_TAG, "JniGsmOpen() Success");
-        IncommingpacketQueue = new LinkedBlockingQueue<>(20);
-        mSimVoice = SimVoice;
-        mSock.setAddress(ip);
+
+        ArrayList<String> ips = PhoneState.getInstance().getRemoteIPs();
+
+        int port = NetworkConstants.VOIP_VIDEO_UDP_PORT+1;
+        for (String ip : ips) {
+            try {
+                DatagramSocket receiveUDPSocket = new DatagramSocket();
+                receiveUDPSocket.setReuseAddress(true);
+                receiveUDPSocket.bind(new InetSocketAddress(port++));
+                receiveUDPSocketList.add(receiveUDPSocket);
+
+                LinkedBlockingQueue<byte[]> queue = new LinkedBlockingQueue<>(20);
+                IncommingpacketQueueList.add(queue);
+
+            } catch (SocketException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
         StartAudioIoThread();
         StartReceiveDataThread();
         IsRunning = true;
@@ -79,9 +101,15 @@ public class VoIPAudioIo {
         if (!IsRunning) return (true);
         Log.i(LOG_TAG, "Ending VoIp Audio");
 
-        mSock.closeSendSocket();
-        mSock.setListener(null);
+        sendUdpSocket.disconnect();
+        Util.safetyClose(sendUdpSocket);
 
+        for (DatagramSocket socket : receiveUDPSocketList) {
+            socket.disconnect();
+            socket.close();
+        }
+
+        receiveUDPSocketList.clear();
 
         Log.i(LOG_TAG, "Ending VoIp Audio");
         if (AudioIoThread != null && AudioIoThread.isAlive()) {
@@ -97,7 +125,8 @@ public class VoIPAudioIo {
         }
 
         AudioIoThread = null;
-        IncommingpacketQueue = null;
+
+        IncommingpacketQueueList.clear();
         mCodec.close();
         IsRunning = false;
         return (false);
@@ -204,7 +233,7 @@ public class VoIPAudioIo {
                         }
                         if (BytesRead == RAW_BUFFER_SIZE) {
                             byte[] gsmbuf = mCodec.encode(rawbuf, 0, rawbuf.length);
-                            mSock.send(gsmbuf);
+                           // mSock.send(gsmbuf);
                         }
                     }
                     Recorder.stop();
@@ -232,30 +261,30 @@ public class VoIPAudioIo {
 
     private void StartReceiveDataThread() {
 
-        mSock.setListener(new UserDatagramSocket.PacketDataHandler() {
+      //  mSock.setListener(new UserDatagramSocket.PacketDataHandler() {
 
-            boolean logged = true;
-            @Override
-            public void onReceive(DatagramPacket packet) {
-                // if (packet.getLength() == GSM_BUFFER_SIZE) {
-//                if (logged && packet.getLength()>5) {
-//                    Log.i(LOG_TAG, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+ packet.getLength());
-//                    //   logged = false;
+//            boolean logged = true;
+//            @Override
+//            public void onReceive(DatagramPacket packet) {
+//                // if (packet.getLength() == GSM_BUFFER_SIZE) {
+////                if (logged && packet.getLength()>5) {
+////                    Log.i(LOG_TAG, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+ packet.getLength());
+////                    //   logged = false;
+////                }
+//                byte[] coded = packet.getData();
+//                byte[] rawbuf = mCodec.decode(coded, 0, packet.getLength());
+//                if (IncommingpacketQueue.remainingCapacity() >1)  {
+//                    IncommingpacketQueue.add(rawbuf);
+//                } else {
+//                    IncommingpacketQueue.remove();
+//                    IncommingpacketQueue.add(rawbuf);
 //                }
-                byte[] coded = packet.getData();
-                byte[] rawbuf = mCodec.decode(coded, 0, packet.getLength());
-                if (IncommingpacketQueue.remainingCapacity() >1)  {
-                    IncommingpacketQueue.add(rawbuf);
-                } else {
-                    IncommingpacketQueue.remove();
-                    IncommingpacketQueue.add(rawbuf);
-                }
-
-                //Log.i(LOG_TAG, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA         "+ IncommingpacketQueue.size());
-                //  } else
-                //     Log.i(LOG_TAG, "Invalid Packet LengthReceived: " + packet.getLength());
-            }
-        });
+//
+//                //Log.i(LOG_TAG, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA         "+ IncommingpacketQueue.size());
+//                //  } else
+//                //     Log.i(LOG_TAG, "Invalid Packet LengthReceived: " + packet.getLength());
+//            }
+//        });
     }
 
 }

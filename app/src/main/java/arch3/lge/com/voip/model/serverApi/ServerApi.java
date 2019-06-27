@@ -13,6 +13,7 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.listener.TCPListenerService;
 import arch3.lge.com.voip.model.UDPnetwork.TCPCmd;
 import arch3.lge.com.voip.model.call.PhoneState;
@@ -40,6 +41,7 @@ public class ServerApi {
     public final static String API_GET_CC = "schedule/myschedule";  // get
     public final static String API_CREATE = "users/create";   //post
     public final static String API_UPDATE = "users/update";   //post
+    public final static String API_GET_IP_CC= "schedule/IP";  // get
 
     public void login (final Context context, String source,final String email) {
         try {
@@ -163,6 +165,7 @@ public class ServerApi {
                                 Toast.makeText(activity, "이메일 중복", Toast.LENGTH_SHORT).show();
                             else {
                                 Toast.makeText(activity, "생성완료", Toast.LENGTH_SHORT).show();
+
                                 User.saveLogin(activity, null, email, null);
                                 Intent intent = new Intent(activity, LoginActivity.class);
                                 activity.startActivity(intent);
@@ -172,6 +175,7 @@ public class ServerApi {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
                             String res = new String(responseBody);
                             Log.e("tag", "실패 : " + res);
                             Toast.makeText(activity, "전송실패", Toast.LENGTH_SHORT).show();
@@ -255,7 +259,7 @@ public class ServerApi {
                                 context.startService(intent);
 
                             } catch (JSONException e) {
-
+                                CallController.finish();
                             }
 
                             Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
@@ -265,7 +269,9 @@ public class ServerApi {
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
 //                            String res = new String(responseBody);
 //                            Log.e("tag", "실패 : " + res);
-                            Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
+
+                            Toast.makeText(context, "Wrong number", Toast.LENGTH_SHORT).show();
+
 
                                 //JSONObject jsonObject = new JSONObject(res);
 //                                String ip = "10.0.1.2";
@@ -313,8 +319,9 @@ public class ServerApi {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            String res = new String(responseBody);
-                            Log.e("tag", "실패 : " + res);
+
+                            //String res = new String(responseBody);
+                            //Log.e("tag", "실패 : " + res);
                             Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
                             PhoneState.setUpdatingIP(0);
                         }
@@ -368,6 +375,7 @@ public class ServerApi {
             client.addHeader("client","app");
             client.addHeader("Authorization", "Bearer "+User.getLogin(activity));
 
+
             client.post(activity,  NetworkConstants.serverAddress + API_CREATE_CC
                     , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
                         @Override
@@ -381,7 +389,9 @@ public class ServerApi {
 //                            ConferenceDB.showList();
 //                            Log.v("dae", "data : "+ConferenceDB.conferenceList.toString());
 
+
 //                            Intent intent1 = new Intent(context, ConferenceActivity.class);
+
 
                             try {
                                 JSONObject object = new JSONObject(res);
@@ -394,10 +404,10 @@ public class ServerApi {
                                 ConferenceDB.showList();
                                 Log.v("dae", "data : "+ConferenceDB.conferenceList.toString());
 
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-
 
 
                             Intent intent1 = new Intent(activity, ConferenceActivity.class);
@@ -438,6 +448,41 @@ public class ServerApi {
 
 
                             Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            String res = new String(responseBody);
+                            Log.e("tag", "실패 : " + res);
+                            Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
+                        }
+                    }  );
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getIPforCC (final Context context, JSONObject object) {
+        try {
+
+            StringEntity entity = new StringEntity(object.toString(), "UTF-8");
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.addHeader("project","voip");
+            client.addHeader("client","app");
+            client.addHeader("Authorization", "Bearer "+User.getLogin(context));
+
+            client.get(context,  NetworkConstants.serverAddress + API_GET_IP_CC
+                    , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            String res = new String(responseBody);
+                            Log.e("tag", "응답 RES = " + res);
+                            Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
+
+                          //////  PhoneState.getInstance().setRemoteIPs(null);
+
                         }
 
                         @Override
