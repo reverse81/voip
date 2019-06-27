@@ -110,6 +110,7 @@ public class TCPListenerService extends Service {
                 // Invalid notification received
                 if (messageIn.startsWith("{"))
                 {
+                    //{"phoneNumber":"07038557462","schedule":{"from":"2019-06-27T16:03:00.000Z","to":"2019-06-27T17:03:00.000Z"}}
                     try {
                         JSONObject object = new JSONObject(messageIn);
                         String phoneNumber = object.getString("phoneNumber");

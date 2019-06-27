@@ -53,6 +53,8 @@ public class ConferenceCallingActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().hide();
 
+        setContentView(R.layout.activity_conference_calling);
+
         String phoneNumber = getIntent().getStringExtra("phoneNumber");
         CallController.startCCCall(this, phoneNumber);
 
@@ -77,9 +79,9 @@ public class ConferenceCallingActivity extends AppCompatActivity {
                     SensorManager.SENSOR_DELAY_NORMAL);
         }
 
-        StartReceiveVideoThread();
-        VoIPVideoIoCC.getInstance(this).startVideo();
-        VoIPAudioIoCC.getInstance(this).StartAudio();
+//        StartReceiveVideoThread();
+//        VoIPVideoIoCC.getInstance(this).startVideo();
+//        VoIPAudioIoCC.getInstance(this).StartAudio();
 
         ImageButton endCall = (ImageButton) findViewById(R.id.end_call);
         endCall.setOnClickListener(new View.OnClickListener() {
