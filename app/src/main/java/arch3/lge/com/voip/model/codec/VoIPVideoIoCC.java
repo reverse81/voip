@@ -1,88 +1,71 @@
 package arch3.lge.com.voip.model.codec;
 
 
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
-
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
-import android.graphics.YuvImage;
-import android.hardware.* ; // avoid  deprecation warning import android.hardware.Camera;
-import android.provider.MediaStore;
+import android.hardware.Camera;
 import android.util.Log;
 import android.widget.ImageView;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.List;
+import java.util.ArrayList;
 
+import arch3.lge.com.voip.controller.DeviceContorller;
+import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.utils.NetworkConstants;
 import arch3.lge.com.voip.utils.Util;
 
-import static android.support.constraint.Constraints.TAG;
-import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
-
 @SuppressWarnings("deprecation")
-public class VoIPVideoIo implements  Camera.PreviewCallback{
+public class VoIPVideoIoCC implements  Camera.PreviewCallback{
     private static final String LOG_TAG = "VoIPVideoIo";
 
     private static final int MAX_VIDEO_FRAME_SIZE =640*480*4;
     private DatagramSocket SendUdpSocket;
-    private InetAddress remoteIp;                   // Address to call
+    private ArrayList<InetAddress> remoteIPList;                   // Address to call
     private boolean IsRunning = false;
     @SuppressWarnings("FieldCanBeLocal")
     private SurfaceTexture mtexture;
     @SuppressWarnings("deprecation")
     private Camera mCamera;
     private int frame;
-    private ImageView selfView;
+    //private ImageView selfView;
     private VideoCodec mCodec;
+    private Context mContext;
 
-    private VoIPVideoIo(){
+    private VoIPVideoIoCC(Context context){
         mCodec = CodecFacotry.createVideo(CodecFacotry.VideoCodecType.MJPEG);
+        mContext = context;
     }
 
-    private static VoIPVideoIo mVoIPVideoIo;
-    public static VoIPVideoIo getInstance() {
+    private static VoIPVideoIoCC mVoIPVideoIo;
+    public static VoIPVideoIoCC getInstance(Context context) {
         if (mVoIPVideoIo ==null) {
-            mVoIPVideoIo = new VoIPVideoIo();
+            mVoIPVideoIo = new VoIPVideoIoCC(context);
         }
         return mVoIPVideoIo;
     }
 
-    public void attachIP (String RemoteIP) {
-        InetAddress address = null;
-        try {
-            address = InetAddress.getByName(RemoteIP);
-            this.remoteIp = address;
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public  synchronized boolean StartVideo(ImageView view) {
-        if (IsRunning) {
-            Log.i(LOG_TAG, "Already Start VoIP Video");
-            selfView = view;
-            return true;
-        } else {
-            Log.i(LOG_TAG, "Start VoIP Video");
-            selfView = view;
-            OpenCamera();
-            IsRunning = true;
-            return false;
+    public void attachIP () {
+        for (String RemoteIP : PhoneState.getInstance().getRemoteIPs() ) {
+            InetAddress address = null;
+            try {
+                address = InetAddress.getByName(RemoteIP);
+                remoteIPList.add(address);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public  synchronized boolean restartVideo() {
+    public  synchronized boolean startVideo() {
         if (IsRunning) {
             Log.i(LOG_TAG, "Already Start VoIP Video");
             return true;
@@ -180,12 +163,7 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
 
             byte[] encryptedImageBytes = encipher.encrypt(imageBytes);
 
-            Bitmap image = mCodec.decode(imageBytes);
-            if (selfView!= null) {
-                selfView.setImageBitmap(image);
-            }
-
-            if (remoteIp != null) {
+            if (remoteIPList != null) {
               //  Log.i(LOG_TAG, ":"+encryptedImageBytes.length + " vs "+ imageBytes.length);
                 UdpSend(encryptedImageBytes);
                // UdpSend(imageBytes);
@@ -200,8 +178,15 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
             public void run() {
                 try {
                  //   Log.i(LOG_TAG, "Send UDP Video : " + bytes.length);
-                        DatagramPacket packet = new DatagramPacket(bytes, bytes.length, remoteIp, NetworkConstants.VOIP_VIDEO_UDP_PORT);
+                    int index = PhoneState.getInstance().myIndex(mContext);
+                    if (index == 0 )
+                    {
+                        return;
+                    }
+                    for (InetAddress remoteIp : remoteIPList) {
+                        DatagramPacket packet = new DatagramPacket(bytes, bytes.length, remoteIp, NetworkConstants.VOIP_VIDEO_UDP_PORT + index);
                         SendUdpSocket.send(packet);
+                    }
                 } catch (SocketException e) {
 
                     Log.e(LOG_TAG, "Failure. SocketException in UdpSend: " + e);

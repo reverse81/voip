@@ -2,6 +2,7 @@ package arch3.lge.com.voip.model.codec.video;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 
@@ -16,6 +17,19 @@ public class VideoMJPEG extends VideoCodec {
         return true;
     }
 
+    private Bitmap rotateBitmap(YuvImage yuvImage, int orientation, Rect rectangle)
+    {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        yuvImage.compressToJpeg(rectangle, 100, os);
+
+        Matrix matrix = new Matrix();
+        matrix.postRotate(orientation);
+        byte[] bytes = os.toByteArray();
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        return Bitmap.createBitmap(bitmap, 0 , 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
+
     @Override
     public byte [] encode(byte[] data, int format, int width, int height){
         // Get the YuV image
@@ -24,8 +38,22 @@ public class VideoMJPEG extends VideoCodec {
         // Convert YuV to Jpeg
         Rect rect = new Rect(0, 0, width, height);
         ByteArrayOutputStream output_stream = new ByteArrayOutputStream();
-        yuv_image.compressToJpeg(rect, 40, output_stream);
-        return output_stream.toByteArray();
+
+        yuv_image.compressToJpeg(rect, 50, output_stream);
+        Matrix matrix = new Matrix();
+        matrix.postRotate(-90);
+
+        byte[] bytes = output_stream.toByteArray();
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        bitmap = Bitmap.createBitmap(bitmap, 0 , 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+        ByteArrayOutputStream returnStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, returnStream);
+        return returnStream.toByteArray();
+     //   return Bitmap.createBitmap(bitmap, 0 , 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+
+        //eturn
     }
 
     @Override

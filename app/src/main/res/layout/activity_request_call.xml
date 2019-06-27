@@ -10,12 +10,10 @@
         android:id="@+id/selfImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitStart"
-        android:rotation="-90"
+        android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars"
-        />
+        tools:srcCompat="@tools:sample/avatars" />
 
     <ImageButton
         android:id="@+id/end_call"

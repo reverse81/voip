@@ -1,5 +1,7 @@
 package arch3.lge.com.voip.ui;
 
+import android.content.Context;
+import android.media.AudioManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -56,7 +58,7 @@ public class CallingActivity extends BaseCallActivity {
                 boolean result = DeviceContorller.toggleSpeakerPhone(CallingActivity.this);
                 if (result) {
                     speaker.setImageResource(R.drawable.speaker);
-                    bluetooth.setImageResource(R.drawable.bluetooth_disable);
+                       bluetooth.setImageResource(R.drawable.bluetooth_disable);
                 } else {
                     speaker.setImageResource(R.drawable.speaker_mute);
                 }
@@ -71,7 +73,7 @@ public class CallingActivity extends BaseCallActivity {
                 boolean result =DeviceContorller.toggleBluetooth(CallingActivity.this);
                 if (result) {
                     speaker.setImageResource(R.drawable.speaker_mute);
-                    bluetooth.setImageResource(R.drawable.bluetooth);
+                    bluetooth.setImageResource(R.drawable.bluetooth_on);
                 } else {
                     bluetooth.setImageResource(R.drawable.bluetooth_disable);
                 }
