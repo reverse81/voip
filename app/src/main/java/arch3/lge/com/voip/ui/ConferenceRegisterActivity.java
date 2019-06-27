@@ -171,15 +171,31 @@ public class ConferenceRegisterActivity extends Activity {
                 ArrayList<String> arrayList = new ArrayList<>();
 
                 arrayList.add(User.getPhoneNumber(this));
-                if (mPhoneNum1 != null) {
-                    arrayList.add(mPhoneNum1);
+
+                TextView userview1 = (TextView) findViewById(R.id.conference_register_add1_txt);
+                if (userview1.length() > 0) {
+                    arrayList.add(userview1.getText().toString());
                 }
-                if (mPhoneNum2 != null) {
-                    arrayList.add(mPhoneNum2);
+
+                TextView userview2 = (TextView) findViewById(R.id.conference_register_add2_txt);
+                if (userview2.length() > 0) {
+                    arrayList.add(userview2.getText().toString());
                 }
-                if (mPhoneNum3 != null) {
-                    arrayList.add(mPhoneNum3);
+
+                TextView userview3 = (TextView) findViewById(R.id.conference_register_add3_txt);
+                if (userview3.length() > 0) {
+                    arrayList.add(userview3.getText().toString());
                 }
+
+//                if (mPhoneNum1 != null) {
+//                    arrayList.add(mPhoneNum1);
+//                }
+//                if (mPhoneNum2 != null) {
+//                    arrayList.add(mPhoneNum2);
+//                }
+//                if (mPhoneNum3 != null) {
+//                    arrayList.add(mPhoneNum3);
+//                }
 
                 ApiParamBuilder param = new ApiParamBuilder();
                 ServerApi server = new ServerApi();
