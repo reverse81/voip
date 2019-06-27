@@ -117,7 +117,7 @@ public class ServerApi {
             AsyncHttpClient client = new AsyncHttpClient();
             client.addHeader("project","voip");
             client.addHeader("client","app");
-            client.addHeader("Authorization", "Bearer "+User.getLogin(context));
+            //client.addHeader("Authorization", "Bearer "+User.getLogin(context));
 
             client.post(context,  NetworkConstants.serverAddress + API_RECOVERY
                     , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
@@ -125,7 +125,6 @@ public class ServerApi {
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             String res = new String(responseBody);
                             Log.e(LOG_TAG, "응답 RES = " + res);
-
 
                             Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
                         }

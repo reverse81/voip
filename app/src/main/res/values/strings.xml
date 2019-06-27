@@ -48,4 +48,8 @@
     <string name="new_conference_attendee2">User 2</string>
     <string name="new_conference_attendee3">User 3</string>
     <string name="new_conference_Add">Add</string>
+    <string name="password_question">What kind of animal do you like?</string>
+    <string name="password_hint">Password Hint</string>
+    <string name="password_forget">Forget PW</string>
+    <string name="phone_number">Phone Number</string>
 </resources>

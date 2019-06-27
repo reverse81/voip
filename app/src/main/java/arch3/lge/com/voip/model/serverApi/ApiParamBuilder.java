@@ -31,6 +31,7 @@ public class ApiParamBuilder {
     protected final static String KEY_EMAIL = "email";
     protected final static String KEY_PASSWORD = "pwd";
     protected final static String KEY_PASSWORD_NEW = "new_pwd";
+    protected final static String KEY_PASSWORD_RECOVERY = "recovery";
 
     protected final static String KEY_PHONENUMBER = "phone";
     protected final static String KEY_IP = "ip";
@@ -51,23 +52,25 @@ public class ApiParamBuilder {
         return mMandatoryParam;
     }
 
-    public JSONObject getRecovery(String email, String phonenumber) {
+    public JSONObject getRecovery(String email, String phone, JSONObject recovery) {
         JSONObject mMandatoryParam = new JSONObject();
         try {
             mMandatoryParam.put(KEY_EMAIL, email);
-            mMandatoryParam.put(KEY_PHONENUMBER, phonenumber);
-            Log.i(LOGTAG, mMandatoryParam.toString());
+            mMandatoryParam.put(KEY_PHONENUMBER, phone);
+            mMandatoryParam.put(KEY_PASSWORD_RECOVERY, recovery);
+            Log.i("dhtest", mMandatoryParam.toString());
         } catch (JSONException e) {
             Log.e(LOGTAG, "JSONException on getRetrieveApplistParam...", e);
         }
         return mMandatoryParam;
     }
 
-    public JSONObject getCreate(String email, String password) {
+    public JSONObject getCreate(String email, String password, JSONObject recovery) {
         JSONObject mMandatoryParam = new JSONObject();
         try {
             mMandatoryParam.put(KEY_EMAIL, email);
             mMandatoryParam.put(KEY_PASSWORD, password);
+            mMandatoryParam.put(KEY_PASSWORD_RECOVERY, recovery);
             Log.i(LOGTAG, mMandatoryParam.toString());
         } catch (JSONException e) {
             Log.e(LOGTAG, "JSONException on getRetrieveApplistParam...", e);
@@ -133,4 +136,5 @@ public class ApiParamBuilder {
         }
         return mMandatoryParam;
     }
+
 }

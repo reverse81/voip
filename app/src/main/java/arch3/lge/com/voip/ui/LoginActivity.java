@@ -95,7 +95,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.v("dae", "Login Register");
+                Log.v("dhtest", "Login Register");
                 attemptLogin();
             }
         });
@@ -104,11 +104,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mRegisterID.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.v("dae", "Listner Register");
+                Log.v("dhtest", "Listner Register");
                 registerID();
             }
         });
 
+        TextView mRecoveryPW = (TextView)findViewById(R.id.forget_pwd);
+        mRecoveryPW.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v("dhtest", "Listner Recovery");
+                forgetPW(mEmailView.getText().toString());
+            }
+        });
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -231,10 +239,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private void registerID(){
         //Register menu
-        Log.v("dae", "Register11");
+        Log.v("dhtest", "Register11");
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(intent);
-        finish();
+        //finish();
+    }
+
+    private void forgetPW(String emailText){
+        //Register menu
+        Log.v("dhtest", "Forget PW : "+emailText);
+        Intent intent = new Intent(LoginActivity.this, RecoveryActivity.class);
+        intent.putExtra("email", emailText);
+        startActivity(intent);
+        //finish();
     }
 
     private boolean isEmailValid(String email) {

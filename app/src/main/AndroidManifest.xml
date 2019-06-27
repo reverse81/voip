@@ -72,6 +72,7 @@
         <activity android:name=".ui.ConferenceRegisterActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".ui.RecoveryActivity"/>
         <receiver android:name=".listener.WifiReceiver" >
             <intent-filter android:priority="100">
                 <action android:name="android.net.wifi.STATE_CHANGE" />

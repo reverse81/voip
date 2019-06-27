@@ -9,6 +9,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import arch3.lge.com.voip.R;
@@ -20,6 +21,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     private AutoCompleteTextView emailText;
     private AutoCompleteTextView nameText;
+    private AutoCompleteTextView passwordHintText;
+
     private EditText passwordText;
     private EditText retypeText;
 
@@ -34,10 +37,9 @@ public class RegisterActivity extends AppCompatActivity {
         emailText.setText(email);
 
         nameText = (AutoCompleteTextView)findViewById(R.id.name);
-
         passwordText = (EditText)findViewById(R.id.password);
-
         retypeText = (EditText)findViewById(R.id.retype);
+        passwordHintText = (AutoCompleteTextView)findViewById(R.id.password_hint);
 
         Button registerButton = (Button) findViewById(R.id.buttonRegister);
         registerButton.setOnClickListener(new View.OnClickListener() {
@@ -54,6 +56,7 @@ public class RegisterActivity extends AppCompatActivity {
         emailText.setError(null);
         passwordText.setError(null);
         retypeText.setError(null);
+        passwordHintText.setError(null);
 
         // Store values at the time of the login attempt.
         User user = new User(emailText.getText().toString(), passwordText.getText().toString());
@@ -66,6 +69,13 @@ public class RegisterActivity extends AppCompatActivity {
         if (passwordText.length() < 8) {
             passwordText.setError(getString(R.string.error_invalid_password));
             focusView = passwordText;
+            cancel = true;
+        }
+
+        // Check for a valid password, if the user entered one.
+        if (passwordHintText.length() == 0) {
+            passwordHintText.setError(getString(R.string.error_field_required));
+            focusView = passwordHintText;
             cancel = true;
         }
 
@@ -96,9 +106,18 @@ public class RegisterActivity extends AppCompatActivity {
 
             //@TODO
             // Request register using controller
-            Log.v("dae", "Transmit email : "+user.getEmail()+" password:"+user.getPassword());//dhtest
+            Log.v("dhtest", "Transmit email : "+user.getEmail()+" password:"+user.getPassword()+" Hint:"+passwordHintText.getText().toString());//dhtest
             ApiParamBuilder createParam = new ApiParamBuilder();
-            JSONObject sendJsonObject = createParam.getCreate(user.getEmail(), user.getPassword());
+            JSONObject recovery = new JSONObject();
+            try {
+                recovery.put("question", "What kind of animal do you like?");
+                recovery.put("answer", passwordHintText.getText().toString());
+                Log.v("dhtest", recovery.toString());
+            } catch (JSONException e) {
+                Log.e("dhtest", "JSONException on getRetrieveApplistParam...", e);
+            }
+
+            JSONObject sendJsonObject = createParam.getCreate(user.getEmail(), user.getPassword(), recovery);
 
             ServerApi server = new ServerApi();
             server.create(this, sendJsonObject, user.getEmail());
