@@ -19,6 +19,7 @@ import java.util.Locale;
 
 import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.model.call.PhoneState;
+import arch3.lge.com.voip.model.database.ConferenceDatabaseHelper;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
 import arch3.lge.com.voip.model.serverApi.ServerApi;
@@ -117,6 +118,14 @@ public class TCPListenerService extends Service {
                         JSONObject schedule = object.getJSONObject("schedule");
                         String from = schedule.getString("from");
                         String to = schedule.getString("to");
+                        String startTimeDB = from.substring(0, 10) + " " + from.substring(11, 16);
+                        String endTimeDB = to.substring(0, 10) + " " + to.substring(11, 16);
+                        //dhtest
+                        Log.i("dhtest","TCP listener phone : "+phoneNumber+" from : "+startTimeDB+" to : "+endTimeDB);
+
+                        ConferenceDatabaseHelper ConferenceDB = new ConferenceDatabaseHelper(getApplicationContext());
+                        ConferenceDB.insert(startTimeDB, endTimeDB, phoneNumber);
+                        ConferenceDB.showList();
 
                     } catch (JSONException e) {
                         Log.e(LOG_TAG, sender + " sent invalid message: " + messageIn,e);
