@@ -29,6 +29,9 @@
         <activity android:name=".ui.CallingActivity"
             android:screenOrientation="portrait"
             />
+        <activity android:name=".ui.ConferenceCallingActivity"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".ui.LoginActivity"
             android:screenOrientation="portrait"
