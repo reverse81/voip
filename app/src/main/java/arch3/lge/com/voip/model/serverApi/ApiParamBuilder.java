@@ -30,6 +30,7 @@ public class ApiParamBuilder {
 
     protected final static String KEY_EMAIL = "email";
     protected final static String KEY_PASSWORD = "pwd";
+    protected final static String KEY_PASSWORD_NEW = "new_pwd";
 
     protected final static String KEY_PHONENUMBER = "phone";
     protected final static String KEY_IP = "ip";
@@ -110,8 +111,25 @@ public class ApiParamBuilder {
             mMandatoryParam.put(KEY_FROM, from);
             mMandatoryParam.put(KEY_TO, to);
             Log.i(LOGTAG, mMandatoryParam.toString());
+
         } catch (JSONException e) {
             Log.e(LOGTAG, "JSONException on getRetrieveApplistParam...", e);
+        }
+        return mMandatoryParam;
+    }
+
+    public JSONObject updateAccountInfo(String phoneNum, String email, String password, String newPassword) {
+        JSONObject mMandatoryParam = new JSONObject();
+        try {
+            mMandatoryParam.put(KEY_PHONENUMBER,phoneNum);
+            mMandatoryParam.put(KEY_EMAIL,email);
+            mMandatoryParam.put(KEY_PASSWORD,password);
+            if (newPassword != null)
+                mMandatoryParam.put(KEY_PASSWORD_NEW, newPassword);
+            Log.i(LOGTAG, mMandatoryParam.toString());
+            Log.v("dae", mMandatoryParam.toString());
+        } catch (JSONException e) {
+            Log.e(LOGTAG, "JSONException on updateAccountInfo...", e);
         }
         return mMandatoryParam;
     }

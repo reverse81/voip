@@ -39,6 +39,7 @@ public class ServerApi {
     public final static String API_CREATE_CC = "schedule/create";  // post
     public final static String API_GET_CC = "schedule/myschedule";  // get
     public final static String API_CREATE = "users/create";   //post
+    public final static String API_UPDATE = "users/update";   //post
 
     public void login (final Context context, String source,final String email) {
         try {
@@ -182,6 +183,49 @@ public class ServerApi {
             e.printStackTrace();
         }
     }
+
+    public void update (final Activity activity, JSONObject object, final String email) {
+        try {
+
+            StringEntity entity = new StringEntity(object.toString(), "UTF-8");
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.addHeader("project","voip");
+            client.addHeader("client","app");
+            client.addHeader("Authorization", "Bearer "+User.getLogin(activity));
+
+            client.post(activity,  NetworkConstants.serverAddress + API_UPDATE
+                    , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            String res = new String(responseBody);
+                            String duplicated = "User duplicated.";
+                            Log.e("tag", "응답 RES = " + res);
+
+                            if (res.equals(duplicated))
+                                Toast.makeText(activity, "Duplicated the e-mail", Toast.LENGTH_SHORT).show();
+                            else {
+                                Toast.makeText(activity, "Complete update...", Toast.LENGTH_SHORT).show();
+                                User.saveLogin(activity, null, email, null);
+                                //Intent intent = new Intent(activity, LoginActivity.class);
+                                //activity.startActivity(intent);
+                                activity.finish();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            String res = new String(responseBody);
+                            Log.e("tag", "실패 : " + res);
+                            Toast.makeText(activity, "전송실패", Toast.LENGTH_SHORT).show();
+                        }
+                    }  );
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void getIP (final Context context, JSONObject object,final VoIPVideoIo io) {
         try {

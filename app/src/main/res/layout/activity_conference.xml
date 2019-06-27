@@ -8,12 +8,12 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         layout="@layout/activity_main_tab" />
-
+    
 
     <ListView
         android:id="@+id/conference_list"
         android:layout_width="match_parent"
-        android:layout_height="371dp"></ListView>
+        android:layout_height="361dp"></ListView>
     <Button
         android:id="@+id/conference_new_btn"
         android:layout_width="200dp"

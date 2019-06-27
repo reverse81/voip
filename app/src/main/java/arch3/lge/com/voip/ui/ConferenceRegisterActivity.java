@@ -10,7 +10,9 @@ import android.icu.util.GregorianCalendar;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.DatePicker;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -38,6 +40,11 @@ public class ConferenceRegisterActivity extends Activity {
     private static String mPhoneNum2;
     private static String mPhoneNum3;
 
+    private Calendar cal = new GregorianCalendar();
+    private Calendar StartDatecal = new GregorianCalendar();
+    private Calendar EndDatecal = new GregorianCalendar();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,14 +65,13 @@ public class ConferenceRegisterActivity extends Activity {
 
         //현재 날짜와 시간을 가져오기위한 Calendar 인스턴스 선언
         if (mPhoneNum == null) {
-            Calendar cal = new GregorianCalendar();
             mYear = cal.get(Calendar.YEAR);
             mMonth = cal.get(Calendar.MONTH);
             mDay = cal.get(Calendar.DAY_OF_MONTH);
-            mStartHour = cal.get(Calendar.HOUR_OF_DAY);
-            mStartMinute = cal.get(Calendar.MINUTE);
-            mEndHour = cal.get(Calendar.HOUR_OF_DAY);
-            mEndMinute = cal.get(Calendar.MINUTE);
+            mStartHour = StartDatecal.get(Calendar.HOUR_OF_DAY);
+            mStartMinute = StartDatecal.get(Calendar.MINUTE);
+            mEndHour = EndDatecal.get(Calendar.HOUR_OF_DAY);
+            mEndMinute = EndDatecal.get(Calendar.MINUTE);
             mPhoneNum1 = null;
             mPhoneNum2 = null;
             mPhoneNum3 = null;
@@ -96,6 +102,32 @@ public class ConferenceRegisterActivity extends Activity {
                 textview.setText(mPhoneNum3);
             }
         }
+
+        //Spinner
+        Spinner s = (Spinner)findViewById(R.id.conference_register_endtime_btn);
+        s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //tv.setText("position : " + position + parent.getItemAtPosition(position));
+                Log.v("dae", "position : "+ position + "value : "+ parent.getItemAtPosition(position));
+                String selectValue = parent.getItemAtPosition(position).toString();
+                int value =  Integer.parseInt(selectValue);
+
+                mEndHour = mStartHour + value;
+
+                if (mEndHour > 23){
+                    mEndHour -= 24;
+                    EndDatecal.add(Calendar.DAY_OF_MONTH, 1);
+                }
+
+                UpdateNow();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                Log.v("dae", "Spinner nothing");
+            }
+        });
+
     }
 
 
@@ -205,6 +237,16 @@ public class ConferenceRegisterActivity extends Activity {
                 mYear = year;
                 mMonth = monthOfYear;
                 mDay = dayOfMonth;
+
+                cal.set(Calendar.YEAR, mYear);
+                cal.set(Calendar.MONTH, mYear);
+                cal.set(Calendar.DAY_OF_MONTH, mYear);
+                StartDatecal.set(Calendar.YEAR, mYear);
+                StartDatecal.set(Calendar.MONTH, mYear);
+                StartDatecal.set(Calendar.DAY_OF_MONTH, mYear);
+                EndDatecal.set(Calendar.YEAR, mYear);
+                EndDatecal.set(Calendar.MONTH, mYear);
+                EndDatecal.set(Calendar.DAY_OF_MONTH, mYear);
 
                 Log.v("dae", "Date "+mYear+" "+mMonth+" "+mDay);
 
