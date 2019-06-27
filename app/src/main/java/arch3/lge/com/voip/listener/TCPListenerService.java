@@ -117,7 +117,7 @@ public class TCPListenerService extends Service {
                         JSONObject schedule = object.getJSONObject("schedule");
                         String from = schedule.getString("from");
                         String to = schedule.getString("to");
-
+                        Log.e(LOG_TAG, sender + " server message: " + phoneNumber +" from : " + from +" to : " + to);
                     } catch (JSONException e) {
                         Log.e(LOG_TAG, sender + " sent invalid message: " + messageIn,e);
                     }

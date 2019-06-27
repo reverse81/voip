@@ -10,14 +10,18 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.listener.TCPListenerService;
 import arch3.lge.com.voip.model.UDPnetwork.TCPCmd;
 import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
+import arch3.lge.com.voip.model.codec.VoIPVideoIoCC;
 import arch3.lge.com.voip.model.database.ConferenceDatabaseHelper;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.model.user.User;
@@ -480,7 +484,20 @@ public class ServerApi {
                             Log.e("tag", "응답 RES = " + res);
                             Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
 
-                          //////  PhoneState.getInstance().setRemoteIPs(null);
+                            try {
+                                JSONArray array = new JSONArray(res);
+                                ArrayList<String> arrayList = new ArrayList<>();
+                                for (int i =0; i<array.length() ;i++ ) {
+                                   JSONObject item = (JSONObject) array.get(i);
+                                   arrayList.add(item.getString("ip"));
+                                   // Log.e("tag", "응답 ip = " + item.getString("ip"));
+                                }
+                                PhoneState.getInstance().setRemoteIPs(arrayList);
+                                VoIPVideoIoCC.getInstance(context).attachIP();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            //////  PhoneState.getInstance().setRemoteIPs(null);
 
                         }
 

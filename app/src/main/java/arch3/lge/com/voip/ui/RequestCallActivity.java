@@ -42,6 +42,25 @@ public class RequestCallActivity extends BaseCallActivity {
             }
         });
 
+        final ImageButton video = (ImageButton)findViewById(R.id.video_record);
+
+
+        video.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!VoIPVideoIo.getInstance().isBanned()) {
+                    VoIPVideoIo.getInstance().EndVideo();
+                    VoIPVideoIo.getInstance().setBanned(true);
+                    video.setImageResource(R.drawable.video_off);
+
+                } else {
+                    VoIPVideoIo.getInstance().restartVideo();
+                    VoIPVideoIo.getInstance().setBanned(false);
+                    video.setImageResource(R.drawable.video_on);
+                }
+            }
+        });
+
     }
 
     @Override

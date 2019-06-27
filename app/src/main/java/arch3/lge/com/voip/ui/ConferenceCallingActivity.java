@@ -79,8 +79,10 @@ public class ConferenceCallingActivity extends AppCompatActivity {
                     SensorManager.SENSOR_DELAY_NORMAL);
         }
 
-//        StartReceiveVideoThread();
-//        VoIPVideoIoCC.getInstance(this).startVideo();
+        Log.i(LOG_TAG, "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSs");
+        StartReceiveVideoThread();
+        Log.i(LOG_TAG, "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSs");
+        VoIPVideoIoCC.getInstance(this).startVideo();
 //        VoIPAudioIoCC.getInstance(this).StartAudio();
 
         ImageButton endCall = (ImageButton) findViewById(R.id.end_call);
@@ -105,15 +107,16 @@ public class ConferenceCallingActivity extends AppCompatActivity {
         // Create thread for receiving audio data
         PhoneState.getInstance().SetRecvVideoState(PhoneState.VideoState.RECEIVING_VIDEO);
         if ( UdpVoipReceiveVideoThreadRun) return;
+
         UdpVoipReceiveVideoThreadRun = true;
         UdpReceiveVideoThread1 = new Thread(new CCRunnable(NetworkConstants.VOIP_VIDEO_UDP_PORT+1 , (ImageView)findViewById(R.id.cc1)));
-        UdpReceiveVideoThread1.run();
+        UdpReceiveVideoThread1.start();
         UdpReceiveVideoThread2=new Thread(new CCRunnable(NetworkConstants.VOIP_VIDEO_UDP_PORT+2, (ImageView)findViewById(R.id.cc2)));
-        UdpReceiveVideoThread2.run();
+        UdpReceiveVideoThread2.start();
         UdpReceiveVideoThread3 = new Thread(new CCRunnable(NetworkConstants.VOIP_VIDEO_UDP_PORT+3, (ImageView)findViewById(R.id.cc3)));
-        UdpReceiveVideoThread3.run();
+        UdpReceiveVideoThread3.start();
         UdpReceiveVideoThread4 = new Thread(new CCRunnable(NetworkConstants.VOIP_VIDEO_UDP_PORT+4, (ImageView)findViewById(R.id.cc4)));
-        UdpReceiveVideoThread4.run();
+        UdpReceiveVideoThread4.start();
 
     }
 

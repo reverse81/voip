@@ -29,9 +29,17 @@ public class CallingActivity extends BaseCallActivity {
         StartReceiveVideoThread();
         this.attachImageView((ImageView)findViewById(R.id.target));
         Log.e(LOG_TAG, "Start send");
+
+        
+        final ImageButton video = (ImageButton)findViewById(R.id.video_record);
         VoIPVideoIo io = VoIPVideoIo.getInstance();
         io.attachIP(PhoneState.getInstance().getRemoteIP());
-        io.StartVideo((ImageView)findViewById(R.id.self));
+        if (!io.isBanned()) {
+            io.StartVideo((ImageView) findViewById(R.id.self));
+        } else {
+            io.attachView((ImageView) findViewById(R.id.self));
+            video.setImageResource(R.drawable.video_on);
+        }
 
 
         Log.e(LOG_TAG, "Start audio");
@@ -52,13 +60,31 @@ public class CallingActivity extends BaseCallActivity {
         final ImageButton bluetooth = (ImageButton)findViewById(R.id.bluetooth);
         final ImageButton mic = (ImageButton)findViewById(R.id.mic);
 
+
+
+        video.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!VoIPVideoIo.getInstance().isBanned()) {
+                    VoIPVideoIo.getInstance().EndVideo();
+                    VoIPVideoIo.getInstance().setBanned(true);
+                    video.setImageResource(R.drawable.video_off);
+
+                } else {
+                    VoIPVideoIo.getInstance().restartVideo();
+                    VoIPVideoIo.getInstance().setBanned(false);
+                    video.setImageResource(R.drawable.video_on);
+                }
+            }
+        });
+
         speaker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 boolean result = DeviceContorller.toggleSpeakerPhone(CallingActivity.this);
                 if (result) {
                     speaker.setImageResource(R.drawable.speaker);
-                       bluetooth.setImageResource(R.drawable.bluetooth_disable);
+                    bluetooth.setImageResource(R.drawable.bluetooth_disable);
                 } else {
                     speaker.setImageResource(R.drawable.speaker_mute);
                 }
