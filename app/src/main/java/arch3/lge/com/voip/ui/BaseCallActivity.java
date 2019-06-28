@@ -220,9 +220,7 @@ public class BaseCallActivity extends AppCompatActivity {
                //     Log.i("Sensor", "FAAAAAAAAAAAAAAAAAr");
                     if (wl !=null && wl.isHeld()) {
                         wl.release();
-                        if (!VoIPVideoIo.getInstance().isBanned()) {
-                            VoIPVideoIo.getInstance().restartVideo();
-                        }
+                        VoIPVideoIo.getInstance().restartVideo();
                     }
                 }
             }

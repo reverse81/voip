@@ -19,25 +19,63 @@
         android:id="@+id/video_record"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="64dp"
+        android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/video_on"
         android:background="@color/colorTransparency"
         android:scaleType="fitCenter"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/end_call"
+        app:layout_constraintBottom_toTopOf="@id/speaker"
         tools:layout_editor_absoluteY="672dp" />
 
+    <ImageButton
+        android:id="@+id/speaker"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/speaker_mute"
+        android:background="@color/colorTransparency"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteY="672dp" />
+
+    <ImageButton
+        android:id="@+id/bluetooth"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/bluetooth_disable"
+        android:background="@color/colorTransparency"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toEndOf="@+id/speaker"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteY="675dp" />
+
+    <ImageButton
+        android:id="@+id/mic"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/mic_on"
+        android:background="@color/colorTransparency"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toEndOf="@+id/bluetooth"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
     <ImageButton
         android:id="@+id/end_call"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="64dp"
+        android:layout_marginStart="48dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/end_call"
         android:background="@color/colorTransparency"
         android:scaleType="fitCenter"
-        android:text="reject"
+        app:layout_constraintStart_toEndOf="@+id/mic"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        />
 </android.support.constraint.ConstraintLayout>

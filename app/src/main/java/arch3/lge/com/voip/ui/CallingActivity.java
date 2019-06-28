@@ -30,7 +30,7 @@ public class CallingActivity extends BaseCallActivity {
         this.attachImageView((ImageView)findViewById(R.id.target));
         Log.e(LOG_TAG, "Start send");
 
-        
+
         final ImageButton video = (ImageButton)findViewById(R.id.video_record);
         VoIPVideoIo io = VoIPVideoIo.getInstance();
         io.attachIP(PhoneState.getInstance().getRemoteIP());
@@ -56,10 +56,20 @@ public class CallingActivity extends BaseCallActivity {
             }
         });
 
+        AudioManager audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         final ImageButton speaker = (ImageButton)findViewById(R.id.speaker);
         final ImageButton bluetooth = (ImageButton)findViewById(R.id.bluetooth);
         final ImageButton mic = (ImageButton)findViewById(R.id.mic);
 
+        if (audioManager.isMicrophoneMute()) {
+            mic.setImageResource(R.drawable.mic_off);
+        }
+        if (audioManager.isBluetoothScoOn()) {
+            bluetooth.setImageResource(R.drawable.bluetooth_on);
+        }
+        if (audioManager.isSpeakerphoneOn()) {
+            speaker.setImageResource(R.drawable.speaker);
+        }
 
 
         video.setOnClickListener(new View.OnClickListener() {

@@ -18,6 +18,7 @@ import java.net.Socket;
 import java.util.Locale;
 
 import arch3.lge.com.voip.controller.CallController;
+import arch3.lge.com.voip.model.UDPnetwork.TCPCmd;
 import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
@@ -84,15 +85,23 @@ public class TCPListenerService extends Service {
 
             case "/CALLIP/":
                 // Receives Call Requests
-
-                PhoneState.getInstance().setRemoteIP(sender);
-                intent.setClass(this, ReceivedCallActivity.class);
-                this.startActivity(intent);
+                if (PhoneState.getInstance().GetPhoneState() == PhoneState.CallState.LISTENING) {
+                    PhoneState.getInstance().setRemoteIP(sender);
+                    intent.setClass(this, ReceivedCallActivity.class);
+                    this.startActivity(intent);
+                } else {
+                    intent.setClassName(this.getPackageName(), TCPCmd.class.getName());
+                    intent.setAction(TCPCmd.GUI_VOIP_CTRL);
+                    intent.putExtra("message", "/BUSY_SIGNAL/");
+                    intent.putExtra("sender", sender);
+                    this.startService(intent);
+                }
 
                 break;
             case "/ANSWER/":
                 // Accept notification received. Start call
                 //finish activity??
+                PhoneState.getInstance().SetPhoneState(PhoneState.CallState.INCALL);
                 BaseCallActivity current =  CallController.getCurrent();
                 intent.setClass(this, CallingActivity.class);
                 this.startActivity(intent);
@@ -104,6 +113,10 @@ public class TCPListenerService extends Service {
             case "/REFUSE/":
             case "/ENDCALL/":
                 CallController.finish();
+                break;
+            case "/BUSY/":
+                CallController.busy();
+                //CallController.finish();
                 break;
 
             default:

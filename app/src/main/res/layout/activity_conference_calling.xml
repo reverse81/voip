@@ -7,10 +7,63 @@
     tools:context=".ui.CallingActivity">
 
     <ImageView
-        android:id="@+id/cc1"
+        android:id="@+id/cc1_back"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/colorAccent"
+        android:layout_marginTop="64dp"
+        android:layout_marginBottom="64dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cc2_back"
+        app:layout_constraintBottom_toTopOf="@id/cc3_back"
+        />
+
+    <ImageView
+        android:id="@+id/cc2_back"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorAccent"
+        android:layout_marginTop="64dp"
+        android:layout_marginBottom="64dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/cc1_back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/cc4_back"
+        />
+
+    <ImageView
+        android:id="@+id/cc3_back"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorAccent"
+        android:layout_marginTop="64dp"
+        android:layout_marginBottom="64dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cc4_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cc1_back" />
+
+    <ImageView
+        android:id="@+id/cc4_back"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorAccent"
+        android:layout_marginTop="64dp"
+        android:layout_marginBottom="64dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/cc3_back"
+        app:layout_constraintTop_toBottomOf="@id/cc2_back" />
+
+    <ImageView
+        android:id="@+id/cc1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/cc2"
@@ -21,7 +74,6 @@
         android:id="@+id/cc2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/cc1"
         app:layout_constraintTop_toTopOf="parent"
@@ -32,7 +84,6 @@
         android:id="@+id/cc3"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/cc4"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,22 +93,73 @@
         android:id="@+id/cc4"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/cc3"
         app:layout_constraintTop_toBottomOf="@id/cc2" />
 
     <ImageButton
+        android:id="@+id/video_record"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/video_on"
+        android:background="@color/colorTransparency"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteY="672dp" />
+
+    <ImageButton
+        android:id="@+id/speaker"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/speaker_mute"
+        android:background="@color/colorTransparency"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintBottom_toTopOf="@id/video_record"
+        tools:layout_editor_absoluteY="672dp" />
+
+    <ImageButton
+        android:id="@+id/bluetooth"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/bluetooth_disable"
+        android:background="@color/colorTransparency"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toEndOf="@+id/video_record"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteY="675dp" />
+
+    <ImageButton
+        android:id="@+id/mic"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/mic_on"
+        android:background="@color/colorTransparency"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toEndOf="@+id/bluetooth"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+    <ImageButton
         android:id="@+id/end_call"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="64dp"
+        android:layout_marginStart="48dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/end_call"
         android:background="@color/colorTransparency"
         android:scaleType="fitCenter"
-        android:text="reject"
+        app:layout_constraintStart_toEndOf="@+id/mic"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        />
 </android.support.constraint.ConstraintLayout>

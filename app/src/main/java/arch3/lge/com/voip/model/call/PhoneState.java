@@ -8,7 +8,8 @@ import java.util.Date;
 import java.util.Observable;
 
 public class PhoneState { //extends Observable {
-    public enum CallState {LISTENING, CALLING, INCOMMING, INCALL}
+
+    public enum CallState {LISTENING, CALLING, INCALL, BUSY }
     public enum VideoState {START_VIDEO, RECEIVING_VIDEO, STOP_VIDEO,VIDEO_STOPPED}
     private CallState CallStatel = CallState.LISTENING;
     private VideoState  RecVideoState = VideoState.VIDEO_STOPPED;

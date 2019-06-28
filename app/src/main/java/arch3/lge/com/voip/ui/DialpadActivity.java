@@ -44,7 +44,7 @@ public class DialpadActivity  extends MainTabActivity {
         {
             if(mDialNumId[idx] == v.getId())
             {
-                Log.e(TAG, "idx = "+idx);
+     //           Log.e(TAG, "idx = "+idx);
                 mNumberString += idx;
                 mNumberView.setText(mNumberString);
                 break;
@@ -53,13 +53,13 @@ public class DialpadActivity  extends MainTabActivity {
     }
     public void onClickAsterisk(View v)
     {
-        Log.e(TAG, "onClickAsterisk = "+v.getId());
+    //    Log.e(TAG, "onClickAsterisk = "+v.getId());
         mNumberString += "*";
         mNumberView.setText(mNumberString);
     }
     public void onClickSharp(View v)
     {
-        Log.e(TAG, "onClickSharp = "+v.getId());
+    //    Log.e(TAG, "onClickSharp = "+v.getId());
         mNumberString += "#";
         mNumberView.setText(mNumberString);
     }
@@ -68,8 +68,8 @@ public class DialpadActivity  extends MainTabActivity {
         Intent intent = new Intent(DialpadActivity.this, ContactListMgrActivity.class);
         intent.putExtra("PhoneNum", mNumberString);
         startActivity(intent);
-        Log.e(TAG, "onClickAdd = "+v.getId());
-        Log.v("dae", "Click Add btn, Phone Number : "+mNumberString);
+        //Log.e(TAG, "onClickAdd = "+v.getId());
+       // Log.v("dae", "Click Add btn, Phone Number : "+mNumberString);
 
     }
     public void onClickCall(View v)
@@ -101,14 +101,14 @@ public class DialpadActivity  extends MainTabActivity {
 //            this.startService(intent);
 //        }
 
-        Log.e(TAG, "onClickCall = "+v.getId());
+        Log.e(TAG, "onClickCall = "+phone);
 
 
         //finish();
     }
     public void onClickDell(View v)
     {
-        Log.e(TAG, "onClickDell = "+v.getId());
+       // Log.e(TAG, "onClickDell = "+v.getId());
         if(mNumberString.isEmpty())
             return;
         mNumberString = mNumberString.substring(0, mNumberString.length() - 1);

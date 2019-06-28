@@ -71,12 +71,8 @@ public class TCPCmd extends IntentService {
                 try {
                 //    EndRinger();
                     TCPSend(PhoneState.getInstance().getRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/ANSWER/");
-                    //InetAddress address = InetAddress.getByName(PhoneState.getInstance().GetRemoteIP());
+
                     PhoneState.getInstance().SetPhoneState(PhoneState.CallState.INCALL);
-//                    if (Audio.StartAudio(address, MainActivity.SimVoice))
-//                        Log.e(LOG_TAG, "Audio Already started (Answer Button)");
-//                    if (Video.StartVideo(address))
-//                        Log.e(LOG_TAG, "Video Already started (Answer Button)");
                     PhoneState.getInstance().SetRecvVideoState(PhoneState.VideoState.START_VIDEO);
                     Log.i(LOG_TAG, "Answered " + PhoneState.getInstance().getRemoteIP());
                 } catch (Exception e) {
@@ -88,37 +84,10 @@ public class TCPCmd extends IntentService {
             case "/REFUSE_CALL_BUTTON/":
                 TCPSend(PhoneState.getInstance().getRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/REFUSE/");
                 CallController.finish();
+            case "/BUSY_SIGNAL/":
+                TCPSend(PhoneState.getInstance().getRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/BUSY/");
              //   PhoneState.getInstance().NotifyUpdate();
                 break;
-//            case "/Audio_Output_Menu_Button/":
-//                if (MainActivity.AudioOutputTarget == MainActivity.EOutputTarget.SPEAKER) {
-//                    audioManager.setBluetoothScoOn(false);
-//                    audioManager.stopBluetoothSco();
-//                    audioManager.setSpeakerphoneOn(true);
-//                } else if (MainActivity.AudioOutputTarget == MainActivity.EOutputTarget.EARPIECE) {
-//                    audioManager.setBluetoothScoOn(false);
-//                    audioManager.stopBluetoothSco();
-//                    audioManager.setSpeakerphoneOn(false);
-//                } else if (MainActivity.AudioOutputTarget == MainActivity.EOutputTarget.BLUETOOTH) {
-//                    audioManager.setSpeakerphoneOn(false);
-//                    audioManager.setBluetoothScoOn(true);
-//                    audioManager.startBluetoothSco();
-//                }
-//                PhoneState.getInstance().NotifyUpdate();
-//                break;
-//            case "/Sim_Voice_Menu_Button/":
-//                PhoneState.getInstance().NotifyUpdate();
-//                break;
-//            case "/TOGGLE_MIC_BUTTON/":
-//                if (Sender.equals("true")) {
-//                    PhoneState.getInstance().SetMic(true);
-//                    audioManager.setMicrophoneMute(false);
-//                } else if (Sender.equals("false")) {
-//                    PhoneState.getInstance().SetMic(false);
-//                    audioManager.setMicrophoneMute(true);
-//                }
-//                PhoneState.getInstance().NotifyUpdate();
-//                break;
             default:
                 // Invalid notification received
                 Log.w(LOG_TAG, Sender + " sent invalid message: " + MessageIn);

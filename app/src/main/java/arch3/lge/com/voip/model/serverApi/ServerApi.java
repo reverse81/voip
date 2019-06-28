@@ -20,12 +20,14 @@ import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.listener.TCPListenerService;
 import arch3.lge.com.voip.model.UDPnetwork.TCPCmd;
 import arch3.lge.com.voip.model.call.PhoneState;
+import arch3.lge.com.voip.model.codec.VoIPAudioIoCC;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
 import arch3.lge.com.voip.model.codec.VoIPVideoIoCC;
 import arch3.lge.com.voip.model.database.ConferenceDatabaseHelper;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.model.user.User;
 import arch3.lge.com.voip.ui.ConferenceActivity;
+import arch3.lge.com.voip.ui.ConferenceCallingActivity;
 import arch3.lge.com.voip.ui.ConferenceRegisterActivity;
 import arch3.lge.com.voip.ui.DialpadActivity;
 import arch3.lge.com.voip.ui.LoginActivity;
@@ -77,7 +79,6 @@ public class ServerApi {
                                 Intent serviceIntent = new Intent(context, TCPListenerService.class);
                                 context.startService(serviceIntent);
                                 Log.e(LOG_TAG, "Started TCPListenerService.class");
-
 
                                 Intent intent = new Intent(context, DialpadActivity.class);
                                 context.startActivity(intent);
@@ -467,7 +468,7 @@ public class ServerApi {
         }
     }
 
-    public void getIPforCC (final Context context, JSONObject object) {
+    public void getIPforCC (final ConferenceCallingActivity context, JSONObject object) {
         try {
 
             StringEntity entity = new StringEntity(object.toString(), "UTF-8");
@@ -494,6 +495,10 @@ public class ServerApi {
                                 }
                                 PhoneState.getInstance().setRemoteIPs(arrayList);
                                 VoIPVideoIoCC.getInstance(context).attachIP();
+                                VoIPAudioIoCC.getInstance(context).attachIP();
+
+                                VoIPVideoIoCC.getInstance(context).startVideo();
+                                VoIPAudioIoCC.getInstance(context).StartAudio();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -503,8 +508,8 @@ public class ServerApi {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            String res = new String(responseBody);
-                            Log.e("tag", "실패 : " + res);
+                            //String res = new String(responseBody);
+                            //Log.e("tag", "실패 : " + res);
                             Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
                         }
                     }  );

@@ -7,6 +7,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.controller.CallController;
+import arch3.lge.com.voip.controller.DeviceContorller;
 import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.codec.VoIPAudioIoCC;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
@@ -51,11 +53,25 @@ public class ConferenceCallingActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                        | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         getSupportActionBar().hide();
 
         setContentView(R.layout.activity_conference_calling);
 
+        ArrayList<ImageView> images = new ArrayList<>();
+        images.add((ImageView)findViewById(R.id.cc1_back));
+        images.add((ImageView)findViewById(R.id.cc2_back));
+        images.add((ImageView)findViewById(R.id.cc3_back));
+        images.add((ImageView)findViewById(R.id.cc4_back));
+        VoIPAudioIoCC.getInstance(this).attachImageView(images);
+
         String phoneNumber = getIntent().getStringExtra("phoneNumber");
+
+        DeviceContorller.initDeviceForCC(this);
         CallController.startCCCall(this, phoneNumber);
 
         manager = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -79,19 +95,97 @@ public class ConferenceCallingActivity extends AppCompatActivity {
                     SensorManager.SENSOR_DELAY_NORMAL);
         }
 
-        Log.i(LOG_TAG, "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSs");
         StartReceiveVideoThread();
-        Log.i(LOG_TAG, "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSs");
-        VoIPVideoIoCC.getInstance(this).startVideo();
-//        VoIPAudioIoCC.getInstance(this).StartAudio();
 
+        AudioManager audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        final ImageButton speaker = (ImageButton)findViewById(R.id.speaker);
+        final ImageButton bluetooth = (ImageButton)findViewById(R.id.bluetooth);
+        final ImageButton mic = (ImageButton)findViewById(R.id.mic);
+
+        if (audioManager.isMicrophoneMute()) {
+            mic.setImageResource(R.drawable.mic_off);
+        }
+        if (audioManager.isBluetoothScoOn()) {
+            bluetooth.setImageResource(R.drawable.bluetooth_on);
+        }
+        if (audioManager.isSpeakerphoneOn()) {
+            speaker.setImageResource(R.drawable.speaker);
+        }
+
+        final ImageButton video = (ImageButton)findViewById(R.id.video_record);
+        VoIPVideoIo io = VoIPVideoIo.getInstance();
+        if (!io.isBanned()) {
+            io.StartVideo((ImageView) findViewById(R.id.self));
+        } else {
+            io.attachView((ImageView) findViewById(R.id.self));
+            video.setImageResource(R.drawable.video_on);
+        }
+
+
+        video.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!VoIPVideoIo.getInstance().isBanned()) {
+                    VoIPVideoIo.getInstance().EndVideo();
+                    VoIPVideoIo.getInstance().setBanned(true);
+                    video.setImageResource(R.drawable.video_off);
+
+                } else {
+                    VoIPVideoIo.getInstance().restartVideo();
+                    VoIPVideoIo.getInstance().setBanned(false);
+                    video.setImageResource(R.drawable.video_on);
+                }
+            }
+        });
+
+        speaker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean result = DeviceContorller.toggleSpeakerPhone(ConferenceCallingActivity.this);
+                if (result) {
+                    speaker.setImageResource(R.drawable.speaker);
+                    bluetooth.setImageResource(R.drawable.bluetooth_disable);
+                } else {
+                    speaker.setImageResource(R.drawable.speaker_mute);
+                }
+                //CallController.endCall(CallingActivity.this);
+            }
+        });
+
+
+        bluetooth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean result =DeviceContorller.toggleBluetooth(ConferenceCallingActivity.this);
+                if (result) {
+                    speaker.setImageResource(R.drawable.speaker_mute);
+                    bluetooth.setImageResource(R.drawable.bluetooth_on);
+                } else {
+                    bluetooth.setImageResource(R.drawable.bluetooth_disable);
+                }
+                //CallController.endCall(CallingActivity.this);
+            }
+        });
+
+        mic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean result =DeviceContorller.toggleMicMute(ConferenceCallingActivity.this);
+                if (result) {
+                    mic.setImageResource(R.drawable.mic_off);
+                } else {
+                    mic.setImageResource(R.drawable.mic_on);
+                }
+                //CallController.endCall(CallingActivity.this);
+            }
+        });
         ImageButton endCall = (ImageButton) findViewById(R.id.end_call);
         endCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 StopReceiveVideoThread();
                 VoIPVideoIoCC.getInstance(ConferenceCallingActivity.this).EndVideo();
-           //     VoIPAudioIoCC.getInstance(ConferenceCallingActivity.this).EndAudio();
+                VoIPAudioIoCC.getInstance(ConferenceCallingActivity.this).EndAudio();
                 CallController.endCCCall(ConferenceCallingActivity.this);
             }
         });
@@ -173,10 +267,10 @@ public class ConferenceCallingActivity extends AppCompatActivity {
                     // close socket
 
                 } catch (SocketException e) {
-                    UdpVoipReceiveVideoThreadRun = false;
+                   // UdpVoipReceiveVideoThreadRun = false;
                     Log.e(LOG_TAG, "SocketException: " + e.toString());
                 } catch (IOException e) {
-                    UdpVoipReceiveVideoThreadRun = false;
+                  //  UdpVoipReceiveVideoThreadRun = false;
                     Log.e(LOG_TAG, "IOException: " + e.toString());
                 } finally {
                     recvVideoUdpSocket.disconnect();

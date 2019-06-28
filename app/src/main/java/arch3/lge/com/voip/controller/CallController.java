@@ -18,6 +18,7 @@ import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
 import arch3.lge.com.voip.model.serverApi.ServerApi;
 import arch3.lge.com.voip.ui.BaseCallActivity;
 import arch3.lge.com.voip.ui.ConferenceCallingActivity;
+import arch3.lge.com.voip.ui.RequestCallActivity;
 
 public class CallController {
     public final static String LOG_TAG = "VoIP:CallController";
@@ -74,7 +75,7 @@ public class CallController {
         VoIPVideoIo.getInstance().EndVideo();
     }
 
-    static public void startCCCall(Context context, String phoneNumber) {
+    static public void startCCCall(ConferenceCallingActivity context, String phoneNumber) {
         JSONObject object = param.getPhoneParam(phoneNumber);
         serverApi.getIPforCC(context, object);
     }
@@ -85,6 +86,12 @@ public class CallController {
         //VoIPAudioIoCC.getInstance(ccActivity).EndAudio();
         ccActivity.finish();
 
+    }
+
+    static public void busy () {
+        if (mCurrent!=null && mCurrent instanceof RequestCallActivity) {
+            ((RequestCallActivity)mCurrent).changeTone();
+        }
     }
 
     static private BaseCallActivity mCurrent;
@@ -98,6 +105,7 @@ public class CallController {
     }
 
     static public void finish () {
+        PhoneState.getInstance().SetPhoneState(PhoneState.CallState.LISTENING);
         if (mCurrent != null) {
             DeviceContorller.initDevice(mCurrent);
             mCurrent.StopReceiveVideoThread();
