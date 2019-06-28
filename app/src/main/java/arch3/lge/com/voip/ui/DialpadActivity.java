@@ -7,17 +7,8 @@ import android.view.View;
 import android.widget.TextView;
 
 
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
-
 import arch3.lge.com.voip.R;
-import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.listener.TCPListenerService;
-import arch3.lge.com.voip.model.UDPnetwork.TCPCmd;
-import arch3.lge.com.voip.model.codec.VoIPVideoIo;
-import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
-import arch3.lge.com.voip.model.serverApi.ServerApi;
 
 public class DialpadActivity  extends MainTabActivity {
     final String TAG = "Dialpad";

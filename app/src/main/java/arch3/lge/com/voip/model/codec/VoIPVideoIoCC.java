@@ -24,7 +24,7 @@ import arch3.lge.com.voip.utils.Util;
 public class VoIPVideoIoCC implements  Camera.PreviewCallback{
     private static final String LOG_TAG = "VoIPVideoIo";
 
-    private static final int MAX_VIDEO_FRAME_SIZE =640*480*4;
+    private static final int MAX_VIDEO_FRAME_SIZE =320*480*4;
     private DatagramSocket SendUdpSocket;
     private ArrayList<InetAddress> remoteIPList = new ArrayList<>();                   // Address to call
     private boolean IsRunning = false;
@@ -128,8 +128,11 @@ public class VoIPVideoIoCC implements  Camera.PreviewCallback{
         }
 
         Camera.Parameters params = mCamera.getParameters();
-
-        //480 x 320
+//          h/w
+//        176 x 144
+//        320 x 240
+//        352 x 288
+//        480 x 320
 
         params.setPreviewSize(480, 640);
         params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);

@@ -1,6 +1,5 @@
 package arch3.lge.com.voip.controller;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -84,7 +83,7 @@ public class CallController {
     static public void endCCCall(ConferenceCallingActivity ccActivity) {
         ccActivity.StopReceiveVideoThread();
         VoIPVideoIoCC.getInstance(ccActivity).EndVideo();
-        //VoIPAudioIoCC.getInstance(ccActivity).EndAudio();
+        VoIPAudioIoCC.getInstance(ccActivity).EndAudio();
         ccActivity.finish();
 
     }

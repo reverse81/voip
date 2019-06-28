@@ -3,7 +3,6 @@ package arch3.lge.com.voip.ui;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.icu.util.Calendar;
 import android.icu.util.GregorianCalendar;
@@ -21,8 +20,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import arch3.lge.com.voip.R;
-import arch3.lge.com.voip.model.database.ConferenceDatabaseHelper;
-import arch3.lge.com.voip.model.database.ContactListDataHelper;
 import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
 import arch3.lge.com.voip.model.serverApi.ServerApi;
 import arch3.lge.com.voip.model.user.User;

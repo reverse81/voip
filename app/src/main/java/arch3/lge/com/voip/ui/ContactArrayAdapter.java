@@ -1,17 +1,8 @@
 package arch3.lge.com.voip.ui;
 
 import android.app.Activity;
-import android.content.Context;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.model.database.ContactListDataHelper;

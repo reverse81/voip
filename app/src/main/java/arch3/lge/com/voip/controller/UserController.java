@@ -5,7 +5,6 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
-import arch3.lge.com.voip.model.codec.VoIPVideoIo;
 import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
 import arch3.lge.com.voip.model.serverApi.ServerApi;
 

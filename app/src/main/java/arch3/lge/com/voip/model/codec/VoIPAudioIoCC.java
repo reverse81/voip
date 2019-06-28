@@ -6,7 +6,6 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
-import android.media.Image;
 import android.media.MediaRecorder;
 import android.media.audiofx.AcousticEchoCanceler;
 import android.media.audiofx.NoiseSuppressor;
@@ -28,13 +27,10 @@ import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import arch3.lge.com.voip.R;
-import arch3.lge.com.voip.model.UDPnetwork.UserDatagramSocket;
 import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.ui.ConferenceCallingActivity;
 import arch3.lge.com.voip.utils.NetworkConstants;
 import arch3.lge.com.voip.utils.Util;
-
-import static java.util.Arrays.copyOf;
 
 public class VoIPAudioIoCC {
 
@@ -44,22 +40,14 @@ public class VoIPAudioIoCC {
     private static final int SAMPLE_INTERVAL = 10;   // Milliseconds
     private static final int BYTES_PER_SAMPLE = 2;    // Bytes Per Sampl;e
     private static final int RAW_BUFFER_SIZE = SAMPLE_RATE / (MILLISECONDS_IN_A_SECOND / SAMPLE_INTERVAL) * BYTES_PER_SAMPLE;
-    private static final int GSM_BUFFER_SIZE = 33;
-    private int mSimVoice;
     private ConferenceCallingActivity mContext;
     private Thread AudioIoThread = null;
     private boolean IsRunning = false;
     private boolean AudioIoThreadThreadRun = false;
-   // private LinkedBlockingQueue<byte[]> IncommingpacketQueue1;
-   //private LinkedBlockingQueue<byte[]> IncommingpacketQueue;
     private AudioCodec mCodec;
 
     private DatagramSocket sendUdpSocket;
-   // private ArrayList<DatagramSocket> receiveUDPSocketList = new ArrayList<>();
   private ArrayList<LinkedBlockingQueue<byte[]>> mQueueList = new ArrayList<>();
-
-    // private boolean mBoostAudio = false;
-   // private UserDatagramSocket mSock = new UserDatagramSocket(NetworkConstants.VOIP_AUDIO_UDP_PORT);
 
     private VoIPAudioIoCC(ConferenceCallingActivity context) {
         mContext = context;
@@ -140,38 +128,20 @@ public class VoIPAudioIoCC {
         return (false);
     }
 
-    private InputStream OpenSimVoice(int SimVoice) {
-        InputStream VoiceFile = null;
-        switch (SimVoice) {
-            case 0:
-                break;
-            case 1:
-                VoiceFile = mContext.getResources().openRawResource(R.raw.t18k16bit);
-                break;
-            case 2:
-                VoiceFile = mContext.getResources().openRawResource(R.raw.t28k16bit);
-                break;
-            case 3:
-                VoiceFile = mContext.getResources().openRawResource(R.raw.t38k16bit);
-                break;
-            case 4:
-                VoiceFile = mContext.getResources().openRawResource(R.raw.t48k16bit);
-                break;
-            default:
-                break;
-        }
-        return VoiceFile;
-    }
+    private Thread player1;
+    private Thread player2;
+    private Thread player3;
+    private Thread player4;
 
-
+    private int audioSessionId;
     private void StartAudioIoThread() {
         // Creates the thread for capturing and transmitting audio
         AudioIoThreadThreadRun = true;
+
         AudioIoThread = new Thread(new Runnable() {
 
             @Override
             public void run() {
-                InputStream InputPlayFile;
                 Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO);
                 AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
                 int PreviousAudioManagerMode = 0;
@@ -182,12 +152,12 @@ public class VoIPAudioIoCC {
 
                 // Create an instance of the AudioRecord class
                 Log.i(LOG_TAG, "Audio Thread started. Thread id: " + Thread.currentThread().getId());
-                InputPlayFile = OpenSimVoice(mSimVoice);
+
                 AudioRecord Recorder = new AudioRecord(MediaRecorder.AudioSource.VOICE_COMMUNICATION, SAMPLE_RATE,
                         AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT,
                         AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT));
-                int audioSessionId = Recorder.getAudioSessionId();
-                if(NoiseSuppressor.isAvailable())
+                audioSessionId = Recorder.getAudioSessionId();
+                                if(NoiseSuppressor.isAvailable())
                 {
                     NoiseSuppressor ns = NoiseSuppressor.create(audioSessionId);
                     ns.setEnabled(true);
@@ -200,27 +170,15 @@ public class VoIPAudioIoCC {
                     Log.i(LOG_TAG, "AcousticEchoCanceler : "+ aec.getEnabled() );
                 }
 
-                ArrayList<AudioTrack> tracks = new ArrayList<>();
-                for (LinkedBlockingQueue queue : mQueueList)
-                {
-                    AudioTrack outTrack = new AudioTrack.Builder()
-                            .setAudioAttributes(new AudioAttributes.Builder()
-                                    .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
-                                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
-                                    //	.setFlags(AudioAttributes.FLAG_LOW_LATENCY) //This is Nougat+ only (API 25) comment if you have lower
-                                    .build())
-                            .setAudioFormat(new AudioFormat.Builder()
-                                    .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-                                    .setSampleRate(SAMPLE_RATE)
-                                    .setChannelMask(AudioFormat.CHANNEL_OUT_MONO).build())
-                            .setBufferSizeInBytes(RAW_BUFFER_SIZE)
-                            .setTransferMode(AudioTrack.MODE_STREAM)
-                            //.setPerformanceMode(AudioTrack.PERFORMANCE_MODE_LOW_LATENCY) //Not until Api 26
-                            .setSessionId(Recorder.getAudioSessionId())
-                            .build();
-                    tracks.add(outTrack);
-                }
+                player1 = new Thread(new AudioPlayer(mQueueList.get(0), imageList.get(0) , 0 == (PhoneState.getInstance().myIndex(mContext) -1) ) );
+                player2 = new Thread(new AudioPlayer(mQueueList.get(1) , imageList.get(1) , 1 == (PhoneState.getInstance().myIndex(mContext) -1) ));
+                player3 = new Thread(new AudioPlayer(mQueueList.get(2), imageList.get(2),  2== (PhoneState.getInstance().myIndex(mContext) -1) ));
+                player4 = new Thread(new AudioPlayer(mQueueList.get(3) , imageList.get(3), 3 == (PhoneState.getInstance().myIndex(mContext) -1)));
 
+                player1.start();
+                player2.start();
+                player3.start();
+                player4.start();
 
                 int BytesRead;
                 byte[] rawbuf = new byte[RAW_BUFFER_SIZE];
@@ -229,59 +187,11 @@ public class VoIPAudioIoCC {
                     // Create a socket and start recording
                     // DatagramSocket socket = new DatagramSocket();
                     Recorder.startRecording();
-                     for (LinkedBlockingQueue queue : mQueueList) {
-                        queue.clear();
-                    }
-                    for (AudioTrack track : tracks) {
-                        track.play();
-                    }
                     while (AudioIoThreadThreadRun) {
-                        for(int i=0; i<mQueueList.size();i++) {
-                            LinkedBlockingQueue<byte[]> queue = mQueueList.get(i);
-                            AudioTrack track = tracks.get(i);
-                            if (queue.size() > 0) {
-
-                                byte[] AudioOutputBufferBytes = queue.remove();
-                                if (AudioOutputBufferBytes.length > 160) {
-                                    AudioOutputBufferBytes = Arrays.copyOf(AudioOutputBufferBytes, AudioOutputBufferBytes.length-1);
-                                    final int index = i;
-                                    mContext.runOnUiThread(new Runnable() {
-                                                               @Override
-                                                               public void run() {
-                                                                   imageList.get(index).setVisibility(View.INVISIBLE);
-                                                               }
-                                                           });
-                                } else {
-                                    final int index = i;
-                                    mContext.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            imageList.get(index).setVisibility(View.VISIBLE);
-                                        }
-                                    });
-                                }
-                                if (i+1 != PhoneState.getInstance().myIndex(mContext)) {
-                                    track.write(AudioOutputBufferBytes, 0, RAW_BUFFER_SIZE);
-                                }
-                            }
-                        }
-
                         // Capture audio from microphone and send
                         BytesRead = Recorder.read(rawbuf, 0, RAW_BUFFER_SIZE);
-                        if (InputPlayFile != null) {
-                            BytesRead = InputPlayFile.read(rawbuf, 0, RAW_BUFFER_SIZE);
-                            if (BytesRead != RAW_BUFFER_SIZE) {
-                                InputPlayFile.close();
-                                InputPlayFile = OpenSimVoice(mSimVoice);
-                                BytesRead = InputPlayFile.read(rawbuf, 0, RAW_BUFFER_SIZE);
-                            }
-                        }
+
                         if (BytesRead == RAW_BUFFER_SIZE) {
-                            int index = PhoneState.getInstance().myIndex(mContext);
-                            if (index == 0 )
-                            {
-                                continue;
-                            }
                             byte[] gsmbuf = mCodec.encode(rawbuf, 0, rawbuf.length);
                             for (InetAddress remoteIp : remoteIPList) {
                                     DatagramPacket packet = new DatagramPacket(gsmbuf, gsmbuf.length, remoteIp, NetworkConstants.VOIP_AUDIO_UDP_PORT);
@@ -291,13 +201,7 @@ public class VoIPAudioIoCC {
                     }
                     Recorder.stop();
                     Recorder.release();
-                    for (AudioTrack track: tracks) {
-                        track.stop();
-                        track.flush();
-                        track.release();
-                    }
 
-                    if (InputPlayFile != null) InputPlayFile.close();
                     if (audioManager != null) audioManager.setMode(PreviousAudioManagerMode);
                     Log.i(LOG_TAG, "Audio Thread Stopped");
                 } catch (SocketException e) {
@@ -325,13 +229,82 @@ public class VoIPAudioIoCC {
         UdpReceiveAudioThread1.start();
     }
 
+    class AudioPlayer implements Runnable {
+
+        private LinkedBlockingQueue<byte[]> IncommingpacketQueue;
+        AudioTrack outTrack;
+        ImageView mImageView;
+        boolean mSelf;
+
+        public AudioPlayer(LinkedBlockingQueue<byte[]> queue,ImageView imageView,boolean self) {
+            IncommingpacketQueue = queue;
+            mImageView = imageView;
+            mSelf = self;
+        }
+
+        @Override
+        public void run() {
+            // Create an instance of AudioTrack, used for playing back audio
+            Log.i(LOG_TAG, "Receive Data Thread Started. Thread id: " + Thread.currentThread().getId());
+            try {
+                // Setup socket to receive the audio data
+                outTrack = new AudioTrack.Builder()
+                        .setAudioAttributes(new AudioAttributes.Builder()
+                                .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
+                                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                                //	.setFlags(AudioAttributes.FLAG_LOW_LATENCY) //This is Nougat+ only (API 25) comment if you have lower
+                                .build())
+                        .setAudioFormat(new AudioFormat.Builder()
+                                .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                                .setSampleRate(SAMPLE_RATE)
+                                .setChannelMask(AudioFormat.CHANNEL_OUT_MONO).build())
+                        .setBufferSizeInBytes(RAW_BUFFER_SIZE)
+                        .setTransferMode(AudioTrack.MODE_STREAM)
+                        //.setPerformanceMode(AudioTrack.PERFORMANCE_MODE_LOW_LATENCY) //Not until Api 26
+                        .setSessionId(audioSessionId)
+                        .build();
+
+                outTrack.play();
+                IncommingpacketQueue.clear();
+                while (AudioIoThreadThreadRun) {
+                    if (IncommingpacketQueue.size() >0) {
+                        byte[] AudioOutputBufferBytes = IncommingpacketQueue.remove();
+                        if (AudioOutputBufferBytes.length > 160) {
+                            AudioOutputBufferBytes = Arrays.copyOf(AudioOutputBufferBytes, AudioOutputBufferBytes.length - 1);
+                            mContext.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mImageView.setVisibility(View.INVISIBLE);
+                                }
+                            });
+                        } else {
+                            mContext.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mImageView.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        }
+                        if (!mSelf) {
+                            outTrack.write(AudioOutputBufferBytes, 0, RAW_BUFFER_SIZE);
+                        }
+                    }
+                }
+            } finally {
+                outTrack.stop();
+                outTrack.flush();
+                outTrack.release();
+            }
+        }
+    }
+
     class CCRunnable implements Runnable {
         DatagramSocket recvAudioUdpSocket;
         //private LinkedBlockingQueue<byte[]> IncommingpacketQueue;
 
         public CCRunnable() {
             for (int i=0;i<4 ;i++) {
-                LinkedBlockingQueue<byte[]> IncommingpacketQueue = new LinkedBlockingQueue<>(20);
+                LinkedBlockingQueue<byte[]> IncommingpacketQueue = new LinkedBlockingQueue<>(200);
                 mQueueList.add(IncommingpacketQueue);
             }
         }
@@ -366,7 +339,7 @@ public class VoIPAudioIoCC {
                         }
                     }
                     LinkedBlockingQueue<byte[]> IncommingpacketQueue = mQueueList.get(index);
-                    Log.i("SSSSSSSSSSSSSSSSS",index +" aaaaaaaaaaaaaaa "+ IncommingpacketQueue.size());
+                    //Log.i("SSSSSSSSSSSSSSSSS",index +" aaaaaaaaaaaaaaa "+ IncommingpacketQueue.size());
                     if (IncommingpacketQueue.remainingCapacity() >1)  {
                         IncommingpacketQueue.add(rawbuf);
 

@@ -1,28 +1,8 @@
 package arch3.lge.com.voip.model.UDPnetwork;
 
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.net.InetSocketAddress;
-import java.io.InputStream;
-
-import android.content.Context;
-import android.media.AudioManager;
-import android.media.AudioAttributes;
-import android.media.AudioFormat;
-import android.media.AudioRecord;
-import android.media.AudioTrack;
-import android.media.MediaRecorder;
 import android.util.Log;
-import android.os.Process;
+
 import java.io.*;
 import java.net.*;
 public class UserDatagramSocket {

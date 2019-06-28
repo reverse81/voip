@@ -175,9 +175,9 @@ public class ConferenceCallingActivity extends AppCompatActivity {
         endCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                StopReceiveVideoThread();
-                VoIPVideoIoCC.getInstance(ConferenceCallingActivity.this).EndVideo();
-                VoIPAudioIoCC.getInstance(ConferenceCallingActivity.this).EndAudio();
+                //StopReceiveVideoThread();
+//                VoIPVideoIoCC.getInstance(ConferenceCallingActivity.this).EndVideo();
+//                VoIPAudioIoCC.getInstance(ConferenceCallingActivity.this).EndAudio();
                 CallController.endCCCall(ConferenceCallingActivity.this);
             }
         });
@@ -317,13 +317,11 @@ public class ConferenceCallingActivity extends AppCompatActivity {
             // TODO Auto-generated method stub
             if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
                 if (event.values[0] == 0) {
-                    // Log.i("Sensor", "nEEEEEEEEEEEEEEEEEEEr");
                     if (wl !=null && !wl.isHeld()) {
                         wl.acquire();
                         VoIPVideoIoCC.getInstance(ConferenceCallingActivity.this).EndVideo();
                     }
                 } else {
-                    //     Log.i("Sensor", "FAAAAAAAAAAAAAAAAAr");
                     if (wl !=null && wl.isHeld()) {
                         wl.release();
                         VoIPVideoIoCC.getInstance(ConferenceCallingActivity.this).startVideo();

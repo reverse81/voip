@@ -3,7 +3,6 @@ package arch3.lge.com.voip.ui;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -27,8 +26,6 @@ import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.utils.NetworkConstants;
-
-import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 
 
 public class BaseCallActivity extends AppCompatActivity {

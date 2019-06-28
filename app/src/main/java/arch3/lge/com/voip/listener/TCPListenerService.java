@@ -164,7 +164,7 @@ public class TCPListenerService extends Service {
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
             LocalIpAddressBin = wifiInfo.getIpAddress();
             String ip =String.format(Locale.US, "%d.%d.%d.%d", (LocalIpAddressBin & 0xff), (LocalIpAddressBin >> 8 & 0xff), (LocalIpAddressBin >> 16 & 0xff), (LocalIpAddressBin >> 24 & 0xff));
-            if (!PhoneState.getInstance().getPreviousIP(this).equals(ip)) {
+          //  if (!PhoneState.getInstance().getPreviousIP(this).equals(ip)) {
                 if (PhoneState.getUpdatingIP() != LocalIpAddressBin ) {
                     PhoneState.setUpdatingIP(LocalIpAddressBin);
                     String phoneNumber = User.getPhoneNumber(this);
@@ -172,7 +172,7 @@ public class TCPListenerService extends Service {
                     serverApi.setIP(this, object, ip);
                 }
                // PhoneState.setCurrentIP(this, ip);
-            }
+        //    }
             startListenerForTCP();
 
 

@@ -2,14 +2,8 @@ package arch3.lge.com.voip.model.codec;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.net.InetSocketAddress;
 import java.io.InputStream;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -21,7 +15,6 @@ import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.media.audiofx.AcousticEchoCanceler;
-import android.media.audiofx.AutomaticGainControl;
 import android.media.audiofx.NoiseSuppressor;
 import android.util.Log;
 import android.os.Process;

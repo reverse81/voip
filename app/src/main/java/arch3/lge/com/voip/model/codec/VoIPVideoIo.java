@@ -147,6 +147,10 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
 
         Camera.Parameters params = mCamera.getParameters();
 
+        //720 x 1,280 pixels
+        //320 x 480
+        //640 x 320
+
         params.setPreviewSize(480, 640);
         params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         mCamera.setParameters(params);

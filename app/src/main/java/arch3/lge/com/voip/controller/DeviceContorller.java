@@ -3,8 +3,6 @@ package arch3.lge.com.voip.controller;
 import android.content.Context;
 import android.media.AudioManager;
 
-import arch3.lge.com.voip.model.call.PhoneState;
-
 public class DeviceContorller {
 
     static public boolean  toggleSpeakerPhone(Context context) {

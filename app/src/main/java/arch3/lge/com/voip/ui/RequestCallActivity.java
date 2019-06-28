@@ -3,23 +3,15 @@ package arch3.lge.com.voip.ui;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.Vibrator;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.controller.DeviceContorller;
-import arch3.lge.com.voip.model.codec.VoIPAudioIo;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
 
 public class RequestCallActivity extends BaseCallActivity {

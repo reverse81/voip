@@ -1,14 +1,11 @@
 package arch3.lge.com.voip.ui;
 
 import android.app.Activity;
-import android.content.Context;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.model.database.ConferenceDatabaseHelper;
-import arch3.lge.com.voip.model.database.ContactListDataHelper;
 
 public class ConferenceArrayAdapter {
 //    ArrayAdapter<String> mAdapter;

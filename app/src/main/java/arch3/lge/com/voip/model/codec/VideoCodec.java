@@ -2,8 +2,6 @@ package arch3.lge.com.voip.model.codec;
 
 import android.graphics.Bitmap;
 
-import java.io.ByteArrayOutputStream;
-
 public abstract class VideoCodec {
 
     public abstract boolean open();
