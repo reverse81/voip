@@ -15,7 +15,7 @@ public class AdaptiveBuffering {
     private int mLastSequence = 0;
     private byte [] mLastPacket;
 
-    private final static long COEF_A = 500;
+    private final static long COEF_A = 100;
     private final static long COEF_B = 4;
     private long mAveDi = 0;
     private long mAveVi = 0;
@@ -55,7 +55,9 @@ public class AdaptiveBuffering {
         long Pi = mAveDi + COEF_B*mAveVi;
         Log.d(LOG_TAG, "Di ="+ mAveDi+  " Vi ="+ mAveVi + " => "+ Pi);
         if((mLastSequence % 1000) == 0){
-         //   mQueueCapacity = (int)Pi / 10;
+            mQueueCapacity = (int)Pi / 10;
+            if (mQueueCapacity >= 20)
+                mQueueCapacity = 20;
             Log.d(LOG_TAG, "Capacity  update ="+ mQueueCapacity);
         }
     }
