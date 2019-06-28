@@ -67,7 +67,7 @@ public class DialpadActivity  extends MainTabActivity {
     }
     public void onClickAdd(View v)
     {
-        Intent intent = new Intent(DialpadActivity.this, ContactListMgrActivity.class);
+        Intent intent = new Intent(DialpadActivity.this, ContactListAddActivity.class);
         intent.putExtra("PhoneNum", mNumberString);
         startActivity(intent);
         //Log.e(TAG, "onClickAdd = "+v.getId());

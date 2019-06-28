@@ -126,4 +126,14 @@ public class ApiParamBuilder {
         return mMandatoryParam;
     }
 
+    public JSONObject requestConferenceInfo(String phoneNum) {
+        JSONObject mMandatoryParam = new JSONObject();
+        try {
+            mMandatoryParam.put(KEY_PHONENUMBER,phoneNum);
+            Log.i(LOGTAG, mMandatoryParam.toString());
+        } catch (JSONException e) {
+            Log.e(LOGTAG, "JSONException on updateAccountInfo...", e);
+        }
+        return mMandatoryParam;
+    }
 }

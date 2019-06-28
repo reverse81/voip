@@ -81,15 +81,19 @@ public class ServerApi {
 
                                 Intent intent = new Intent(context, DialpadActivity.class);
                                 context.startActivity(intent);
-                                Log.v("dae", "Success Transmit res : "+res);//dhtest
+                                Log.i("dhtest", "Success Transmit res : "+res);//dhtest
 
+                                ApiParamBuilder param = new ApiParamBuilder();
+                                JSONObject SendObject =  param.requestConferenceInfo(phoneNumber);
+                                requestGetConference(context, SendObject);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
 
-
-                            Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
+                            //CharSequence sendTxt = res;
+                            Toast.makeText(context, res, Toast.LENGTH_LONG).show();
+                            //Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
 
 
                             //@TODO save login & post IP
@@ -104,7 +108,8 @@ public class ServerApi {
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                             String res = new String(responseBody);
                             Log.e(LOG_TAG, "실패 : " + res);
-                            Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, res, Toast.LENGTH_LONG).show();
                         }
                     }  );
 
@@ -131,14 +136,16 @@ public class ServerApi {
                             String res = new String(responseBody);
                             Log.e(LOG_TAG, "응답 RES = " + res);
 
-                            Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, res, Toast.LENGTH_LONG).show();
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                             String res = new String(responseBody);
                             Log.e(LOG_TAG, "실패 : " + res);
-                            Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, res, Toast.LENGTH_LONG).show();
                         }
                     }  );
 
@@ -167,9 +174,11 @@ public class ServerApi {
                             Log.e("tag", "응답 RES = " + res);
 
                             if (res.equals(duplicated))
-                                Toast.makeText(activity, "이메일 중복", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(activity, "이메일 중복", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
                             else {
-                                Toast.makeText(activity, "생성완료", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(activity, "생성완료", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
 
                                 User.saveLogin(activity, null, email, null);
                                 Intent intent = new Intent(activity, LoginActivity.class);
@@ -183,7 +192,8 @@ public class ServerApi {
 
                             String res = new String(responseBody);
                             Log.e("tag", "실패 : " + res);
-                            Toast.makeText(activity, "전송실패", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(activity, "전송실패", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
                         }
                     }  );
 
@@ -212,9 +222,11 @@ public class ServerApi {
                             Log.e("tag", "응답 RES = " + res);
 
                             if (res.equals(duplicated))
-                                Toast.makeText(activity, "Duplicated the e-mail", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(activity, "Duplicated the e-mail", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
                             else {
-                                Toast.makeText(activity, "Complete update...", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(activity, "Complete update...", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
                                 User.saveLogin(activity, null, email, null);
                                 //Intent intent = new Intent(activity, LoginActivity.class);
                                 //activity.startActivity(intent);
@@ -226,7 +238,8 @@ public class ServerApi {
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                             String res = new String(responseBody);
                             Log.e("tag", "실패 : " + res);
-                            Toast.makeText(activity, "전송실패", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(activity, "전송실패", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
                         }
                     }  );
 
@@ -269,15 +282,17 @@ public class ServerApi {
                                 CallController.finish();
                             }
 
-                            Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, res, Toast.LENGTH_LONG).show();
+                            //Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-//                            String res = new String(responseBody);
+                            String res = new String(responseBody);
 //                            Log.e("tag", "실패 : " + res);
 
-                            Toast.makeText(context, "Wrong number", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(context, "Wrong number", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, res, Toast.LENGTH_LONG).show();
                             CallController.finish();
 
 
@@ -424,14 +439,16 @@ public class ServerApi {
                             Intent intent1 = new Intent(activity, ConferenceActivity.class);
                             activity.startActivity(intent1);
                             activity.finish();
-                            Toast.makeText(activity, "전송완료", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(activity, "전송완료", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                             String res = new String(responseBody);
                             Log.e("tag", "실패 : " + res);
-                            Toast.makeText(activity, "전송실패", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(activity, "전송실패", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
                         }
                     }  );
 
@@ -455,13 +472,37 @@ public class ServerApi {
                     , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                            String res = new String(responseBody);
-                            Log.e("tag", "응답 RES = " + res);
+                            try {
+                                String res = new String(responseBody);
+                                JSONArray ja = new JSONArray(res);
 
+                                Log.e("tag", "응답 RES = " + res);
+                                Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
 
-                            Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
+                                ConferenceDatabaseHelper conferenceDB = new ConferenceDatabaseHelper(context);
+                                conferenceDB.deleteListAll();
+
+                                for (int i = 0; i < ja.length(); i++) {
+                                    JSONObject order = ja.getJSONObject(i);
+
+                                    String phoneNumber = order.getString("phoneNumber");
+                                    JSONObject schedule = order.getJSONObject("schedule");
+                                    String from = schedule.getString("from");
+                                    String to = schedule.getString("to");
+                                    String startTimeDB = from.substring(0, 10) + " " + from.substring(11, 16);
+                                    String endTimeDB = to.substring(0, 10) + " " + to.substring(11, 16);
+
+                                    //dhtest
+                                    Log.i("dhtest", "GetConference phone : " + phoneNumber + " from : " + startTimeDB + " to : " + endTimeDB);
+
+                                    ConferenceDatabaseHelper ConferenceDB = new ConferenceDatabaseHelper(context);
+                                    ConferenceDB.insert(startTimeDB, endTimeDB, phoneNumber);
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
-
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                             String res = new String(responseBody);
@@ -516,13 +557,16 @@ public class ServerApi {
                             }
                             //////  PhoneState.getInstance().setRemoteIPs(null);
 
+                            Toast.makeText(context, res, Toast.LENGTH_LONG).show();
+
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            //String res = new String(responseBody);
+                            String res = new String(responseBody);
                             //Log.e("tag", "실패 : " + res);
-                            Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, res, Toast.LENGTH_LONG).show();
                             CallController.endCCCall(context);
                         }
                     }  );

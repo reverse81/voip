@@ -1,19 +1,19 @@
 package arch3.lge.com.voip.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import arch3.lge.com.voip.R;
 
-public class ContactActivity extends MainTabActivity {
-    private ContactArrayAdapter mAdapter = new ContactArrayAdapter();
-    private ListView listView;
+public class ContactSelectActivity extends Activity {
+    ContactArrayAdapter mAdapter = new ContactArrayAdapter();
     final int CONTACT_NORMAL = 0;
     final int CONTACT_DELETE = 1;
     final int CONTACT_SELECT = 2;
@@ -24,12 +24,12 @@ public class ContactActivity extends MainTabActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.tapSelect = CONTACTLIST_SELECT;
+        final ListView listView;
 
         Intent intent = getIntent(); /*데이터 수신*/
         String contactType = intent.getExtras().getString("type");
 
-        Log.i("dae","Create Contact List type :"+contactType);
+        Log.i("dhtest","Create Contact Select type :"+contactType);
 
         if (contactType.equals("normal")) {
             mContactType = CONTACT_NORMAL;
@@ -44,16 +44,17 @@ public class ContactActivity extends MainTabActivity {
             mAdapter.onCreate(this, listView);
         }
         else if (contactType.equals("select")){
+            Log.i("dhtest", "contact select type");
             mContactType = CONTACT_SELECT;
-            setContentView(R.layout.activity_contact);
-            listView = (ListView) findViewById(R.id.contact_list);
+            setContentView(R.layout.activity_contact_select);
+            listView = (ListView) findViewById(R.id.contact_list_select);
             mAdapter.onCreate(this, listView);
             mUserStr = intent.getExtras().getString("user");
         }
         else if (contactType.equals("edit")){
             mContactType = CONTACT_EDIT;
-            setContentView(R.layout.activity_contact);
-            listView = (ListView) findViewById(R.id.contact_list);
+            setContentView(R.layout.activity_contact_select);
+            listView = (ListView) findViewById(R.id.contact_list_select);
             mAdapter.onCreate(this, listView);
         }
         else{
@@ -71,12 +72,13 @@ public class ContactActivity extends MainTabActivity {
                 Log.i("dhtest", "Position:"+position+" id:"+id);
 
                 //String string = ((TextView)view).getText().toString();
-                String string = ((TextView) view.findViewById(R.id.list_item_phone)).getText().toString();
-                Log.i("dhtest", "phone:"+string);
+                String phoneString = ((TextView) view.findViewById(R.id.list_item_phone)).getText().toString();
+                String userString = ((TextView) view.findViewById(R.id.list_item_name)).getText().toString();
+                Log.i("dhtest", "phone:"+phoneString);
 
                 if (mContactType == CONTACT_SELECT){
                     Intent intent = new Intent(getApplicationContext(), ConferenceRegisterActivity.class);
-                    intent.putExtra("phone",string); /*송신*/
+                    intent.putExtra("phone",phoneString); /*송신*/
                     intent.putExtra("user",mUserStr); /*송신*/
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
@@ -84,8 +86,16 @@ public class ContactActivity extends MainTabActivity {
                 }
                 else if(mContactType == CONTACT_NORMAL){
                     Intent intent = new Intent(getApplicationContext(), DialpadActivity.class);
-                    intent.putExtra("phone",string); /*송신*/
-                    intent.putExtra("user",mUserStr); /*송신*/
+                    intent.putExtra("phone",phoneString); /*송신*/
+                    intent.putExtra("user",userString); /*송신*/
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
+                }
+                else if(mContactType == CONTACT_EDIT){
+                    Intent intent = new Intent(getApplicationContext(), ContactListEditActivity.class);
+                    intent.putExtra("phone",phoneString); /*송신*/
+                    intent.putExtra("user",userString); /*송신*/
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     finish();

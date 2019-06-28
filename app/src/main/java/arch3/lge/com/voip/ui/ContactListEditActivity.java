@@ -12,50 +12,51 @@ import android.widget.EditText;
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.model.database.ContactListDataHelper;
 
-public class ContactListMgrActivity extends AppCompatActivity {
-    private String UserName;
-    private String PhoneNum;
+public class ContactListEditActivity extends AppCompatActivity {
+
     private EditText mUserName;
     private EditText mPhoneNum;
-
+    private String UserName;
+    private String PhoneNum;
+    private String originalUserName;
+    private String originalPhoneNum;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contact_list_add);
-
+        setContentView(R.layout.activity_contact_list_edit);
         Intent intent = getIntent();
-        String dialInputStr = intent.getStringExtra("PhoneNum");
+        originalPhoneNum = intent.getStringExtra("phone");
+        originalUserName = intent.getStringExtra("user");
 
-        mUserName = (EditText)findViewById(R.id.contact_mgr_user);
-        mPhoneNum = (EditText)findViewById(R.id.contact_mgr_phone);
+        mUserName = (EditText)findViewById(R.id.contact_edit_user);
+        mPhoneNum = (EditText)findViewById(R.id.contact_edit_phone);
 
-
-        if (dialInputStr != null){
-            mPhoneNum.setText(dialInputStr);
+        if (originalPhoneNum != null){
+            mPhoneNum.setText(originalPhoneNum);
         }
 
-        Button mAddContactList = (Button)findViewById(R.id.contact_mgr_add);
+        if (originalUserName != null){
+            mUserName.setText(originalUserName);
+        }
+
+        Button mAddContactList = (Button)findViewById(R.id.contact_edit_update);
         mAddContactList.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
 
                 UserName = mUserName.getText().toString();
                 PhoneNum = mPhoneNum.getText().toString();
-                Log.v("dae", "Click Add button of contact List");
-                Log.v("dae", "Name : "+UserName+" Phone : "+PhoneNum);
+                Log.v("dhtest", "Click Add button of contact List");
+                Log.v("dhtest", "Name : "+UserName+" Phone : "+PhoneNum);
 
                 ContactListDataHelper ContactDB = new ContactListDataHelper(getApplicationContext());
-                ContactDB.insertContextList(UserName, PhoneNum);
+                ContactDB.updateContextList(originalUserName, UserName, PhoneNum);
                 ContactDB.showList();
-                Log.v("dae", "data : "+ContactDB.personList.toString());
+                Log.v("dhtest", "data : "+ContactDB.personList.toString());
 
                 finish();
             }
         });
     }
-
-
-
-
 }

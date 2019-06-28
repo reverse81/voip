@@ -212,34 +212,34 @@ public class ConferenceRegisterActivity extends Activity {
                 break;
             case R.id.conference_register_cancle_btn:
                 Log.v("dae", "onClick conference_register_cancle_btn");
-                Intent intent2 = new Intent(ConferenceRegisterActivity.this, ConferenceActivity.class);
-                startActivity(intent2);
+                //Intent intent2 = new Intent(ConferenceRegisterActivity.this, ConferenceActivity.class);
+                //startActivity(intent2);
                 finish();
                 break;
 
             case R.id.conference_register_add1_btn:
                 Log.v("dae", "onClick conference_register_cancle_btn");
-                Intent intent3 = new Intent(this, ContactActivity.class);
+                Intent intent3 = new Intent(this, ContactSelectActivity.class);
                 intent3.putExtra("type","select"); /*송신*/
                 intent3.putExtra("user","user1"); /*송신*/
                 startActivity(intent3);
-                finish();
+                //finish();
                 break;
             case R.id.conference_register_add2_btn:
                 Log.v("dae", "onClick conference_register_cancle_btn");
-                Intent intent4 = new Intent(this, ContactActivity.class);
+                Intent intent4 = new Intent(this, ContactSelectActivity.class);
                 intent4.putExtra("type","select"); /*송신*/
                 intent4.putExtra("user","user2"); /*송신*/
                 startActivity(intent4);
-                finish();
+                //finish();
                 break;
             case R.id.conference_register_add3_btn:
                 Log.v("dae", "onClick conference_register_cancle_btn");
-                Intent intent5 = new Intent(this, ContactActivity.class);
+                Intent intent5 = new Intent(this, ContactSelectActivity.class);
                 intent5.putExtra("type","select"); /*송신*/
                 intent5.putExtra("user","user3"); /*송신*/
                 startActivity(intent5);
-                finish();
+                //finish();
                 break;
         }
     }

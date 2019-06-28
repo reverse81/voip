@@ -51,8 +51,9 @@ public class ContactListDataHelper extends SQLiteOpenHelper {
 
     public void updateContextList(String userName, String newUserName, String newPhoneNum){
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("update "+tableName+" set userName=" + userName + " where phone='" + newPhoneNum + "';");
-        db.execSQL("update "+tableName+" set userName=" + userName + " where name='" + newUserName + "';");
+        Log.i("dhtest", "update Contact DB User : "+userName);
+        db.execSQL("update "+tableName+" set phone='" + newPhoneNum + "' where name='" + userName + "';");
+        db.execSQL("update "+tableName+" set name='" + newUserName + "' where name='" + userName + "';");
         db.close();
     }
 

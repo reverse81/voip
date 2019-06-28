@@ -84,12 +84,22 @@ public class MainTabActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
                 return true;
-            case R.id.log_out:
-                Log.v("dae", "log out");
-                Intent intent2 = new Intent(this, LoginActivity.class);
+
+            case R.id.edit_contactlist:
+                Log.v("dae", "Menu option1");
+                Intent intent2 = new Intent(this, ContactSelectActivity.class);
                 intent2.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                intent2.putExtra("type","edit"); /*송신*/
                 startActivity(intent2);
+                return true;
+
+            case R.id.log_out:
+                Log.v("dae", "log out");
+                Intent intent3 = new Intent(this, LoginActivity.class);
+                intent3.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent3.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent3);
                 User.setLogout(getApplicationContext());
                 finish();
                 return true;

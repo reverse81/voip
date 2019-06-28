@@ -122,10 +122,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
 
         //Login 상태이면 바로 Dialpad로 이동.
+        Log.i("dhtest", "check token : " + User.getLogin(this));
         if(!User.getLogin(this).isEmpty()) {
             Intent serviceIntent = new Intent(this, TCPListenerService.class);
             this.startService(serviceIntent);
-            Log.i("dae", "Started TCPListenerService.class");
+            Log.i("dhtest", "Login Started TCPListenerService.class token : "+User.getLogin(this));
 
             Intent intent = new Intent(this, DialpadActivity.class);
             this.startActivity(intent);
@@ -227,13 +228,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
-            Log.v("dae", "Message1");
+            Log.i("dhtest", "Message1");
 
             ApiParamBuilder param = new ApiParamBuilder();
             ServerApi server = new ServerApi();
             JSONObject object = param.getLogin(email,password);
             server.login(getApplicationContext(), object.toString(), email);
-            Log.v("dae", "email : "+email+" Password : "+password);
+            Log.i("dhtest", "email : "+email+" Password : "+password);
         }
     }
 

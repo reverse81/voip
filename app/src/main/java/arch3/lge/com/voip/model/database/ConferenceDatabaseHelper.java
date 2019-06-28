@@ -111,4 +111,13 @@ public class ConferenceDatabaseHelper extends SQLiteOpenHelper {
         }
 
     }
+
+
+    public void deleteListAll(){
+
+        SQLiteDatabase db = getWritableDatabase();
+        // DB 모든 정보 삭제
+        db.execSQL("DELETE FROM "+ tableName);
+        db.close();
+    }
 }
