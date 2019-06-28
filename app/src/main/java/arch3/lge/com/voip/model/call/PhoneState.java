@@ -11,7 +11,7 @@ public class PhoneState { //extends Observable {
 
     public enum CallState {LISTENING, CALLING, INCALL, BUSY }
     public enum VideoState {START_VIDEO, RECEIVING_VIDEO, STOP_VIDEO,VIDEO_STOPPED}
-    private CallState CallStatel = CallState.LISTENING;
+    private CallState mCallState = CallState.LISTENING;
     private VideoState  RecVideoState = VideoState.VIDEO_STOPPED;
     private String RemoteIP;
     private ArrayList<String> RemoteIPs;
@@ -42,12 +42,12 @@ public class PhoneState { //extends Observable {
     private PhoneState() {
     }
 
-    public void SetPhoneState(CallState callstate) {
-        CallStatel = callstate;
+    public void setCallState(CallState callstate) {
+        mCallState = callstate;
     }
 
-    public  CallState GetPhoneState() {
-        return CallStatel;
+    public  CallState getCallState() {
+        return mCallState;
     }
 
     public void SetRecvVideoState(VideoState videostate) { RecVideoState = videostate; }

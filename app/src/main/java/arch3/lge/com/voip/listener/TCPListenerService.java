@@ -85,7 +85,7 @@ public class TCPListenerService extends Service {
 
             case "/CALLIP/":
                 // Receives Call Requests
-                if (PhoneState.getInstance().GetPhoneState() == PhoneState.CallState.LISTENING) {
+                if (PhoneState.getInstance().getCallState() == PhoneState.CallState.LISTENING) {
                     PhoneState.getInstance().setRemoteIP(sender);
                     intent.setClass(this, ReceivedCallActivity.class);
                     this.startActivity(intent);
@@ -101,7 +101,7 @@ public class TCPListenerService extends Service {
             case "/ANSWER/":
                 // Accept notification received. Start call
                 //finish activity??
-                PhoneState.getInstance().SetPhoneState(PhoneState.CallState.INCALL);
+                PhoneState.getInstance().setCallState(PhoneState.CallState.INCALL);
                 BaseCallActivity current =  CallController.getCurrent();
                 intent.setClass(this, CallingActivity.class);
                 this.startActivity(intent);

@@ -2,12 +2,10 @@ package arch3.lge.com.voip.model.codec;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.util.Log;
-import android.widget.ImageView;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -17,7 +15,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import arch3.lge.com.voip.controller.DeviceContorller;
 import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.utils.NetworkConstants;
@@ -131,6 +128,8 @@ public class VoIPVideoIoCC implements  Camera.PreviewCallback{
         }
 
         Camera.Parameters params = mCamera.getParameters();
+
+        //480 x 320
 
         params.setPreviewSize(480, 640);
         params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);

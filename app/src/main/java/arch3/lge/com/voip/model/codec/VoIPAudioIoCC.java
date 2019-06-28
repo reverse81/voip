@@ -316,31 +316,20 @@ public class VoIPAudioIoCC {
     }
 
     static private Thread UdpReceiveAudioThread1;
-    static private Thread UdpReceiveAudioThread2;
-    static private Thread UdpReceiveAudioThread3;
-    static private Thread UdpReceiveAudioThread4;
     private boolean UdpVoipReceiveDataThreadRun = false;
     private void StartReceiveDataThread() {
         if ( UdpVoipReceiveDataThreadRun) return;
 
         UdpVoipReceiveDataThreadRun = true;
-        UdpReceiveAudioThread1 = new Thread(new CCRunnable(NetworkConstants.VOIP_AUDIO_UDP_PORT));
+        UdpReceiveAudioThread1 = new Thread(new CCRunnable());
         UdpReceiveAudioThread1.start();
-//        UdpReceiveAudioThread2=new Thread(new CCRunnable(NetworkConstants.VOIP_AUDIO_UDP_PORT+2));
-//        UdpReceiveAudioThread2.start();
-//        UdpReceiveAudioThread3 = new Thread(new CCRunnable(NetworkConstants.VOIP_AUDIO_UDP_PORT+3));
-//        UdpReceiveAudioThread3.start();
-//        UdpReceiveAudioThread4 = new Thread(new CCRunnable(NetworkConstants.VOIP_AUDIO_UDP_PORT+4));
-//        UdpReceiveAudioThread4.start();
     }
 
     class CCRunnable implements Runnable {
-        int mPort;
         DatagramSocket recvAudioUdpSocket;
         //private LinkedBlockingQueue<byte[]> IncommingpacketQueue;
 
-        public CCRunnable(int port) {
-            mPort = port;
+        public CCRunnable() {
             for (int i=0;i<4 ;i++) {
                 LinkedBlockingQueue<byte[]> IncommingpacketQueue = new LinkedBlockingQueue<>(20);
                 mQueueList.add(IncommingpacketQueue);
@@ -355,7 +344,7 @@ public class VoIPAudioIoCC {
                 // Setup socket to receive the audio data
                 recvAudioUdpSocket = new DatagramSocket(null);
                 recvAudioUdpSocket.setReuseAddress(true);
-                recvAudioUdpSocket.bind(new InetSocketAddress(mPort));
+                recvAudioUdpSocket.bind(new InetSocketAddress(NetworkConstants.VOIP_AUDIO_UDP_PORT));
 
                 while (UdpVoipReceiveDataThreadRun) {
                     byte [] mBuffer = new byte[8*1024];
@@ -377,10 +366,10 @@ public class VoIPAudioIoCC {
                         }
                     }
                     LinkedBlockingQueue<byte[]> IncommingpacketQueue = mQueueList.get(index);
-
+                    Log.i("SSSSSSSSSSSSSSSSS",index +" aaaaaaaaaaaaaaa "+ IncommingpacketQueue.size());
                     if (IncommingpacketQueue.remainingCapacity() >1)  {
                         IncommingpacketQueue.add(rawbuf);
-                        Log.i("SSSSSSSSSSSSSSSSS",index +" aaaaaaaaaaaaaaa "+ IncommingpacketQueue.size());
+
                     } else {
                         IncommingpacketQueue.remove();
                         IncommingpacketQueue.add(rawbuf);

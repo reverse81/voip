@@ -113,15 +113,7 @@ public class ConferenceCallingActivity extends AppCompatActivity {
         }
 
         final ImageButton video = (ImageButton)findViewById(R.id.video_record);
-        VoIPVideoIo io = VoIPVideoIo.getInstance();
-        if (!io.isBanned()) {
-            io.StartVideo((ImageView) findViewById(R.id.self));
-        } else {
-            io.attachView((ImageView) findViewById(R.id.self));
-            video.setImageResource(R.drawable.video_on);
-        }
-
-
+        
         video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

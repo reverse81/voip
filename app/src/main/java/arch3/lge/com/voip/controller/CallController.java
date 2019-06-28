@@ -64,13 +64,14 @@ public class CallController {
     }
 
     static public void endCall(Context context) {
-        Intent intent = new Intent();
-        intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
-        intent.setAction(TCPCmd.GUI_VOIP_CTRL);
-        intent.putExtra("message", "/END_CALL_BUTTON/");
-        intent.putExtra("sender", PhoneState.getInstance().getRemoteIP());
-        context.startService(intent);
-
+        if (PhoneState.getInstance().getCallState() != PhoneState.CallState.BUSY) {
+            Intent intent = new Intent();
+            intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
+            intent.setAction(TCPCmd.GUI_VOIP_CTRL);
+            intent.putExtra("message", "/END_CALL_BUTTON/");
+            intent.putExtra("sender", PhoneState.getInstance().getRemoteIP());
+            context.startService(intent);
+        }
         mCurrent.StopReceiveVideoThread();
         VoIPVideoIo.getInstance().EndVideo();
     }
@@ -105,7 +106,7 @@ public class CallController {
     }
 
     static public void finish () {
-        PhoneState.getInstance().SetPhoneState(PhoneState.CallState.LISTENING);
+        PhoneState.getInstance().setCallState(PhoneState.CallState.LISTENING);
         if (mCurrent != null) {
             DeviceContorller.initDevice(mCurrent);
             mCurrent.StopReceiveVideoThread();

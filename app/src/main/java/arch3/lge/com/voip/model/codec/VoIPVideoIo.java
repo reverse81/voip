@@ -2,32 +2,22 @@ package arch3.lge.com.voip.model.codec;
 
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
-
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
-import android.graphics.YuvImage;
-import android.hardware.* ; // avoid  deprecation warning import android.hardware.Camera;
-import android.provider.MediaStore;
+import android.hardware.Camera;
 import android.util.Log;
 import android.widget.ImageView;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.List;
 
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.utils.NetworkConstants;
 import arch3.lge.com.voip.utils.Util;
-
-import static android.support.constraint.Constraints.TAG;
-import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 
 @SuppressWarnings("deprecation")
 public class VoIPVideoIo implements  Camera.PreviewCallback{

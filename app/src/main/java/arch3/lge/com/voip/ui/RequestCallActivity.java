@@ -40,8 +40,8 @@ public class RequestCallActivity extends BaseCallActivity {
         ImageView self = (ImageView)findViewById(R.id.selfImage);
         CallController.requestCall(this, phoneNumber, self);
 
-        ImageButton reject = (ImageButton) findViewById(R.id.end_call);
-        reject.setOnClickListener(new View.OnClickListener() {
+        ImageButton end_call = (ImageButton) findViewById(R.id.end_call);
+        end_call.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {

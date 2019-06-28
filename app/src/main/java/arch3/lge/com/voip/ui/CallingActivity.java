@@ -38,7 +38,7 @@ public class CallingActivity extends BaseCallActivity {
             io.StartVideo((ImageView) findViewById(R.id.self));
         } else {
             io.attachView((ImageView) findViewById(R.id.self));
-            video.setImageResource(R.drawable.video_on);
+            video.setImageResource(R.drawable.video_off);
         }
 
 

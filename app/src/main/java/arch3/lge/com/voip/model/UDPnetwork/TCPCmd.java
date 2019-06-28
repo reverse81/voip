@@ -55,7 +55,7 @@ public class TCPCmd extends IntentService {
             case "/CALL_BUTTON/":
 
                 PhoneState.getInstance().setRemoteIP(Sender);
-                PhoneState.getInstance().SetPhoneState(PhoneState.CallState.CALLING);
+                PhoneState.getInstance().setCallState(PhoneState.CallState.CALLING);
                 TCPSend(Sender, NetworkConstants.CONTROL_DATA_PORT, "/CALLIP/");
                 //PhoneState.getInstance().NotifyUpdate();
                // Log.i("CALL", "AAAAAAAAAAAAAAAAAAAAAAAAA");
@@ -72,7 +72,7 @@ public class TCPCmd extends IntentService {
                 //    EndRinger();
                     TCPSend(PhoneState.getInstance().getRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/ANSWER/");
 
-                    PhoneState.getInstance().SetPhoneState(PhoneState.CallState.INCALL);
+                    PhoneState.getInstance().setCallState(PhoneState.CallState.INCALL);
                     PhoneState.getInstance().SetRecvVideoState(PhoneState.VideoState.START_VIDEO);
                     Log.i(LOG_TAG, "Answered " + PhoneState.getInstance().getRemoteIP());
                 } catch (Exception e) {
