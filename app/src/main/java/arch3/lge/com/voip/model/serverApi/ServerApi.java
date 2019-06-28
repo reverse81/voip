@@ -54,6 +54,7 @@ public class ServerApi {
             Log.i(LOG_TAG, encipher.decrypt(text));
 
             AsyncHttpClient client = new AsyncHttpClient();
+            client.setMaxRetriesAndTimeout(MAX_RETRY,TIMEOUT);
             client.addHeader("project","voip");
             client.addHeader("client","app");
 
@@ -118,6 +119,7 @@ public class ServerApi {
 
             StringEntity entity = new StringEntity(object.toString(), "UTF-8");
             AsyncHttpClient client = new AsyncHttpClient();
+            client.setMaxRetriesAndTimeout(MAX_RETRY,TIMEOUT);
             client.addHeader("project","voip");
             client.addHeader("client","app");
             //client.addHeader("Authorization", "Bearer "+User.getLogin(context));
@@ -151,6 +153,7 @@ public class ServerApi {
 
             StringEntity entity = new StringEntity(object.toString(), "UTF-8");
             AsyncHttpClient client = new AsyncHttpClient();
+            client.setMaxRetriesAndTimeout(MAX_RETRY,TIMEOUT);
             client.addHeader("project","voip");
             client.addHeader("client","app");
            // client.addHeader("Authorization ", "Bearer "+User.getLogin(activity));
@@ -195,6 +198,7 @@ public class ServerApi {
 
             StringEntity entity = new StringEntity(object.toString(), "UTF-8");
             AsyncHttpClient client = new AsyncHttpClient();
+            client.setMaxRetriesAndTimeout(MAX_RETRY,TIMEOUT);
             client.addHeader("project","voip");
             client.addHeader("client","app");
             client.addHeader("Authorization", "Bearer "+User.getLogin(activity));
@@ -238,6 +242,7 @@ public class ServerApi {
 
             StringEntity entity = new StringEntity(object.toString(), "UTF-8");
             AsyncHttpClient client = new AsyncHttpClient();
+            client.setMaxRetriesAndTimeout(MAX_RETRY,TIMEOUT);
             client.addHeader("project","voip");
             client.addHeader("client","app");
             client.addHeader("Authorization", "Bearer "+User.getLogin(context));
@@ -273,6 +278,8 @@ public class ServerApi {
 //                            Log.e("tag", "실패 : " + res);
 
                             Toast.makeText(context, "Wrong number", Toast.LENGTH_SHORT).show();
+                            CallController.finish();
+
 
 
                                 //JSONObject jsonObject = new JSONObject(res);
@@ -300,6 +307,7 @@ public class ServerApi {
             StringEntity entity = new StringEntity(object.toString(), "UTF-8");
             //entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             AsyncHttpClient client = new AsyncHttpClient();
+            client.setMaxRetriesAndTimeout(MAX_RETRY,TIMEOUT);
             client.addHeader("project","voip");
             client.addHeader("client","app");
             // Log.e("tag", "token = " + User.getLogin(context));
@@ -373,6 +381,7 @@ public class ServerApi {
 
             StringEntity entity = new StringEntity(object.toString(), "UTF-8");
             AsyncHttpClient client = new AsyncHttpClient();
+            client.setMaxRetriesAndTimeout(MAX_RETRY,TIMEOUT);
             client.addHeader("project","voip");
             client.addHeader("client","app");
             client.addHeader("Authorization", "Bearer "+User.getLogin(activity));
@@ -437,6 +446,7 @@ public class ServerApi {
 
             StringEntity entity = new StringEntity(object.toString(), "UTF-8");
             AsyncHttpClient client = new AsyncHttpClient();
+            client.setMaxRetriesAndTimeout(MAX_RETRY,TIMEOUT);
             client.addHeader("project","voip");
             client.addHeader("client","app");
             client.addHeader("Authorization", "Bearer "+User.getLogin(context));
@@ -466,11 +476,14 @@ public class ServerApi {
         }
     }
 
+    final int MAX_RETRY = 3;
+    final int TIMEOUT = 10000;
     public void getIPforCC (final ConferenceCallingActivity context, JSONObject object) {
         try {
 
             StringEntity entity = new StringEntity(object.toString(), "UTF-8");
             AsyncHttpClient client = new AsyncHttpClient();
+            client.setMaxRetriesAndTimeout(MAX_RETRY,TIMEOUT);
             client.addHeader("project","voip");
             client.addHeader("client","app");
             client.addHeader("Authorization", "Bearer "+User.getLogin(context));
@@ -499,6 +512,7 @@ public class ServerApi {
                                 VoIPAudioIoCC.getInstance(context).StartAudio();
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                CallController.endCCCall(context);
                             }
                             //////  PhoneState.getInstance().setRemoteIPs(null);
 
@@ -509,6 +523,7 @@ public class ServerApi {
                             //String res = new String(responseBody);
                             //Log.e("tag", "실패 : " + res);
                             Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
+                            CallController.endCCCall(context);
                         }
                     }  );
 

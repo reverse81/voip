@@ -183,6 +183,20 @@ public class ConferenceCallingActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        Log.i("TAG","onDestroy");
+//        StopReceiveVideoThread();
+//        VoIPVideoIo.getInstance().EndVideo();
+
+        super.onDestroy();
+        mySensorManager.unregisterListener(proximitySensorEventListener,myProximitySensor);
+        if (wl !=null && wl.isHeld()) {
+            Log.i("TAG","RELEASE");
+            wl.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY);
+        }
+    }
+
     static private Thread UdpReceiveVideoThread1;
     static private Thread UdpReceiveVideoThread2;
     static private Thread UdpReceiveVideoThread3;

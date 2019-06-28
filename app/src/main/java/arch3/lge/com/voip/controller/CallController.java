@@ -76,11 +76,13 @@ public class CallController {
     }
 
     static public void startCCCall(ConferenceCallingActivity context, String phoneNumber) {
+        PhoneState.getInstance().setCallState(PhoneState.CallState.CALLING);
         JSONObject object = param.getPhoneParam(phoneNumber);
         serverApi.getIPforCC(context, object);
     }
 
     static public void endCCCall(ConferenceCallingActivity ccActivity) {
+        PhoneState.getInstance().setCallState(PhoneState.CallState.LISTENING);
         ccActivity.StopReceiveVideoThread();
         VoIPVideoIoCC.getInstance(ccActivity).EndVideo();
         VoIPAudioIoCC.getInstance(ccActivity).EndAudio();
