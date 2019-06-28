@@ -3,13 +3,14 @@ package arch3.lge.com.voip.model.codec;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
+import java.util.NoSuchElementException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class AdaptiveBuffering {
     private final static String LOG_TAG = "AdaptiveBuffering";
 
     private final static int HDR_SIZE = Integer.BYTES + Long.BYTES;
-    private int mSequenceNumber = 0;
+    private static int mSequenceNumber = 0;
     private LinkedBlockingQueue<byte[]> mPacketQueue = new LinkedBlockingQueue<>(1024);
     private int mQueueCapacity = 16;
     private int mLastSequence = 0;
@@ -20,7 +21,7 @@ public class AdaptiveBuffering {
     private long mAveDi = 0;
     private long mAveVi = 0;
 
-    byte [] writeHeader(byte [] data){
+    static byte [] writeHeader(byte [] data){
         ByteBuffer byteBuffer = ByteBuffer.allocate(HDR_SIZE + data.length);
         byteBuffer.putInt(mSequenceNumber);
         mSequenceNumber ++;
@@ -71,8 +72,13 @@ public class AdaptiveBuffering {
     }
 
     byte [] getQueue(){
-        if (mPacketQueue.size() > 0) {
+        try{
+            if(mPacketQueue.isEmpty())
+                return null;
             return mPacketQueue.remove();
+        }
+        catch(NoSuchElementException e){
+            //e.printStackTrace();
         }
         return null;
     }
