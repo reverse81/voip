@@ -9,5 +9,7 @@ public class NetworkConstants {
     public static final int VIDEO_BUFFER_SIZE = 65507;
 
     public static final  String serverAddress = "http://10.0.1.18:3000/";
+   // public static final  String serverAddress =     "http://debb5f2b.ngrok.io/";
+
     public static final String ContentsType = "application/json";
 }
