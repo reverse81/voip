@@ -1,13 +1,16 @@
 package arch3.lge.com.voip.model.codec;
 
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.util.Log;
 import android.widget.ImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -15,6 +18,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.utils.NetworkConstants;
 import arch3.lge.com.voip.utils.Util;
@@ -51,15 +55,17 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
     private int frame;
     private ImageView selfView;
     private VideoCodec mCodec;
+    private Context mContext;
 
-    private VoIPVideoIo(){
+    private VoIPVideoIo(Context context){
+        mContext = context;
         mCodec = CodecFacotry.createVideo(CodecFacotry.VideoCodecType.MJPEG);
     }
 
     private static VoIPVideoIo mVoIPVideoIo;
-    public static VoIPVideoIo getInstance() {
+    public static VoIPVideoIo getInstance(Context context) {
         if (mVoIPVideoIo ==null) {
-            mVoIPVideoIo = new VoIPVideoIo();
+            mVoIPVideoIo = new VoIPVideoIo(context);
         }
         return mVoIPVideoIo;
     }
@@ -166,6 +172,32 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
 
     private void CloseCamera()  {
         if (mCamera==null) return;
+
+
+        {
+            Bitmap black = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.black);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            black.compress(Bitmap.CompressFormat.JPEG,50,stream);
+
+            // Create a byte array from ByteArrayOutputStream
+            byte[] byteArray = stream.toByteArray();
+            byte[] encryptedImageBytes = encipher.encrypt(byteArray);
+
+           // Bitmap image = mCodec.decode(imageBytes);
+            if (selfView!= null) {
+                selfView.setImageResource(R.drawable.black);
+            }
+
+            if (remoteIp != null) {
+                //  Log.i(LOG_TAG, ":"+encryptedImageBytes.length + " vs "+ imageBytes.length);
+              Log.i(LOG_TAG, "black image will be sent");
+                for (int i =0; i<3 ;i++) {
+                    UdpSend(encryptedImageBytes);
+                }
+                // UdpSend(imageBytes);
+            }
+        }
+
         mCamera.stopPreview();
         mCamera.setPreviewCallbackWithBuffer(null);
         mCamera.release();

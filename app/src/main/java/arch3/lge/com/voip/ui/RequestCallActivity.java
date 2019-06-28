@@ -50,14 +50,14 @@ public class RequestCallActivity extends BaseCallActivity {
         video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!VoIPVideoIo.getInstance().isBanned()) {
-                    VoIPVideoIo.getInstance().EndVideo();
-                    VoIPVideoIo.getInstance().setBanned(true);
+                if (!VoIPVideoIo.getInstance(RequestCallActivity.this).isBanned()) {
+                    VoIPVideoIo.getInstance(RequestCallActivity.this).EndVideo();
+                    VoIPVideoIo.getInstance(RequestCallActivity.this).setBanned(true);
                     video.setImageResource(R.drawable.video_off);
 
                 } else {
-                    VoIPVideoIo.getInstance().restartVideo();
-                    VoIPVideoIo.getInstance().setBanned(false);
+                    VoIPVideoIo.getInstance(RequestCallActivity.this).restartVideo();
+                    VoIPVideoIo.getInstance(RequestCallActivity.this).setBanned(false);
                     video.setImageResource(R.drawable.video_on);
                 }
             }

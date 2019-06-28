@@ -61,14 +61,14 @@ public class ReceivedCallActivity extends BaseCallActivity {
         video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!VoIPVideoIo.getInstance().isBanned()) {
-                    VoIPVideoIo.getInstance().EndVideo();
-                    VoIPVideoIo.getInstance().setBanned(true);
+                if (!VoIPVideoIo.getInstance(ReceivedCallActivity.this).isBanned()) {
+                    VoIPVideoIo.getInstance(ReceivedCallActivity.this).EndVideo();
+                    VoIPVideoIo.getInstance(ReceivedCallActivity.this).setBanned(true);
                     video.setImageResource(R.drawable.video_off);
 
                 } else {
-                    VoIPVideoIo.getInstance().restartVideo();
-                    VoIPVideoIo.getInstance().setBanned(false);
+                    VoIPVideoIo.getInstance(ReceivedCallActivity.this).restartVideo();
+                    VoIPVideoIo.getInstance(ReceivedCallActivity.this).setBanned(false);
                     video.setImageResource(R.drawable.video_on);
                 }
             }

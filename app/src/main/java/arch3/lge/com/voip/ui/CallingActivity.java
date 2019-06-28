@@ -3,6 +3,7 @@ package arch3.lge.com.voip.ui;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.telecom.Call;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -30,7 +31,7 @@ public class CallingActivity extends BaseCallActivity {
 
 
         final ImageButton video = (ImageButton)findViewById(R.id.video_record);
-        VoIPVideoIo io = VoIPVideoIo.getInstance();
+        VoIPVideoIo io = VoIPVideoIo.getInstance(CallingActivity.this);
         io.attachIP(PhoneState.getInstance().getRemoteIP());
         if (!io.isBanned()) {
             io.StartVideo((ImageView) findViewById(R.id.self));
@@ -73,14 +74,14 @@ public class CallingActivity extends BaseCallActivity {
         video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!VoIPVideoIo.getInstance().isBanned()) {
-                    VoIPVideoIo.getInstance().EndVideo();
-                    VoIPVideoIo.getInstance().setBanned(true);
+                if (!VoIPVideoIo.getInstance(CallingActivity.this).isBanned()) {
+                    VoIPVideoIo.getInstance(CallingActivity.this).EndVideo();
+                    VoIPVideoIo.getInstance(CallingActivity.this).setBanned(true);
                     video.setImageResource(R.drawable.video_off);
 
                 } else {
-                    VoIPVideoIo.getInstance().restartVideo();
-                    VoIPVideoIo.getInstance().setBanned(false);
+                    VoIPVideoIo.getInstance(CallingActivity.this).restartVideo();
+                    VoIPVideoIo.getInstance(CallingActivity.this).setBanned(false);
                     video.setImageResource(R.drawable.video_on);
                 }
             }

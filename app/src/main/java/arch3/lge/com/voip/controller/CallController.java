@@ -26,7 +26,7 @@ public class CallController {
 
     static public void requestCall(Context context, String phoneNumber, ImageView self) {
         JSONObject object = param.getPhoneParam(phoneNumber);
-        VoIPVideoIo io = VoIPVideoIo.getInstance();
+        VoIPVideoIo io = VoIPVideoIo.getInstance(context);
         io.StartVideo(self);
         serverApi.getIP(context, object,io);
 //        {
@@ -59,7 +59,7 @@ public class CallController {
         context.startService(intent);
 
         mCurrent.StopReceiveVideoThread();
-        VoIPVideoIo.getInstance().EndVideo();
+        VoIPVideoIo.getInstance(context).EndVideo();
     }
 
     static public void endCall(Context context) {
@@ -72,7 +72,7 @@ public class CallController {
             context.startService(intent);
         }
         mCurrent.StopReceiveVideoThread();
-        VoIPVideoIo.getInstance().EndVideo();
+        VoIPVideoIo.getInstance(context).EndVideo();
     }
 
     static public void startCCCall(ConferenceCallingActivity context, String phoneNumber) {
@@ -111,7 +111,7 @@ public class CallController {
         if (mCurrent != null) {
             DeviceContorller.initDevice(mCurrent);
             mCurrent.StopReceiveVideoThread();
-            VoIPVideoIo.getInstance().EndVideo();
+            VoIPVideoIo.getInstance(mCurrent).EndVideo();
             VoIPAudioIo.getInstance(mCurrent).EndAudio();
             mCurrent.finish();
         }

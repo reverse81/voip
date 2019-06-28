@@ -117,14 +117,14 @@ public class ConferenceCallingActivity extends AppCompatActivity {
         video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!VoIPVideoIo.getInstance().isBanned()) {
-                    VoIPVideoIo.getInstance().EndVideo();
-                    VoIPVideoIo.getInstance().setBanned(true);
+                if (!VoIPVideoIo.getInstance(ConferenceCallingActivity.this).isBanned()) {
+                    VoIPVideoIo.getInstance(ConferenceCallingActivity.this).EndVideo();
+                    VoIPVideoIo.getInstance(ConferenceCallingActivity.this).setBanned(true);
                     video.setImageResource(R.drawable.video_off);
 
                 } else {
-                    VoIPVideoIo.getInstance().restartVideo();
-                    VoIPVideoIo.getInstance().setBanned(false);
+                    VoIPVideoIo.getInstance(ConferenceCallingActivity.this).restartVideo();
+                    VoIPVideoIo.getInstance(ConferenceCallingActivity.this).setBanned(false);
                     video.setImageResource(R.drawable.video_on);
                 }
             }

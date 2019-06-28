@@ -11,8 +11,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Locale;
@@ -205,11 +207,13 @@ public class TCPListenerService extends Service {
 
         private Socket clientSocket;
         private BufferedReader input;
+        private BufferedWriter output;
         public CommunicationThread(Socket clientSocket) {
 
             this.clientSocket = clientSocket;
             try {
                 this.input = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
+                this.output = new BufferedWriter(new OutputStreamWriter(this.clientSocket.getOutputStream()));
             } catch (IOException e) {
                 Log.e(LOG_TAG, "IOException",e);
             }
@@ -224,6 +228,9 @@ public class TCPListenerService extends Service {
                     }else{
                         String senderIP = clientSocket.getInetAddress().getHostAddress();
                         ProcessReceivedUdpMessage(senderIP, read);
+                        Log.i(LOG_TAG, "send Result");
+                        output.write("{\"result\",\"ok\"}\n");
+                        output.flush();
                     }
                 } catch (IOException e) {
                     Log.e(LOG_TAG, "IOException",e);
