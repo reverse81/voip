@@ -79,6 +79,12 @@ public class ReceivedCallActivity extends BaseCallActivity {
     protected void onDestroy() {
         super.onDestroy();
         EndRinger();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        audioManager.setMode(previousAudioManagerMode);
     }
 
     private MediaPlayer ring;
@@ -107,7 +113,8 @@ public class ReceivedCallActivity extends BaseCallActivity {
             ring.stop();
             ring.release();
             ring = null;
- audioManager.setMode(previousAudioManagerMode);
+
+
         }
         vibrator.cancel();
     }
