@@ -49,7 +49,7 @@ public class TCPListenerService extends Service {
                     // Setup the socket to receive incoming messages
                    // byte[] buffer = new byte[BUFFER_SIZE];
                     serverSocket = new ServerSocket(NetworkConstants.CONTROL_DATA_PORT);
-//                    serverSocket.setReuseAddress(true);
+                    serverSocket.setReuseAddress(true);
 //                    serverSocket.bind(new InetSocketAddress(NetworkContstants.CONTROL_DATA_PORT));
                    // DatagramPacket packet = new DatagramPacket(buffer, BUFFER_SIZE);
                     Log.i(LOG_TAG, "Incoming call listener started");
@@ -58,6 +58,7 @@ public class TCPListenerService extends Service {
                         Log.i(LOG_TAG, "Listening for incoming calls");
 
                         socket = serverSocket.accept();
+                        socket.setReuseAddress(true);
 
                         new CommunicationThread(socket).run();
                     }
