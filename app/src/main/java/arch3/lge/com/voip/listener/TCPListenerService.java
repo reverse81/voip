@@ -88,6 +88,7 @@ public class TCPListenerService extends Service {
                 // Receives Call Requests
                 if (PhoneState.getInstance().getCallState() == PhoneState.CallState.LISTENING) {
                     PhoneState.getInstance().setRemoteIP(sender);
+                    PhoneState.getInstance().setCallState(PhoneState.CallState.CALLING);
                     intent.setClass(this, ReceivedCallActivity.class);
                     this.startActivity(intent);
                 } else {
