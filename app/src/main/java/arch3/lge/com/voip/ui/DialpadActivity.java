@@ -79,6 +79,10 @@ public class DialpadActivity  extends MainTabActivity {
         String phone = mNumberView.getText().toString();
         Intent screen = new Intent();
 
+        if (phone == null || phone.isEmpty()) {
+            return;;
+        }
+
         if (phone.startsWith("070")) {
 
 
