@@ -13,6 +13,11 @@ public class AdaptiveBuffering {
     private LinkedBlockingQueue<byte[]> mPacketQueue = new LinkedBlockingQueue<>(1024);
     private int mQueueCapacity = 16;
 
+    private final static long COEF_A = 500;
+    private final static long COEF_B = 4;
+    private long mAveDi = 0;
+    private long mAveVi = 0;
+
     byte [] writeHeader(byte [] data){
         ByteBuffer byteBuffer = ByteBuffer.allocate(HDR_SIZE + data.length);
         byteBuffer.putInt(mSequenceNumber);
@@ -32,7 +37,9 @@ public class AdaptiveBuffering {
 
     private int calcBufferSize(int index, long delay){
         Log.d(LOG_TAG, "indx ="+ index+  " delay ="+ delay);
-        return 20;
+        mAveDi = (mAveDi*(COEF_A-1) + delay) / COEF_A;
+        mAveVi = (mAveVi*(COEF_A-1) + Math.abs(mAveDi - delay)) / COEF_A;
+        return (int)(mAveDi + COEF_B*mAveVi)/10;
     }
 
     void addQueue(byte [] data){
