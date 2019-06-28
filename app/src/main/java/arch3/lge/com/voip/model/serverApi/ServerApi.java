@@ -476,7 +476,7 @@ public class ServerApi {
         }
     }
 
-    final int MAX_RETRY = 3;
+    final int MAX_RETRY = 1;
     final int TIMEOUT = 10000;
     public void getIPforCC (final ConferenceCallingActivity context, JSONObject object) {
         try {
