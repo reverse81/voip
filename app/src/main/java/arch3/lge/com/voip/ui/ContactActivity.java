@@ -21,6 +21,7 @@ public class ContactActivity extends MainTabActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.tapSelect = CONTACTLIST_SELECT;
         final ListView listView;
 
         Intent intent = getIntent(); /*데이터 수신*/
@@ -57,11 +58,11 @@ public class ContactActivity extends MainTabActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Log.v("dae", "Position:"+position+" id:"+id);
+                Log.i("dhtest", "Position:"+position+" id:"+id);
 
                 //String string = ((TextView)view).getText().toString();
                 String string = ((TextView) view.findViewById(R.id.list_item_phone)).getText().toString();
-                Log.v("dae", "phone:"+string);
+                Log.i("dhtest", "phone:"+string);
 
                 if (mContactType == CONTACT_SELECT){
                     Intent intent = new Intent(getApplicationContext(), ConferenceRegisterActivity.class);
@@ -70,8 +71,14 @@ public class ContactActivity extends MainTabActivity {
                     startActivity(intent);
                     finish();
                 }
-
-
+                else if(mContactType == CONTACT_NORMAL){
+                    Intent intent = new Intent(getApplicationContext(), DialpadActivity.class);
+                    intent.putExtra("phone",string); /*송신*/
+                    intent.putExtra("user",mUserStr); /*송신*/
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
+                }
 
                 // position이 클릭된 위치입니다.
                 // 컬렉션에서 적절하게 꺼내서 사용하시면 됩니다.

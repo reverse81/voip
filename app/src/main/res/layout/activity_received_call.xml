@@ -29,6 +29,19 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageButton
+        android:id="@+id/video_record"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/video_on"
+        android:background="@color/colorTransparency"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/reject"
+        tools:layout_editor_absoluteY="672dp" />
+
+    <ImageButton
         android:id="@+id/reject"
         android:layout_width="48dp"
         android:layout_height="48dp"

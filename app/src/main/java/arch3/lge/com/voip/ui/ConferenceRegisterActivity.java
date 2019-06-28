@@ -39,6 +39,8 @@ public class ConferenceRegisterActivity extends Activity {
     private static String mPhoneNum1;
     private static String mPhoneNum2;
     private static String mPhoneNum3;
+    private static String endTimeSelectValue;
+    private static int endTimeSelectPosition = 0;
 
     private Calendar cal = new GregorianCalendar();
     private Calendar StartDatecal = new GregorianCalendar();
@@ -54,8 +56,8 @@ public class ConferenceRegisterActivity extends Activity {
         mPhoneNum = intent.getStringExtra("phone"); /*String형*/
         mUserNum = intent.getStringExtra("user"); /*String형*/
 
-        Log.v("dae", "Create conference register");
-        Log.v("dae", "Phone : "+mPhoneNum+" User : "+mUserNum);
+        Log.i("dhtest", "Create conference register");
+        Log.i("dhtest", "Phone : "+mPhoneNum+" User : "+mUserNum);
 
 
         //텍스트뷰 2개 연결
@@ -75,6 +77,8 @@ public class ConferenceRegisterActivity extends Activity {
             mPhoneNum1 = null;
             mPhoneNum2 = null;
             mPhoneNum3 = null;
+            endTimeSelectValue = null;
+            endTimeSelectPosition = 0;
             Log.v("dae", "Initialize conference data");
         }
         UpdateNow();
@@ -105,21 +109,20 @@ public class ConferenceRegisterActivity extends Activity {
 
         //Spinner
         Spinner s = (Spinner)findViewById(R.id.conference_register_endtime_btn);
+        s.setSelection(endTimeSelectPosition);
         s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //tv.setText("position : " + position + parent.getItemAtPosition(position));
                 Log.v("dae", "position : "+ position + "value : "+ parent.getItemAtPosition(position));
-                String selectValue = parent.getItemAtPosition(position).toString();
-                int value =  Integer.parseInt(selectValue);
 
-                mEndHour = mStartHour + value;
+                endTimeSelectPosition = position;
+                endTimeSelectValue = parent.getItemAtPosition(position).toString();
 
-                if (mEndHour > 23){
-                    mEndHour -= 24;
-                    EndDatecal.add(Calendar.DAY_OF_MONTH, 1);
-                }
+                //Endtime update
+                SetEndTime();
 
+                //UI update
                 UpdateNow();
             }
             @Override
@@ -129,7 +132,6 @@ public class ConferenceRegisterActivity extends Activity {
         });
 
     }
-
 
 
     public void mOnClick(View v){
@@ -224,6 +226,7 @@ public class ConferenceRegisterActivity extends Activity {
                 intent3.putExtra("type","select"); /*송신*/
                 intent3.putExtra("user","user1"); /*송신*/
                 startActivity(intent3);
+                finish();
                 break;
             case R.id.conference_register_add2_btn:
                 Log.v("dae", "onClick conference_register_cancle_btn");
@@ -231,6 +234,7 @@ public class ConferenceRegisterActivity extends Activity {
                 intent4.putExtra("type","select"); /*송신*/
                 intent4.putExtra("user","user2"); /*송신*/
                 startActivity(intent4);
+                finish();
                 break;
             case R.id.conference_register_add3_btn:
                 Log.v("dae", "onClick conference_register_cancle_btn");
@@ -238,6 +242,7 @@ public class ConferenceRegisterActivity extends Activity {
                 intent5.putExtra("type","select"); /*송신*/
                 intent5.putExtra("user","user3"); /*송신*/
                 startActivity(intent5);
+                finish();
                 break;
         }
     }
@@ -285,6 +290,9 @@ public class ConferenceRegisterActivity extends Activity {
 
                 Log.v("dae", "Start Time "+ mStartHour +" "+ mStartMinute);
 
+                //Start Time 변경시 Endtime도 변경함.
+                SetEndTime();
+
                 //텍스트뷰의 값을 업데이트함
                 UpdateNow();
             }
@@ -313,4 +321,17 @@ public class ConferenceRegisterActivity extends Activity {
         mTxtEndTime.setText(String.format("%02d:%02d", mEndHour, mEndMinute));
     }
 
+    void SetEndTime(){
+        int value = 0;
+
+        if (endTimeSelectValue != null)
+            value = Integer.parseInt(endTimeSelectValue);
+
+        mEndHour = mStartHour + value;
+
+        if (mEndHour > 23){
+            mEndHour -= 24;
+            EndDatecal.add(Calendar.DAY_OF_MONTH, 1);
+        }
+    }
 }

@@ -29,7 +29,7 @@ public class VoIPVideoIoCC implements  Camera.PreviewCallback{
 
     private static final int MAX_VIDEO_FRAME_SIZE =640*480*4;
     private DatagramSocket SendUdpSocket;
-    private ArrayList<InetAddress> remoteIPList;                   // Address to call
+    private ArrayList<InetAddress> remoteIPList = new ArrayList<>();                   // Address to call
     private boolean IsRunning = false;
     @SuppressWarnings("FieldCanBeLocal")
     private SurfaceTexture mtexture;
@@ -39,6 +39,15 @@ public class VoIPVideoIoCC implements  Camera.PreviewCallback{
     //private ImageView selfView;
     private VideoCodec mCodec;
     private Context mContext;
+
+    private boolean banVideo = false;
+    public boolean isBanned() {
+        return banVideo;
+    }
+
+    public void setBanned(boolean ban) {
+        banVideo = ban;
+    }
 
     private VoIPVideoIoCC(Context context){
         mCodec = CodecFacotry.createVideo(CodecFacotry.VideoCodecType.MJPEG);

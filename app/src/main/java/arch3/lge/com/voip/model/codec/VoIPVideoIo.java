@@ -36,7 +36,24 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
     private static final int MAX_VIDEO_FRAME_SIZE =640*480*4;
     private DatagramSocket SendUdpSocket;
     private InetAddress remoteIp;                   // Address to call
+
+    private boolean banVideo = false;
+    public boolean isBanned() {
+        return banVideo;
+    }
+
+    public void setBanned(boolean ban) {
+        banVideo = ban;
+    }
+
+    public void attachView(ImageView view) {
+        selfView = view;
+    }
+
     private boolean IsRunning = false;
+
+
+
     @SuppressWarnings("FieldCanBeLocal")
     private SurfaceTexture mtexture;
     @SuppressWarnings("deprecation")
