@@ -211,13 +211,13 @@ public class BaseCallActivity extends AppCompatActivity {
                   // Log.i("Sensor", "nEEEEEEEEEEEEEEEEEEEr");
                     if (wl !=null && !wl.isHeld()) {
                         wl.acquire();
-                        VoIPVideoIo.getInstance().EndVideo();
+                        VoIPVideoIo.getInstance(BaseCallActivity.this).EndVideo();
                     }
                 } else {
                //     Log.i("Sensor", "FAAAAAAAAAAAAAAAAAr");
                     if (wl !=null && wl.isHeld()) {
                         wl.release();
-                        VoIPVideoIo.getInstance().restartVideo();
+                        VoIPVideoIo.getInstance(BaseCallActivity.this).restartVideo();
                     }
                 }
             }
