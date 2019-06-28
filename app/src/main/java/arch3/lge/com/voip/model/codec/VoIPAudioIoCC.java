@@ -288,6 +288,12 @@ public class VoIPAudioIoCC {
                         if (!mSelf) {
                             outTrack.write(AudioOutputBufferBytes, 0, RAW_BUFFER_SIZE);
                         }
+                    } else {
+                        try {
+                            Thread.sleep(10);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             } finally {
@@ -300,7 +306,6 @@ public class VoIPAudioIoCC {
 
     class CCRunnable implements Runnable {
         DatagramSocket recvAudioUdpSocket;
-        //private LinkedBlockingQueue<byte[]> IncommingpacketQueue;
 
         public CCRunnable() {
             for (int i=0;i<4 ;i++) {
@@ -340,7 +345,6 @@ public class VoIPAudioIoCC {
                     }
                     try {
                         LinkedBlockingQueue<byte[]> IncommingpacketQueue = mQueueList.get(index);
-                        //Log.i("SSSSSSSSSSSSSSSSS",index +" aaaaaaaaaaaaaaa "+ IncommingpacketQueue.size());
                         if (IncommingpacketQueue.remainingCapacity() > 1) {
                             IncommingpacketQueue.add(rawbuf);
 
