@@ -80,7 +80,7 @@ public class DialpadActivity  extends MainTabActivity {
         Intent screen = new Intent();
 
         if (phone == null || phone.isEmpty()) {
-            return;;
+            return;
         }
 
         if (phone.startsWith("070")) {
