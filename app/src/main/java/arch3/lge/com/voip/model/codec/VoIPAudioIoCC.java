@@ -338,20 +338,24 @@ public class VoIPAudioIoCC {
                             break;
                         }
                     }
-                    LinkedBlockingQueue<byte[]> IncommingpacketQueue = mQueueList.get(index);
-                    //Log.i("SSSSSSSSSSSSSSSSS",index +" aaaaaaaaaaaaaaa "+ IncommingpacketQueue.size());
-                    if (IncommingpacketQueue.remainingCapacity() >1)  {
-                        IncommingpacketQueue.add(rawbuf);
+                    try {
+                        LinkedBlockingQueue<byte[]> IncommingpacketQueue = mQueueList.get(index);
+                        //Log.i("SSSSSSSSSSSSSSSSS",index +" aaaaaaaaaaaaaaa "+ IncommingpacketQueue.size());
+                        if (IncommingpacketQueue.remainingCapacity() > 1) {
+                            IncommingpacketQueue.add(rawbuf);
 
-                    } else {
-                        IncommingpacketQueue.remove();
-                        IncommingpacketQueue.add(rawbuf);
+                        } else {
+                            IncommingpacketQueue.remove();
+                            IncommingpacketQueue.add(rawbuf);
+                        }
+                    } catch (IndexOutOfBoundsException e) {
+                        Log.e(LOG_TAG, "IndexError: " ,e);
                     }
                 }
             } catch (SocketException e) {
-                Log.e(LOG_TAG, "SocketException: " + e.toString());
+                Log.e(LOG_TAG, "SocketException: " ,e);
             } catch (IOException e) {
-                Log.e(LOG_TAG, "IOException: " + e.toString());
+                Log.e(LOG_TAG, "IOException: " ,e);
             } finally {
                 recvAudioUdpSocket.disconnect();
                 recvAudioUdpSocket.close();
