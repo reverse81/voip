@@ -13,36 +13,55 @@ import arch3.lge.com.voip.model.user.User;
 
 public class MainTabActivity extends AppCompatActivity {
     final String TAG = "MainTab";
+    final int DIAL_SELECT = 0;
+    final int CONTACTLIST_SELECT = 1;
+    final int CONFERENCE_SELECT = 2;
+    public int tapSelect = DIAL_SELECT;
 
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        Log.i("dhtest","MainTab Create");
     }
 
     public void onClickDialpad(View v)
     {
         Log.e(TAG, "onClickDialpad = "+v.getId());
-        Intent intent = new Intent(this, DialpadActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        startActivity(intent);
+        Log.i("dhtest","Select : "+tapSelect);
+        if (tapSelect != DIAL_SELECT) {
+            Intent intent = new Intent(this, DialpadActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
     }
     public void onClickContact(View v)
     {
         Log.e(TAG, "onClickContact = "+v.getId());
-        Intent intent = new Intent(this, ContactActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        intent.putExtra("type","noraml"); /*송신*/
-        startActivity(intent);
+        Log.i("dhtest","Select : "+tapSelect);
+        if(tapSelect != CONTACTLIST_SELECT) {
+            Intent intent = new Intent(this, ContactActivity.class);
+            //intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            intent.putExtra("type", "noraml"); /*송신*/
+            startActivity(intent);
+            if (tapSelect == CONFERENCE_SELECT)
+                finish();
+        }
 
     }
     public void onClickConfirence(View v)
     {
         Log.e(TAG, "onClickConfirence = "+v.getId());
-        Intent intent = new Intent(this, ConferenceActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        startActivity(intent);
+        Log.i("dhtest","Select : "+tapSelect);
+        if (tapSelect != CONFERENCE_SELECT) {
+            Intent intent = new Intent(this, ConferenceActivity.class);
+            //intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+            if(tapSelect == CONTACTLIST_SELECT)
+                finish();
+        }
     }
 
     @Override

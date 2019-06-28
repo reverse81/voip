@@ -44,10 +44,10 @@ public class VoIPAudioIo {
     private Thread AudioIoThread = null;
     private boolean IsRunning = false;
     private boolean AudioIoThreadThreadRun = false;
-    private LinkedBlockingQueue<byte[]> IncommingpacketQueue;
     private AudioCodec mCodec;
     // private boolean mBoostAudio = false;
     private UserDatagramSocket mSock = new UserDatagramSocket(NetworkConstants.VOIP_AUDIO_UDP_PORT);
+    private AdaptiveBuffering mAdaptiveBuffer = new AdaptiveBuffering();
 
     private VoIPAudioIo(Context context) {
         mContext = context;
@@ -66,7 +66,7 @@ public class VoIPAudioIo {
         if (IsRunning) return (true);
         if (mCodec.open() == true)
             Log.i(LOG_TAG, "JniGsmOpen() Success");
-        IncommingpacketQueue = new LinkedBlockingQueue<>(20);
+        mAdaptiveBuffer.reset();
         mSimVoice = SimVoice;
         mSock.setAddress(ip);
         StartAudioIoThread();
@@ -97,7 +97,6 @@ public class VoIPAudioIo {
         }
 
         AudioIoThread = null;
-        IncommingpacketQueue = null;
         mCodec.close();
         IsRunning = false;
         return (false);
@@ -186,10 +185,10 @@ public class VoIPAudioIo {
                     // DatagramSocket socket = new DatagramSocket();
                     Recorder.startRecording();
                     OutputTrack.play();
-                    IncommingpacketQueue.clear();
+                    mAdaptiveBuffer.reset();
                     while (AudioIoThreadThreadRun) {
-                        if (IncommingpacketQueue.size() > 0) {
-                            byte[] AudioOutputBufferBytes = IncommingpacketQueue.remove();
+                        if (mAdaptiveBuffer.isEmpty() == false) {
+                            byte[] AudioOutputBufferBytes = mAdaptiveBuffer.getQueue();
                             OutputTrack.write(AudioOutputBufferBytes, 0, RAW_BUFFER_SIZE);
                         }
                         // Capture audio from microphone and send
@@ -204,7 +203,8 @@ public class VoIPAudioIo {
                         }
                         if (BytesRead == RAW_BUFFER_SIZE) {
                             byte[] gsmbuf = mCodec.encode(rawbuf, 0, rawbuf.length);
-                            mSock.send(gsmbuf);
+                            byte [] pktData = mAdaptiveBuffer.writeHeader(gsmbuf);
+                            mSock.send(pktData);
                         }
                     }
                     Recorder.stop();
@@ -237,23 +237,10 @@ public class VoIPAudioIo {
             boolean logged = true;
             @Override
             public void onReceive(DatagramPacket packet) {
-                // if (packet.getLength() == GSM_BUFFER_SIZE) {
-//                if (logged && packet.getLength()>5) {
-//                    Log.i(LOG_TAG, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+ packet.getLength());
-//                    //   logged = false;
-//                }
-                byte[] coded = packet.getData();
-                byte[] rawbuf = mCodec.decode(coded, 0, packet.getLength());
-                if (IncommingpacketQueue.remainingCapacity() >1)  {
-                    IncommingpacketQueue.add(rawbuf);
-                } else {
-                    IncommingpacketQueue.remove();
-                    IncommingpacketQueue.add(rawbuf);
-                }
-
-                //Log.i(LOG_TAG, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA         "+ IncommingpacketQueue.size());
-                //  } else
-                //     Log.i(LOG_TAG, "Invalid Packet LengthReceived: " + packet.getLength());
+                byte[] pktData = packet.getData();
+                int offset = mAdaptiveBuffer.readHeader(pktData);
+                byte[] rawbuf = mCodec.decode(pktData, offset, packet.getLength()-offset);
+                mAdaptiveBuffer.addQueue(rawbuf);
             }
         });
     }

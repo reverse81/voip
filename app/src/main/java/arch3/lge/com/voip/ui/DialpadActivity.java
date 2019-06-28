@@ -26,15 +26,26 @@ public class DialpadActivity  extends MainTabActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.tapSelect = DIAL_SELECT;
+
         setContentView(R.layout.activity_dialpad);
         Log.e("sss", "enter");
+        mNumberView = (TextView)findViewById(R.id.dialInput);
+        mNumberView.setText(mNumberString);
+
+        Intent intent = getIntent(); /*데이터 수신*/
+        String PhoneNum = intent.getStringExtra("phone"); /*String형*/
+        if (PhoneNum != null)
+            mNumberString = PhoneNum;
+        Log.i("dhtest", "Phone : "+PhoneNum);
+
         mNumberView = (TextView)findViewById(R.id.dialInput);
         mNumberView.setText(mNumberString);
 
         {
             Intent serviceIntent = new Intent(this, TCPListenerService.class);
             this.startService(serviceIntent);
-            Log.i("dae", "Started TCPListenerService.class");
+            Log.i("dhtest", "Started TCPListenerService.class");
         }
     }
 
