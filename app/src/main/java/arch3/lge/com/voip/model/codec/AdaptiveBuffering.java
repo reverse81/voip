@@ -44,11 +44,11 @@ public class AdaptiveBuffering {
         int index = byteBuffer.getInt();
 
         long delay = System.currentTimeMillis() - byteBuffer.getLong();
-        Log.d(LOG_TAG, "indx ="+ index+  " delay ="+ delay);
+//        Log.d(LOG_TAG, "indx ="+ index+  " delay ="+ delay);
         calculateBufferSize(delay);
         calculatePacketLoss(index);
         mLastSequence = index;
-        Log.d(LOG_TAG, "aveDi ="+ mAveDi+  " aveVi ="+ mAveVi + " => "+ mPacketLoss);
+        Log.d(LOG_TAG, "indx ="+ index+  " delay ="+ delay+" aveDi ="+ mAveDi+  " aveVi ="+ mAveVi + " => "+ mPacketLoss);
         return HDR_SIZE;
     }
 
