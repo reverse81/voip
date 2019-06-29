@@ -133,8 +133,8 @@ public class VoIPVideoIoCC implements  Camera.PreviewCallback{
 //        320 x 240
 //        352 x 288
 //        480 x 320
-
-        params.setPreviewSize(480, 640);
+      //  params.setPreviewSize(480, 640);
+        params.setPreviewSize(320, 240);
         params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         mCamera.setParameters(params);
         mCamera.setPreviewCallbackWithBuffer(this);

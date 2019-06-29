@@ -288,11 +288,11 @@ public class ServerApi {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            String res = new String(responseBody);
+                         //   String res = new String(responseBody);
 //                            Log.e("tag", "실패 : " + res);
 
                             //Toast.makeText(context, "Wrong number", Toast.LENGTH_SHORT).show();
-                            Toast.makeText(context, res, Toast.LENGTH_LONG).show();
+                          //  Toast.makeText(context, res, Toast.LENGTH_LONG).show();
                             CallController.finish();
 
 

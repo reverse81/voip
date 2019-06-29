@@ -338,7 +338,9 @@ public class ConferenceCallingActivity extends AppCompatActivity {
                 } else {
                     if (wl !=null && wl.isHeld()) {
                         wl.release();
-                        VoIPVideoIoCC.getInstance(ConferenceCallingActivity.this).startVideo();
+                        if (!VoIPVideoIo.getInstance(ConferenceCallingActivity.this).isBanned()) {
+                            VoIPVideoIoCC.getInstance(ConferenceCallingActivity.this).startVideo();
+                        }
                     }
                 }
             }

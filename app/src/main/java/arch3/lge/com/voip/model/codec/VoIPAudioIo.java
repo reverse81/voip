@@ -186,14 +186,6 @@ public class VoIPAudioIo {
                         }
                         // Capture audio from microphone and send
                         BytesRead = Recorder.read(rawbuf, 0, RAW_BUFFER_SIZE);
-                        if (InputPlayFile != null) {
-                            BytesRead = InputPlayFile.read(rawbuf, 0, RAW_BUFFER_SIZE);
-                            if (BytesRead != RAW_BUFFER_SIZE) {
-                                InputPlayFile.close();
-                                InputPlayFile = OpenSimVoice(mSimVoice);
-                                BytesRead = InputPlayFile.read(rawbuf, 0, RAW_BUFFER_SIZE);
-                            }
-                        }
                         if (BytesRead == RAW_BUFFER_SIZE) {
                             byte[] gsmbuf = mCodec.encode(rawbuf, 0, rawbuf.length);
                             byte [] pktData = mAdaptiveBuffer.writeHeader(gsmbuf);
@@ -230,6 +222,7 @@ public class VoIPAudioIo {
             boolean logged = true;
             @Override
             public void onReceive(DatagramPacket packet) {
+
                 byte[] pktData = packet.getData();
                 int offset = mAdaptiveBuffer.readHeader(pktData);
                 byte[] rawbuf = mCodec.decode(pktData, offset, packet.getLength()-offset);

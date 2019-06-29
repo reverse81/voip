@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.listener.TCPListenerService;
+import arch3.lge.com.voip.model.UDPnetwork.TCPCmd;
+import arch3.lge.com.voip.model.codec.VoIPVideoIo;
 
 public class DialpadActivity  extends MainTabActivity {
     final String TAG = "Dialpad";
@@ -94,10 +96,10 @@ public class DialpadActivity  extends MainTabActivity {
             screen.putExtra("phoneNumber",  phone);
             this.startActivity(screen);
         }
-
+//
 //        {
-//            VoIPVideoIo io = VoIPVideoIo.getInstance();
-//            String ip = "10.0.2.21";
+//            VoIPVideoIo io = VoIPVideoIo.getInstance(this);
+//            String ip = "10.0.1.21";
 //            io.attachIP(ip);
 //            Intent intent = new Intent();
 //            intent.setClassName(this.getPackageName(), TCPCmd.class.getName());
