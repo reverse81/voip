@@ -135,9 +135,17 @@ public class ServerApi {
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             String res = new String(responseBody);
                             Log.e(LOG_TAG, "응답 RES = " + res);
+                            try {
+                                JSONObject object = new JSONObject(res);
+                                String pwd = object.getString("pwd");
+                                String showTxt = "Password : "+pwd;
 
-                            //Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
-                            Toast.makeText(context, res, Toast.LENGTH_LONG).show();
+                                //Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, showTxt, Toast.LENGTH_LONG).show();
+
+                            }catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
 
                         @Override
@@ -171,19 +179,29 @@ public class ServerApi {
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             String res = new String(responseBody);
                             String duplicated = "User duplicated.";
+
                             Log.e("tag", "응답 RES = " + res);
 
                             if (res.equals(duplicated))
                                 //Toast.makeText(activity, "이메일 중복", Toast.LENGTH_SHORT).show();
                                 Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
                             else {
-                                //Toast.makeText(activity, "생성완료", Toast.LENGTH_SHORT).show();
-                                Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
+                                try {
+                                    JSONObject object = new JSONObject(res);
+                                    String phoneNumber = object.getString("phone");
+                                    String showTxt = "Phone : " + phoneNumber;
 
-                                User.saveLogin(activity, null, email, null);
-                                Intent intent = new Intent(activity, LoginActivity.class);
-                                activity.startActivity(intent);
-                                activity.finish();
+                                    //Toast.makeText(activity, "생성완료", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(activity, showTxt, Toast.LENGTH_LONG).show();
+
+                                    User.saveLogin(activity, null, email, null);
+                                    Intent intent = new Intent(activity, LoginActivity.class);
+                                    activity.startActivity(intent);
+                                    activity.finish();
+
+                                } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                             }
                         }
 
@@ -407,6 +425,7 @@ public class ServerApi {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             String res = new String(responseBody);
+                            String phoneNumber;
                             Log.e("tag", "응답 RES = " + res);
                             Log.v("dae", "응답 RES = " + res);//dhtest
 
@@ -421,7 +440,7 @@ public class ServerApi {
 
                             try {
                                 JSONObject object = new JSONObject(res);
-                                String phoneNumber = object.getString("phone");
+                                phoneNumber = object.getString("phone");
                                 String startTimeDB = startTime.substring(0, 10) + " " + startTime.substring(11, 16);
                                 String endTimeDB = endTime.substring(0, 10) + " " + endTime.substring(11, 16);
 
@@ -430,17 +449,18 @@ public class ServerApi {
                                 ConferenceDB.showList();
                                 Log.v("dae", "data : "+ConferenceDB.conferenceList.toString());
 
+                                //Toast.makeText(activity, "전송완료", Toast.LENGTH_SHORT).show();
+                                String showTxt = "Success : " + phoneNumber;
+                                Toast.makeText(activity, showTxt, Toast.LENGTH_LONG).show();
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
 
-
                             Intent intent1 = new Intent(activity, ConferenceActivity.class);
                             activity.startActivity(intent1);
                             activity.finish();
-                            //Toast.makeText(activity, "전송완료", Toast.LENGTH_SHORT).show();
-                            Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
+
                         }
 
                         @Override
