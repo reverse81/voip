@@ -20,8 +20,14 @@ public class AdaptiveBuffering {
     private final static long COEF_B = 4;
     private long mAveDi = 0;
     private long mAveVi = 0;
-    private final int CAPACITY_MIN = 4;
+    private final int CAPACITY_MIN = 10;
     private final int CAPACITY_MAX = 20;
+    private static boolean mIsLowLatency = false;
+    private long mPacketLoss = 0;
+
+    static boolean isLowLatency(){
+        return false;
+    }
 
     static byte [] writeHeader(byte [] data){
         ByteBuffer byteBuffer = ByteBuffer.allocate(HDR_SIZE + data.length);
@@ -36,35 +42,55 @@ public class AdaptiveBuffering {
         ByteBuffer byteBuffer = ByteBuffer.wrap(data, 0, HDR_SIZE);
 
         int index = byteBuffer.getInt();
-        if(index == mLastSequence + 2){
-            Log.d(LOG_TAG, "packet missing  ="+ (index-1));
-            if(mLastPacket != null) {
-                Log.d(LOG_TAG, "repleace to  last packet");
-                mPacketQueue.add(mLastPacket);
-                mLastPacket = null;
-            }
-        }
-        mLastSequence = index;
 
         long delay = System.currentTimeMillis() - byteBuffer.getLong();
-        calcBufferSize(index, delay);
+        Log.d(LOG_TAG, "indx ="+ index+  " delay ="+ delay);
+        calculateBufferSize(delay);
+        calculatePacketLoss(index);
+        mLastSequence = index;
+        Log.d(LOG_TAG, "aveDi ="+ mAveDi+  " aveVi ="+ mAveVi + " => "+ mPacketLoss);
         return HDR_SIZE;
     }
 
-    private void calcBufferSize(int index, long delay){
-        Log.d(LOG_TAG, "indx ="+ index+  " delay ="+ delay);
+    private void calculateBufferSize(long delay){
         mAveDi = (mAveDi*(COEF_A-1) + delay) / COEF_A;
         mAveVi = (mAveVi*(COEF_A-1) + Math.abs(mAveDi - delay)) / COEF_A;
-        long Pi = mAveDi + COEF_B*mAveVi;
-        Log.d(LOG_TAG, "Di ="+ mAveDi+  " Vi ="+ mAveVi + " => "+ Pi);
+        int nBuffering = (int)(mAveDi + COEF_B*mAveVi)/10;
+        //mIsLowLatency = (nBuffering > CAPACITY_MAX);
         if((mLastSequence % 1000) == 0){
-            mQueueCapacity = (int)Pi / 10;
+            mQueueCapacity = nBuffering;
             if (mQueueCapacity >= CAPACITY_MAX)
                 mQueueCapacity = CAPACITY_MAX;
             else if(mQueueCapacity < CAPACITY_MIN)
                 mQueueCapacity = CAPACITY_MIN;
             Log.d(LOG_TAG, "Capacity  update ="+ mQueueCapacity);
         }
+    }
+
+    private void calculatePacketLoss(int index){
+        if(index - mLastSequence < 0 ){
+            Log.d(LOG_TAG, "Revert sequence : index = "+ index + ", last = "+mLastSequence);
+            return;
+        }
+        if(index - mLastSequence > 40){
+            Log.d(LOG_TAG, "Too big sequence gap : index = "+ index + ", last = "+mLastSequence);
+            return;
+        }
+
+        int iCurr = mLastSequence + 1;
+        while(iCurr < index){
+            mPacketLoss = (mPacketLoss*(COEF_A-1) + 10000) / COEF_A;
+
+            if(mPacketLoss < 100){    //1%
+                Log.d(LOG_TAG, "packet missing  => replace to last");
+                //mPacketQueue.add(mLastPacket);
+            }
+            else if(mPacketLoss < 200){
+                Log.d(LOG_TAG, "packet missing  => replace to silent");
+               // mPacketQueue.add(mLastPacket);
+            }
+        }
+        mPacketLoss = (mPacketLoss*(COEF_A-1) + 0) / COEF_A;
     }
 
     void addQueue(byte [] data){
