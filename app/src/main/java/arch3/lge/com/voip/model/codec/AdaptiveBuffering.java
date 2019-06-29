@@ -20,6 +20,8 @@ public class AdaptiveBuffering {
     private final static long COEF_B = 4;
     private long mAveDi = 0;
     private long mAveVi = 0;
+    private final int CAPACITY_MIN = 4;
+    private final int CAPACITY_MAX = 20;
 
     static byte [] writeHeader(byte [] data){
         ByteBuffer byteBuffer = ByteBuffer.allocate(HDR_SIZE + data.length);
@@ -57,8 +59,10 @@ public class AdaptiveBuffering {
         Log.d(LOG_TAG, "Di ="+ mAveDi+  " Vi ="+ mAveVi + " => "+ Pi);
         if((mLastSequence % 1000) == 0){
             mQueueCapacity = (int)Pi / 10;
-            if (mQueueCapacity >= 20)
-                mQueueCapacity = 20;
+            if (mQueueCapacity >= CAPACITY_MAX)
+                mQueueCapacity = CAPACITY_MAX;
+            else if(mQueueCapacity < CAPACITY_MIN)
+                mQueueCapacity = CAPACITY_MIN;
             Log.d(LOG_TAG, "Capacity  update ="+ mQueueCapacity);
         }
     }
@@ -67,7 +71,7 @@ public class AdaptiveBuffering {
         mLastPacket = data;
         mPacketQueue.add(data);
         if(mPacketQueue.size( )> mQueueCapacity){
-            mPacketQueue.remove();
+            getQueue();
         }
     }
 
