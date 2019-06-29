@@ -3,13 +3,14 @@ package arch3.lge.com.voip.model.codec;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
+import java.util.NoSuchElementException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class AdaptiveBuffering {
     private final static String LOG_TAG = "AdaptiveBuffering";
 
     private final static int HDR_SIZE = Integer.BYTES + Long.BYTES;
-    private int mSequenceNumber = 0;
+    private static int mSequenceNumber = 0;
     private LinkedBlockingQueue<byte[]> mPacketQueue = new LinkedBlockingQueue<>(1024);
     private int mQueueCapacity = 16;
     private int mLastSequence = 0;
@@ -19,8 +20,10 @@ public class AdaptiveBuffering {
     private final static long COEF_B = 4;
     private long mAveDi = 0;
     private long mAveVi = 0;
+    private final int CAPACITY_MIN = 4;
+    private final int CAPACITY_MAX = 20;
 
-    byte [] writeHeader(byte [] data){
+    static byte [] writeHeader(byte [] data){
         ByteBuffer byteBuffer = ByteBuffer.allocate(HDR_SIZE + data.length);
         byteBuffer.putInt(mSequenceNumber);
         mSequenceNumber ++;
@@ -56,8 +59,10 @@ public class AdaptiveBuffering {
         Log.d(LOG_TAG, "Di ="+ mAveDi+  " Vi ="+ mAveVi + " => "+ Pi);
         if((mLastSequence % 1000) == 0){
             mQueueCapacity = (int)Pi / 10;
-            if (mQueueCapacity >= 20)
-                mQueueCapacity = 20;
+            if (mQueueCapacity >= CAPACITY_MAX)
+                mQueueCapacity = CAPACITY_MAX;
+            else if(mQueueCapacity < CAPACITY_MIN)
+                mQueueCapacity = CAPACITY_MIN;
             Log.d(LOG_TAG, "Capacity  update ="+ mQueueCapacity);
         }
     }
@@ -66,13 +71,18 @@ public class AdaptiveBuffering {
         mLastPacket = data;
         mPacketQueue.add(data);
         if(mPacketQueue.size( )> mQueueCapacity){
-            mPacketQueue.remove();
+            getQueue();
         }
     }
 
     byte [] getQueue(){
-        if (mPacketQueue.size() > 0) {
+        try{
+            if(mPacketQueue.isEmpty())
+                return null;
             return mPacketQueue.remove();
+        }
+        catch(NoSuchElementException e){
+            //e.printStackTrace();
         }
         return null;
     }
