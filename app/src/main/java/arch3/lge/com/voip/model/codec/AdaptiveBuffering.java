@@ -89,6 +89,7 @@ public class AdaptiveBuffering {
                 Log.d(LOG_TAG, "packet missing  => replace to silent");
                // mPacketQueue.add(mLastPacket);
             }
+            iCurr++;
         }
         mPacketLoss = (mPacketLoss*(COEF_A-1) + 0) / COEF_A;
     }
