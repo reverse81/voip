@@ -198,33 +198,33 @@ public class ConferenceCallingActivity extends AppCompatActivity {
 
                 }
             }
-            {
-                ArrayList<String> arrayList = new ArrayList<>();
-                arrayList.add("10.0.1.3");
-                arrayList.add("10.0.1.4");
-                arrayList.add("10.0.1.5");
-
-                PhoneState.getInstance().setRemoteIPs(arrayList);
-                VoIPVideoIoCC.getInstance(this).attachIP();
-                VoIPAudioIoCC.getInstance(this).attachIP();
-
-                if (PhoneState.getInstance().myIndex(this) -1 ==0) {
-                    VoIPVideoIoCC.getInstance(this).attachView((ImageView)this.findViewById(R.id.cc1));
-                }
-                if (PhoneState.getInstance().myIndex(this) -1 ==1) {
-                    VoIPVideoIoCC.getInstance(this).attachView((ImageView)this.findViewById(R.id.cc2));
-                }
-                if (PhoneState.getInstance().myIndex(this) -1 ==2) {
-                    VoIPVideoIoCC.getInstance(this).attachView((ImageView)this.findViewById(R.id.cc3));
-                }
-                if (PhoneState.getInstance().myIndex(this) -1 ==3) {
-                    VoIPVideoIoCC.getInstance(this).attachView((ImageView)this.findViewById(R.id.cc4));
-                }
-
-                VoIPVideoIoCC.getInstance(this).startVideo();
-                VoIPAudioIoCC.getInstance(this).StartAudio();
-                StartReceiveVideoThread();
-            }
+//            {
+//                ArrayList<String> arrayList = new ArrayList<>();
+//                arrayList.add("10.0.1.3");
+//                arrayList.add("10.0.1.4");
+//                arrayList.add("10.0.1.5");
+//
+//                PhoneState.getInstance().setRemoteIPs(arrayList);
+//                VoIPVideoIoCC.getInstance(this).attachIP();
+//                VoIPAudioIoCC.getInstance(this).attachIP();
+//
+//                if (PhoneState.getInstance().myIndex(this) -1 ==0) {
+//                    VoIPVideoIoCC.getInstance(this).attachView((ImageView)this.findViewById(R.id.cc1));
+//                }
+//                if (PhoneState.getInstance().myIndex(this) -1 ==1) {
+//                    VoIPVideoIoCC.getInstance(this).attachView((ImageView)this.findViewById(R.id.cc2));
+//                }
+//                if (PhoneState.getInstance().myIndex(this) -1 ==2) {
+//                    VoIPVideoIoCC.getInstance(this).attachView((ImageView)this.findViewById(R.id.cc3));
+//                }
+//                if (PhoneState.getInstance().myIndex(this) -1 ==3) {
+//                    VoIPVideoIoCC.getInstance(this).attachView((ImageView)this.findViewById(R.id.cc4));
+//                }
+//
+//                VoIPVideoIoCC.getInstance(this).startVideo();
+//                VoIPAudioIoCC.getInstance(this).StartAudio();
+//                StartReceiveVideoThread();
+//            }
         }
 
     }
@@ -318,12 +318,6 @@ public class ConferenceCallingActivity extends AppCompatActivity {
                                 continue;
                             }
                             final Bitmap bitmap = BitmapFactory.decodeByteArray(decrypt, 0, decrypt.length);
-                            //  final Bitmap bitmap = BitmapFactory.decodeByteArray(packet.getData(), 0, packet.getLength());
-//                            final Matrix mtx = new Matrix();
-//                           // mtx.postRotate(-90);
-//                            final Bitmap rotator = Bitmap.createBitmap(bitmap, 0, 0,
-//                                    bitmap.getWidth(), bitmap.getHeight(), mtx,
-//                                    true);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

@@ -99,17 +99,17 @@ public class DialpadActivity  extends MainTabActivity {
             screen.putExtra("phoneNumber",  phone);
             this.startActivity(screen);
 
-            {
-                VoIPVideoIo io = VoIPVideoIo.getInstance(this);
-                String ip = "10.0.1.4";
-                io.attachIP(ip);
-                Intent intent = new Intent();
-                intent.setClassName(this.getPackageName(), TCPCmd.class.getName());
-                intent.setAction(TCPCmd.GUI_VOIP_CTRL);
-                intent.putExtra("message", "/CALL_BUTTON/");
-                intent.putExtra("sender", ip);
-                this.startService(intent);
-            }
+//            {
+//                VoIPVideoIo io = VoIPVideoIo.getInstance(this);
+//                String ip = "10.0.1.4";
+//                io.attachIP(ip);
+//                Intent intent = new Intent();
+//                intent.setClassName(this.getPackageName(), TCPCmd.class.getName());
+//                intent.setAction(TCPCmd.GUI_VOIP_CTRL);
+//                intent.putExtra("message", "/CALL_BUTTON/");
+//                intent.putExtra("sender", ip);
+//                this.startService(intent);
+//            }
         }
         Log.e(TAG, "onClickCall = "+phone);
 

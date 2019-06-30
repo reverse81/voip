@@ -460,7 +460,7 @@ public class VoIPAudioIoCC {
                         // Setup socket to receive the audio data
                         recvAudioUdpSocket = new DatagramSocket(new InetSocketAddress(NetworkConstants.VOIP_AUDIO_UDP_PORT+mIndex));
                         recvAudioUdpSocket.setReuseAddress(true);
-                       // recvAudioUdpSocket.bind();
+                        //recvAudioUdpSocket.bind();
 
                         long systemTime = System.currentTimeMillis();
                         int count=0;
