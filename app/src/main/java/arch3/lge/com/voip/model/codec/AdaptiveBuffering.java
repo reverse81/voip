@@ -22,12 +22,13 @@ public class AdaptiveBuffering {
     private long mAveVi = 0;
     private final int CAPACITY_MIN = 10;
     private final int CAPACITY_MAX = 20;
-    private static boolean mIsLowLatency = false;
     private long mPacketLoss = 0;
+    private static long mPacketLossGlobal = 0;
+    private final static long PACKET_LOSS_SAMPLING = 1000;
+    public final static long MIN_PACKET_LOSS = 80;
+    public final static long MAX_PACKET_LOSS = 120;
 
-    static boolean isLowLatency(){
-        return false;
-    }
+    static public long getPacketLoss() { return mPacketLossGlobal; }
 
     static byte [] writeHeader(byte [] data){
         ByteBuffer byteBuffer = ByteBuffer.allocate(HDR_SIZE + data.length);
@@ -55,8 +56,7 @@ public class AdaptiveBuffering {
     private void calculateBufferSize(long delay){
         mAveDi = (mAveDi*(COEF_A-1) + delay) / COEF_A;
         mAveVi = (mAveVi*(COEF_A-1) + Math.abs(mAveDi - delay)) / COEF_A;
-        int nBuffering = (int)(mAveDi + COEF_B*mAveVi)/10;
-        //mIsLowLatency = (nBuffering > CAPACITY_MAX);
+        int nBuffering = (int)(40 + COEF_B*mAveVi)/10;
         if((mLastSequence % 1000) == 0){
             mQueueCapacity = nBuffering;
             if (mQueueCapacity >= CAPACITY_MAX)
@@ -79,11 +79,11 @@ public class AdaptiveBuffering {
 
         int iCurr = mLastSequence + 1;
         while(iCurr < index){
-            mPacketLoss = (mPacketLoss*(COEF_A-1) + 10000) / COEF_A;
+            mPacketLoss = (mPacketLoss*(PACKET_LOSS_SAMPLING-1) + 10000) / PACKET_LOSS_SAMPLING;
 
             if(mPacketLoss < 100){    //1%
                 Log.d(LOG_TAG, "packet missing  => replace to last");
-                //mPacketQueue.add(mLastPacket);
+                mPacketQueue.add(mLastPacket);
             }
             else if(mPacketLoss < 200){
                 Log.d(LOG_TAG, "packet missing  => replace to silent");
@@ -91,7 +91,8 @@ public class AdaptiveBuffering {
             }
             iCurr++;
         }
-        mPacketLoss = (mPacketLoss*(COEF_A-1) + 0) / COEF_A;
+        mPacketLoss = (mPacketLoss*(PACKET_LOSS_SAMPLING-1) + 0) / PACKET_LOSS_SAMPLING;
+        mPacketLossGlobal = ((mPacketLossGlobal * 2) + mPacketLoss) / 3;
     }
 
     void addQueue(byte [] data){

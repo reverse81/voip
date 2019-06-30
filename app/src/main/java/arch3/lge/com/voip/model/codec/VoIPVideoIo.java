@@ -97,7 +97,7 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
 
     public  synchronized boolean restartVideo() {
         if (IsRunning) {
-            Log.i(LOG_TAG, "Already Start VoIP Video");
+        //    Log.i(LOG_TAG, "Already Start VoIP Video");
             return true;
         } else {
             Log.i(LOG_TAG, "Start VoIP Video");
@@ -232,6 +232,10 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
             }
         }
         camera.addCallbackBuffer(data);
+
+        if(IsRunning && AdaptiveBuffering.getPacketLoss() > AdaptiveBuffering.MAX_PACKET_LOSS){
+            EndVideo();
+        }
     }
     private void UdpSend(final byte[] bytes) {
         Thread replyThread = new Thread(new Runnable() {

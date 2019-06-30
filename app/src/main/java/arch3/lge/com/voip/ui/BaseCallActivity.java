@@ -23,6 +23,7 @@ import java.net.SocketException;
 
 import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.model.call.PhoneState;
+import arch3.lge.com.voip.model.codec.AdaptiveBuffering;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.utils.NetworkConstants;
@@ -152,6 +153,10 @@ public class BaseCallActivity extends AppCompatActivity {
                             //Log.i(LOG_TAG, "Video Packet received: " + packet.getLength());
                         } else
                             Log.i(LOG_TAG, "Invalid Packet LengthReceived: " + packet.getLength());
+
+                        if(AdaptiveBuffering.getPacketLoss() < AdaptiveBuffering.MIN_PACKET_LOSS ){
+                            VoIPVideoIo.getInstance(BaseCallActivity.this).restartVideo();
+                        }
 
                     }
                     // close socket
