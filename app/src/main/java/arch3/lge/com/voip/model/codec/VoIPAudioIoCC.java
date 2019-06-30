@@ -455,9 +455,9 @@ public class VoIPAudioIoCC {
                     Log.i(LOG_TAG, "Receive Data Thread Started. Thread id: " + Thread.currentThread().getId() + " for "+ (NetworkConstants.VOIP_AUDIO_UDP_PORT+mIndex));
                     try {
                         // Setup socket to receive the audio data
-                        recvAudioUdpSocket = new DatagramSocket(null);
+                        recvAudioUdpSocket = new DatagramSocket(new InetSocketAddress(NetworkConstants.VOIP_AUDIO_UDP_PORT+mIndex));
                         recvAudioUdpSocket.setReuseAddress(true);
-                        recvAudioUdpSocket.bind(new InetSocketAddress(NetworkConstants.VOIP_AUDIO_UDP_PORT+mIndex));
+                       // recvAudioUdpSocket.bind();
 
                         long systemTime = System.currentTimeMillis();
                         int count=0;
@@ -471,7 +471,6 @@ public class VoIPAudioIoCC {
                             }
 
                             DatagramPacket packet = new DatagramPacket(mBuffer, mBuffer.length);
-
                             recvAudioUdpSocket.receive(packet);
 
                             byte[] audio = Arrays.copyOf(packet.getData(), packet.getLength());
