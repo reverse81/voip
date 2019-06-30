@@ -30,7 +30,6 @@ import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.ui.ConferenceCallingActivity;
 import arch3.lge.com.voip.utils.NetworkConstants;
-import arch3.lge.com.voip.utils.Util;
 
 public class VoIPAudioIoCC {
 
@@ -46,7 +45,7 @@ public class VoIPAudioIoCC {
     private boolean AudioIoThreadThreadRun = false;
     private AudioCodec mCodec;
 
-    private DatagramSocket sendUdpSocket;
+   // private DatagramSocket sendUdpSocket;
     private ArrayList<LinkedBlockingQueue<byte[]>> mQueueList = new ArrayList<>();
 
     private VoIPAudioIoCC(ConferenceCallingActivity context) {
@@ -55,13 +54,18 @@ public class VoIPAudioIoCC {
     }
 
     private ArrayList<InetAddress> remoteIPList = new ArrayList<>();
+    private ArrayList<DatagramSocket> sendSocketList = new ArrayList<>();
     public void attachIP () {
         for (String RemoteIP : PhoneState.getInstance().getRemoteIPs() ) {
             InetAddress address = null;
             try {
                 address = InetAddress.getByName(RemoteIP);
                 remoteIPList.add(address);
+                DatagramSocket socket = new DatagramSocket();
+                sendSocketList.add(socket);
             } catch (UnknownHostException e) {
+                e.printStackTrace();
+            } catch (SocketException e) {
                 e.printStackTrace();
             }
         }
@@ -85,11 +89,11 @@ public class VoIPAudioIoCC {
         if (mCodec.open() == true)
             Log.i(LOG_TAG, "JniGsmOpen() Success");
 
-        try {
-            sendUdpSocket = new DatagramSocket();
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            sendUdpSocket = new DatagramSocket();
+//        } catch (SocketException e) {
+//            e.printStackTrace();
+//        }
 
         StartAudioIoThread();
         StartReceiveDataThread();
@@ -101,8 +105,17 @@ public class VoIPAudioIoCC {
         if (!IsRunning) return (true);
         Log.i(LOG_TAG, "Ending VoIp Audio");
 
-        sendUdpSocket.disconnect();
-        Util.safetyClose(sendUdpSocket);
+        for (DatagramSocket socket :sendSocketList ){
+            if (socket !=null) {
+                socket.disconnect();
+                socket.close();
+            } sendSocketList.clear();
+
+        }
+
+
+//        sendUdpSocket.disconnect();
+//        Util.safetyClose(sendUdpSocket);
 
         UdpVoipReceiveDataThreadRun = false;
         if (UdpReceiveAudioThread1 !=null&& UdpReceiveAudioThread1.isAlive()) {
@@ -221,11 +234,17 @@ public class VoIPAudioIoCC {
                     if (BytesRead == RAW_BUFFER_SIZE) {
                         byte[] gsmbuf = mCodec.encode(rawbuf, 0, rawbuf.length);
                         //    Log.i(LOG_TAG, "end record " + (System.currentTimeMillis() -systemTime));
-                        for (InetAddress remoteIp : remoteIPList) {
-                            udpSend(gsmbuf,remoteIp);
-//                                    DatagramPacket packet = new DatagramPacket(gsmbuf, gsmbuf.length, remoteIp, NetworkConstants.VOIP_AUDIO_UDP_PORT);
-//                                    sendUdpSocket.send(packet);
+                        for (int i =0; i< remoteIPList.size() ;i++) {
+                            InetAddress remoteIp = remoteIPList.get(i);
+                            DatagramSocket socket = sendSocketList.get(i);
+                            udpSend(gsmbuf,remoteIp, socket);
                         }
+
+//                        for (InetAddress remoteIp : remoteIPList) {
+//
+////                                    DatagramPacket packet = new DatagramPacket(gsmbuf, gsmbuf.length, remoteIp, NetworkConstants.VOIP_AUDIO_UDP_PORT);
+////                                    sendUdpSocket.send(packet);
+//                        }
                         //  Log.i(LOG_TAG, "end record " + (System.currentTimeMillis() -systemTime));
                     }
                 }
@@ -416,7 +435,7 @@ public class VoIPAudioIoCC {
 
             class CCRunnable implements Runnable {
                 DatagramSocket recvAudioUdpSocket;
-                byte [] mBuffer = new byte[164];
+                byte [] mBuffer = new byte[200];
                 int mIndex;
                 boolean self;
                 LinkedBlockingQueue<byte[]> IncommingpacketQueue = new LinkedBlockingQueue<>(200);
@@ -476,14 +495,14 @@ public class VoIPAudioIoCC {
                 }
             }
 
-            private void udpSend(final byte[] bytes, final InetAddress remoteIp) {
+            private void udpSend(final byte[] bytes, final InetAddress remoteIp, DatagramSocket socket) {
                         if (remoteIp.getHostAddress().equals(PhoneState.getInstance().getPreviousIP(mContext))) {
                             return;
                         }
                         try {
                             int index = PhoneState.getInstance().myIndex(mContext)-1;
                             DatagramPacket packet = new DatagramPacket(bytes, bytes.length, remoteIp, (NetworkConstants.VOIP_AUDIO_UDP_PORT+index));
-                            sendUdpSocket.send(packet);
+                            socket.send(packet);
                         } catch (SocketException e) {
 
                             Log.e(LOG_TAG, "Failure. SocketException in UdpSend: " + e);
