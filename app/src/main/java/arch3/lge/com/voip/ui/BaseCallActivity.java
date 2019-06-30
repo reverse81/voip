@@ -27,6 +27,7 @@ import arch3.lge.com.voip.model.codec.AdaptiveBuffering;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.utils.NetworkConstants;
+import cz.msebera.android.httpclient.conn.HttpHostConnectException;
 
 
 public class BaseCallActivity extends AppCompatActivity {
@@ -120,6 +121,10 @@ public class BaseCallActivity extends AppCompatActivity {
 
                         RecvVideoUdpSocket.receive(packet);
 
+                        if (!packet.getAddress().getHostAddress().equals(PhoneState.getInstance().getRemoteIP())) {
+                            //Log.i(LOG_TAG, "Skipppppped"+packet.getAddress().getHostAddress()  + " vs "+PhoneState.getInstance().getRemoteIP());
+                            continue;
+                        }
                        // Log.i(LOG_TAG, ":"+packet.getLength());
 
 
@@ -155,14 +160,17 @@ public class BaseCallActivity extends AppCompatActivity {
 
                     }
                     // close socket
-                    RecvVideoUdpSocket.disconnect();
-                    RecvVideoUdpSocket.close();
+
                 } catch (SocketException e) {
                     UdpVoipReceiveVideoThreadRun = false;
-                    Log.e(LOG_TAG, "SocketException: " + e.toString());
+                    Log.e(LOG_TAG, "SocketException: " ,e);
                 } catch (IOException e) {
                     UdpVoipReceiveVideoThreadRun = false;
-                    Log.e(LOG_TAG, "IOException: " + e.toString());
+                    Log.e(LOG_TAG, "IOException: " ,e);
+                } finally {
+                    RecvVideoUdpSocket.disconnect();
+                    RecvVideoUdpSocket.close();
+                    RecvVideoUdpSocket = null;
                 }
                 runOnUiThread(new Runnable() {
                     @Override
@@ -187,19 +195,16 @@ public class BaseCallActivity extends AppCompatActivity {
         if (!UdpVoipReceiveVideoThreadRun) return;
         if (UdpReceiveVideoThread != null && UdpReceiveVideoThread.isAlive()) {
             UdpVoipReceiveVideoThreadRun = false;
-            RecvVideoUdpSocket.close();
+
+            //RecvVideoUdpSocket.close();
             Log.i(LOG_TAG, "UdpReceiveDataThread Thread Join started");
             UdpVoipReceiveVideoThreadRun = false;
-            try {
-                UdpReceiveVideoThread.join();
-            } catch (InterruptedException e) {
-                Log.i(LOG_TAG, "UdpReceiveDataThread Join interruped");
-            }
+                UdpReceiveVideoThread.interrupt();
             Log.i(LOG_TAG, " UdpReceiveDataThread Join successs");
         }
 
         UdpReceiveVideoThread = null;
-        RecvVideoUdpSocket = null;
+      //  RecvVideoUdpSocket = null;
     }
 
     SensorEventListener proximitySensorEventListener
@@ -222,7 +227,9 @@ public class BaseCallActivity extends AppCompatActivity {
                //     Log.i("Sensor", "FAAAAAAAAAAAAAAAAAr");
                     if (wl !=null && wl.isHeld()) {
                         wl.release();
-                        VoIPVideoIo.getInstance(BaseCallActivity.this).restartVideo();
+                        if (!VoIPVideoIo.getInstance(BaseCallActivity.this).isBanned()) {
+                            VoIPVideoIo.getInstance(BaseCallActivity.this).restartVideo();
+                        }
                     }
                 }
             }

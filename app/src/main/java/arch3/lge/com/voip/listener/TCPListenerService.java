@@ -117,7 +117,9 @@ public class TCPListenerService extends Service {
 
             case "/REFUSE/":
             case "/ENDCALL/":
-                CallController.finish();
+                if (sender.equals(PhoneState.getInstance().getRemoteIP())) {
+                    CallController.finish();
+                }
                 break;
             case "/BUSY/":
                 CallController.busy();
@@ -131,7 +133,7 @@ public class TCPListenerService extends Service {
                     //{"phoneNumber":"07038557462","schedule":{"from":"2019-06-27T16:03:00.000Z","to":"2019-06-27T17:03:00.000Z"}}
                     try {
                         JSONObject object = new JSONObject(messageIn);
-                        String phoneNumber = object.getString("phoneNumber");
+                        String phoneNumber = object.getString("phone");
                         JSONObject schedule = object.getJSONObject("schedule");
                         String from = schedule.getString("from");
                         String to = schedule.getString("to");
@@ -229,8 +231,8 @@ public class TCPListenerService extends Service {
                         String senderIP = clientSocket.getInetAddress().getHostAddress();
                         ProcessReceivedUdpMessage(senderIP, read);
                         Log.i(LOG_TAG, "send Result");
-                        output.write("{\"result\",\"ok\"}\n");
-                        output.flush();
+//                        output.write("{\"result\",\"ok\"}\n");
+//                        output.flush();
                     }
                 } catch (IOException e) {
                     Log.e(LOG_TAG, "IOException",e);

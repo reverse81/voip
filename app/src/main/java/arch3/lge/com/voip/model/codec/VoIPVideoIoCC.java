@@ -2,10 +2,12 @@ package arch3.lge.com.voip.model.codec;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.util.Log;
+import android.widget.ImageView;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -58,7 +60,10 @@ public class VoIPVideoIoCC implements  Camera.PreviewCallback{
         }
         return mVoIPVideoIo;
     }
-
+    private ImageView selfView;
+    public void attachView(ImageView view) {
+        selfView = view;
+    }
     public void attachIP () {
         for (String RemoteIP : PhoneState.getInstance().getRemoteIPs() ) {
             InetAddress address = null;
@@ -128,13 +133,7 @@ public class VoIPVideoIoCC implements  Camera.PreviewCallback{
         }
 
         Camera.Parameters params = mCamera.getParameters();
-//          h/w
-//        176 x 144
-//        320 x 240
-//        352 x 288
-//        480 x 320
-
-        params.setPreviewSize(480, 640);
+        params.setPreviewSize(320, 240);
         params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         mCamera.setParameters(params);
         mCamera.setPreviewCallbackWithBuffer(this);
@@ -171,7 +170,10 @@ public class VoIPVideoIoCC implements  Camera.PreviewCallback{
         if (format == ImageFormat.NV21 || format == ImageFormat.YUY2 || format == ImageFormat.NV16) {
 
             byte[] imageBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height);
-
+            Bitmap image = mCodec.decode(imageBytes);
+            if (selfView!= null) {
+                selfView.setImageBitmap(image);
+            }
             byte[] encryptedImageBytes = encipher.encrypt(imageBytes);
 
             if (remoteIPList != null) {
@@ -188,13 +190,16 @@ public class VoIPVideoIoCC implements  Camera.PreviewCallback{
             @Override
             public void run() {
                 try {
-                 //   Log.i(LOG_TAG, "Send UDP Video : " + bytes.length);
                     int index = PhoneState.getInstance().myIndex(mContext);
                     if (index == 0 )
                     {
                         return;
                     }
+
                     for (InetAddress remoteIp : remoteIPList) {
+                        if (remoteIp.getHostAddress().equals(PhoneState.getInstance().getPreviousIP(mContext))) {
+                            continue;
+                        }
                         DatagramPacket packet = new DatagramPacket(bytes, bytes.length, remoteIp, NetworkConstants.VOIP_VIDEO_UDP_PORT + index);
                         SendUdpSocket.send(packet);
                     }

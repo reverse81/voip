@@ -84,9 +84,9 @@ public class TCPCmd extends IntentService {
             case "/REFUSE_CALL_BUTTON/":
                 TCPSend(PhoneState.getInstance().getRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/REFUSE/");
                 CallController.finish();
+                break;
             case "/BUSY_SIGNAL/":
-                TCPSend(PhoneState.getInstance().getRemoteIP(), NetworkConstants.CONTROL_DATA_PORT, "/BUSY/");
-             //   PhoneState.getInstance().NotifyUpdate();
+                TCPSend(Sender, NetworkConstants.CONTROL_DATA_PORT, "/BUSY/");
                 break;
             default:
                 // Invalid notification received

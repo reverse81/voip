@@ -8,6 +8,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
@@ -18,21 +20,26 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.controller.DeviceContorller;
 import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.codec.VoIPAudioIoCC;
-import arch3.lge.com.voip.model.codec.VoIPVideoIo;
 import arch3.lge.com.voip.model.codec.VoIPVideoIoCC;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
+import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
+import arch3.lge.com.voip.model.serverApi.ServerApi;
+import arch3.lge.com.voip.model.user.User;
 import arch3.lge.com.voip.utils.NetworkConstants;
 
 public class ConferenceCallingActivity extends AppCompatActivity {
@@ -95,8 +102,6 @@ public class ConferenceCallingActivity extends AppCompatActivity {
                     SensorManager.SENSOR_DELAY_NORMAL);
         }
 
-        StartReceiveVideoThread();
-
         AudioManager audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         final ImageButton speaker = (ImageButton)findViewById(R.id.speaker);
         final ImageButton bluetooth = (ImageButton)findViewById(R.id.bluetooth);
@@ -117,14 +122,14 @@ public class ConferenceCallingActivity extends AppCompatActivity {
         video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!VoIPVideoIo.getInstance(ConferenceCallingActivity.this).isBanned()) {
-                    VoIPVideoIo.getInstance(ConferenceCallingActivity.this).EndVideo();
-                    VoIPVideoIo.getInstance(ConferenceCallingActivity.this).setBanned(true);
+                if (!VoIPVideoIoCC.getInstance(ConferenceCallingActivity.this).isBanned()) {
+                    VoIPVideoIoCC.getInstance(ConferenceCallingActivity.this).EndVideo();
+                    VoIPVideoIoCC.getInstance(ConferenceCallingActivity.this).setBanned(true);
                     video.setImageResource(R.drawable.video_off);
 
                 } else {
-                    VoIPVideoIo.getInstance(ConferenceCallingActivity.this).restartVideo();
-                    VoIPVideoIo.getInstance(ConferenceCallingActivity.this).setBanned(false);
+                    VoIPVideoIoCC.getInstance(ConferenceCallingActivity.this).startVideo();
+                    VoIPVideoIoCC.getInstance(ConferenceCallingActivity.this).setBanned(false);
                     video.setImageResource(R.drawable.video_on);
                 }
             }
@@ -181,6 +186,47 @@ public class ConferenceCallingActivity extends AppCompatActivity {
                 CallController.endCCCall(ConferenceCallingActivity.this);
             }
         });
+
+        {
+            {
+                WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+                WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                int LocalIpAddressBin = wifiInfo.getIpAddress();
+                if (LocalIpAddressBin != 0) {
+                    String ip = String.format(Locale.US, "%d.%d.%d.%d", (LocalIpAddressBin & 0xff), (LocalIpAddressBin >> 8 & 0xff), (LocalIpAddressBin >> 16 & 0xff), (LocalIpAddressBin >> 24 & 0xff));
+                    PhoneState.getInstance().setCurrentIP(this,ip);
+
+                }
+            }
+//            {
+//                ArrayList<String> arrayList = new ArrayList<>();
+//                arrayList.add("10.0.1.3");
+//                arrayList.add("10.0.1.4");
+//                arrayList.add("10.0.1.5");
+//
+//                PhoneState.getInstance().setRemoteIPs(arrayList);
+//                VoIPVideoIoCC.getInstance(this).attachIP();
+//                VoIPAudioIoCC.getInstance(this).attachIP();
+//
+//                if (PhoneState.getInstance().myIndex(this) -1 ==0) {
+//                    VoIPVideoIoCC.getInstance(this).attachView((ImageView)this.findViewById(R.id.cc1));
+//                }
+//                if (PhoneState.getInstance().myIndex(this) -1 ==1) {
+//                    VoIPVideoIoCC.getInstance(this).attachView((ImageView)this.findViewById(R.id.cc2));
+//                }
+//                if (PhoneState.getInstance().myIndex(this) -1 ==2) {
+//                    VoIPVideoIoCC.getInstance(this).attachView((ImageView)this.findViewById(R.id.cc3));
+//                }
+//                if (PhoneState.getInstance().myIndex(this) -1 ==3) {
+//                    VoIPVideoIoCC.getInstance(this).attachView((ImageView)this.findViewById(R.id.cc4));
+//                }
+//
+//                VoIPVideoIoCC.getInstance(this).startVideo();
+//                VoIPAudioIoCC.getInstance(this).StartAudio();
+//                StartReceiveVideoThread();
+//            }
+        }
+
     }
 
     @Override
@@ -197,27 +243,49 @@ public class ConferenceCallingActivity extends AppCompatActivity {
         }
     }
 
-    static private Thread UdpReceiveVideoThread1;
-    static private Thread UdpReceiveVideoThread2;
-    static private Thread UdpReceiveVideoThread3;
-    static private Thread UdpReceiveVideoThread4;
+ ArrayList<Thread> receiveVideoThreadList = new ArrayList<>();
     static private boolean UdpVoipReceiveVideoThreadRun = false;
     MyEncrypt encipher = new MyEncrypt();
-    protected void StartReceiveVideoThread() {
+    public void StartReceiveVideoThread() {
         // Create thread for receiving audio data
         PhoneState.getInstance().SetRecvVideoState(PhoneState.VideoState.RECEIVING_VIDEO);
         if ( UdpVoipReceiveVideoThreadRun) return;
 
         UdpVoipReceiveVideoThreadRun = true;
-        UdpReceiveVideoThread1 = new Thread(new CCRunnable(NetworkConstants.VOIP_VIDEO_UDP_PORT+1 , (ImageView)findViewById(R.id.cc1)));
-        UdpReceiveVideoThread1.start();
-        UdpReceiveVideoThread2=new Thread(new CCRunnable(NetworkConstants.VOIP_VIDEO_UDP_PORT+2, (ImageView)findViewById(R.id.cc2)));
-        UdpReceiveVideoThread2.start();
-        UdpReceiveVideoThread3 = new Thread(new CCRunnable(NetworkConstants.VOIP_VIDEO_UDP_PORT+3, (ImageView)findViewById(R.id.cc3)));
-        UdpReceiveVideoThread3.start();
-        UdpReceiveVideoThread4 = new Thread(new CCRunnable(NetworkConstants.VOIP_VIDEO_UDP_PORT+4, (ImageView)findViewById(R.id.cc4)));
-        UdpReceiveVideoThread4.start();
 
+        int count = PhoneState.getInstance().getRemoteIPs().size();
+        if (count >0) {
+            if (PhoneState.getInstance().myIndex(this) !=1) {
+                Thread receiver = new Thread(new CCRunnable(NetworkConstants.VOIP_VIDEO_UDP_PORT + 1, (ImageView) findViewById(R.id.cc1)));
+                receiveVideoThreadList.add(receiver);
+                receiver.start();
+            }
+            count--;
+        }
+        if (count >0) {
+            if (PhoneState.getInstance().myIndex(this) !=2) {
+                Thread receiver = new Thread(new CCRunnable(NetworkConstants.VOIP_VIDEO_UDP_PORT + 2, (ImageView) findViewById(R.id.cc2)));
+                receiveVideoThreadList.add(receiver);
+                receiver.start();
+                count--;
+            }
+        }
+        if (count >0) {
+            if (PhoneState.getInstance().myIndex(this) !=3) {
+                Thread receiver = new Thread(new CCRunnable(NetworkConstants.VOIP_VIDEO_UDP_PORT + 3, (ImageView) findViewById(R.id.cc3)));
+                receiveVideoThreadList.add(receiver);
+                receiver.start();
+                count--;
+            }
+        }
+        if (count >0) {
+            if (PhoneState.getInstance().myIndex(this) !=4) {
+                Thread receiver = new Thread(new CCRunnable(NetworkConstants.VOIP_VIDEO_UDP_PORT + 4, (ImageView) findViewById(R.id.cc4)));
+                receiveVideoThreadList.add(receiver);
+                receiver.start();
+                count--;
+            }
+        }
     }
 
     class CCRunnable implements Runnable {
@@ -250,12 +318,6 @@ public class ConferenceCallingActivity extends AppCompatActivity {
                                 continue;
                             }
                             final Bitmap bitmap = BitmapFactory.decodeByteArray(decrypt, 0, decrypt.length);
-                            //  final Bitmap bitmap = BitmapFactory.decodeByteArray(packet.getData(), 0, packet.getLength());
-//                            final Matrix mtx = new Matrix();
-//                           // mtx.postRotate(-90);
-//                            final Bitmap rotator = Bitmap.createBitmap(bitmap, 0, 0,
-//                                    bitmap.getWidth(), bitmap.getHeight(), mtx,
-//                                    true);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -302,22 +364,13 @@ public class ConferenceCallingActivity extends AppCompatActivity {
         if (!UdpVoipReceiveVideoThreadRun) return;
 
         UdpVoipReceiveVideoThreadRun = false;
-        if (        UdpReceiveVideoThread1 != null &&         UdpReceiveVideoThread1.isAlive()) {
-            UdpReceiveVideoThread1.interrupt();
-            UdpReceiveVideoThread1 = null;
-        }
-        if (        UdpReceiveVideoThread2 != null &&         UdpReceiveVideoThread2.isAlive()) {
-            UdpReceiveVideoThread2.interrupt();
-            UdpReceiveVideoThread2 = null;
-        }
-        if (        UdpReceiveVideoThread3 != null &&         UdpReceiveVideoThread3.isAlive()) {
-            UdpReceiveVideoThread3.interrupt();
-            UdpReceiveVideoThread3 = null;
-        }
-        if (        UdpReceiveVideoThread4 != null &&         UdpReceiveVideoThread4.isAlive()) {
-            UdpReceiveVideoThread4.interrupt();
-            UdpReceiveVideoThread4 = null;
-        }
+        for (Thread receiver : receiveVideoThreadList) {
+
+            if (        receiver != null &&         receiver.isAlive()) {
+                receiver.interrupt();
+            }
+        }receiveVideoThreadList.clear();
+
     }
 
     SensorEventListener proximitySensorEventListener
@@ -338,7 +391,9 @@ public class ConferenceCallingActivity extends AppCompatActivity {
                 } else {
                     if (wl !=null && wl.isHeld()) {
                         wl.release();
-                        VoIPVideoIoCC.getInstance(ConferenceCallingActivity.this).startVideo();
+                        if (!VoIPVideoIoCC.getInstance(ConferenceCallingActivity.this).isBanned()) {
+                            VoIPVideoIoCC.getInstance(ConferenceCallingActivity.this).startVideo();
+                        }
                     }
                 }
             }

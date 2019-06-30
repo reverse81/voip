@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.listener.TCPListenerService;
 import arch3.lge.com.voip.model.UDPnetwork.TCPCmd;
@@ -306,25 +308,12 @@ public class ServerApi {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            String res = new String(responseBody);
+                         //   String res = new String(responseBody);
 //                            Log.e("tag", "실패 : " + res);
 
                             //Toast.makeText(context, "Wrong number", Toast.LENGTH_SHORT).show();
-                            Toast.makeText(context, res, Toast.LENGTH_LONG).show();
-                            CallController.finish();
-
-
-
-                                //JSONObject jsonObject = new JSONObject(res);
-//                                String ip = "10.0.1.2";
-//                                io.attachIP(ip);
-//                                Intent intent = new Intent();
-//                                intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
-//                                intent.setAction(TCPCmd.GUI_VOIP_CTRL);
-//                                intent.putExtra("message", "/CALL_BUTTON/");
-//                                intent.putExtra("sender", ip);
-//                                context.startService(intent);
-
+                          //  Toast.makeText(context, res, Toast.LENGTH_LONG).show();
+                           // CallController.finish();
                         }
                     }  );
 
@@ -569,11 +558,26 @@ public class ServerApi {
                                 VoIPVideoIoCC.getInstance(context).attachIP();
                                 VoIPAudioIoCC.getInstance(context).attachIP();
 
+                                if (PhoneState.getInstance().myIndex(context) -1 ==0) {
+                                    VoIPVideoIoCC.getInstance(context).attachView((ImageView)context.findViewById(R.id.cc1));
+                                }
+                                if (PhoneState.getInstance().myIndex(context) -1 ==1) {
+                                    VoIPVideoIoCC.getInstance(context).attachView((ImageView)context.findViewById(R.id.cc2));
+                                }
+                                if (PhoneState.getInstance().myIndex(context) -1 ==2) {
+                                    VoIPVideoIoCC.getInstance(context).attachView((ImageView)context.findViewById(R.id.cc3));
+                                }
+                                if (PhoneState.getInstance().myIndex(context) -1 ==3) {
+                                    VoIPVideoIoCC.getInstance(context).attachView((ImageView)context.findViewById(R.id.cc4));
+                                }
+
+
+                                context.StartReceiveVideoThread();
                                 VoIPVideoIoCC.getInstance(context).startVideo();
                                 VoIPAudioIoCC.getInstance(context).StartAudio();
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                CallController.endCCCall(context);
+                         		CallController.endCCCall(context);
                             }
                             //////  PhoneState.getInstance().setRemoteIPs(null);
 
@@ -583,11 +587,11 @@ public class ServerApi {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            String res = new String(responseBody);
-                            //Log.e("tag", "실패 : " + res);
-                            //Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
-                            Toast.makeText(context, res, Toast.LENGTH_LONG).show();
-                            CallController.endCCCall(context);
+                            if (responseBody!= null) {
+                                String res = new String(responseBody);
+                                Toast.makeText(context, res, Toast.LENGTH_LONG).show();
+                            }
+
                         }
                     }  );
 

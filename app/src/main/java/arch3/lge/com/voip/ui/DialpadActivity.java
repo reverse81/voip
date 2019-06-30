@@ -9,8 +9,15 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
+import java.util.ArrayList;
+
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.listener.TCPListenerService;
+import arch3.lge.com.voip.model.UDPnetwork.TCPCmd;
+import arch3.lge.com.voip.model.call.PhoneState;
+import arch3.lge.com.voip.model.codec.VoIPAudioIoCC;
+import arch3.lge.com.voip.model.codec.VoIPVideoIo;
+import arch3.lge.com.voip.model.codec.VoIPVideoIoCC;
 
 public class DialpadActivity  extends MainTabActivity {
     final String TAG = "Dialpad";
@@ -93,20 +100,19 @@ public class DialpadActivity  extends MainTabActivity {
             screen.setClassName(this.getPackageName(), RequestCallActivity.class.getName());
             screen.putExtra("phoneNumber",  phone);
             this.startActivity(screen);
+
+//            {
+//                VoIPVideoIo io = VoIPVideoIo.getInstance(this);
+//                String ip = "10.0.1.4";
+//                io.attachIP(ip);
+//                Intent intent = new Intent();
+//                intent.setClassName(this.getPackageName(), TCPCmd.class.getName());
+//                intent.setAction(TCPCmd.GUI_VOIP_CTRL);
+//                intent.putExtra("message", "/CALL_BUTTON/");
+//                intent.putExtra("sender", ip);
+//                this.startService(intent);
+//            }
         }
-
-//        {
-//            VoIPVideoIo io = VoIPVideoIo.getInstance();
-//            String ip = "10.0.2.21";
-//            io.attachIP(ip);
-//            Intent intent = new Intent();
-//            intent.setClassName(this.getPackageName(), TCPCmd.class.getName());
-//            intent.setAction(TCPCmd.GUI_VOIP_CTRL);
-//            intent.putExtra("message", "/CALL_BUTTON/");
-//            intent.putExtra("sender", ip);
-//            this.startService(intent);
-//        }
-
         Log.e(TAG, "onClickCall = "+phone);
 
 
