@@ -34,7 +34,7 @@ import arch3.lge.com.voip.utils.Util;
 
 public class VoIPAudioIoCC {
 
-    private static final String LOG_TAG = "VoIPAudioIo";
+    private static final String LOG_TAG = "VoIPAudioIoCCC";
     private static final int MILLISECONDS_IN_A_SECOND = 1000;
     private static final int SAMPLE_RATE = 8000; // Hertz
     private static final int SAMPLE_INTERVAL = 10;   // Milliseconds
@@ -47,7 +47,7 @@ public class VoIPAudioIoCC {
     private AudioCodec mCodec;
 
     private DatagramSocket sendUdpSocket;
-  private ArrayList<LinkedBlockingQueue<byte[]>> mQueueList = new ArrayList<>();
+    private ArrayList<LinkedBlockingQueue<byte[]>> mQueueList = new ArrayList<>();
 
     private VoIPAudioIoCC(ConferenceCallingActivity context) {
         mContext = context;
@@ -104,6 +104,22 @@ public class VoIPAudioIoCC {
         sendUdpSocket.disconnect();
         Util.safetyClose(sendUdpSocket);
 
+        UdpVoipReceiveDataThreadRun = false;
+        if (UdpReceiveAudioThread1 !=null&& UdpReceiveAudioThread1.isAlive()) {
+            UdpReceiveAudioThread1.interrupt();
+        }
+        if (UdpReceiveAudioThread2 !=null&& UdpReceiveAudioThread2.isAlive()) {
+            UdpReceiveAudioThread2.interrupt();
+        }
+        if (UdpReceiveAudioThread3 !=null&& UdpReceiveAudioThread3.isAlive()) {
+            UdpReceiveAudioThread3.interrupt();
+        }
+        if (UdpReceiveAudioThread4 !=null&& UdpReceiveAudioThread4.isAlive()) {
+            UdpReceiveAudioThread4.interrupt();
+        }
+
+
+
         Log.i(LOG_TAG, "Ending VoIp Audio");
         if (AudioIoThread != null && AudioIoThread.isAlive()) {
             AudioIoThreadThreadRun = false;
@@ -117,6 +133,13 @@ public class VoIPAudioIoCC {
             Log.i(LOG_TAG, "Audio Thread Join successs");
         }
 
+        for (Thread player : playerList)
+        {
+            if (player!=null) {
+                player.interrupt();
+            }
+        } playerList.clear();
+
         AudioIoThread = null;
 
         for (LinkedBlockingQueue queue : mQueueList) {
@@ -128,10 +151,8 @@ public class VoIPAudioIoCC {
         return (false);
     }
 
-    private Thread player1;
-    private Thread player2;
-    private Thread player3;
-    private Thread player4;
+    private ArrayList<Thread> playerList=new ArrayList<>();
+
 
     private int audioSessionId;
     private void StartAudioIoThread() {
@@ -157,7 +178,7 @@ public class VoIPAudioIoCC {
                         AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT,
                         AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT));
                 audioSessionId = Recorder.getAudioSessionId();
-                                if(NoiseSuppressor.isAvailable())
+                if(NoiseSuppressor.isAvailable())
                 {
                     NoiseSuppressor ns = NoiseSuppressor.create(audioSessionId);
                     ns.setEnabled(true);
@@ -170,82 +191,108 @@ public class VoIPAudioIoCC {
                     Log.i(LOG_TAG, "AcousticEchoCanceler : "+ aec.getEnabled() );
                 }
 
-                player1 = new Thread(new AudioPlayer(mQueueList.get(0), imageList.get(0) , 0 == (PhoneState.getInstance().myIndex(mContext) -1) ) );
-                player2 = new Thread(new AudioPlayer(mQueueList.get(1) , imageList.get(1) , 1 == (PhoneState.getInstance().myIndex(mContext) -1) ));
-                player3 = new Thread(new AudioPlayer(mQueueList.get(2), imageList.get(2),  2== (PhoneState.getInstance().myIndex(mContext) -1) ));
-                player4 = new Thread(new AudioPlayer(mQueueList.get(3) , imageList.get(3), 3 == (PhoneState.getInstance().myIndex(mContext) -1)));
-
-                player1.start();
-                player2.start();
-                player3.start();
-                player4.start();
+                for (int i =0 ; i < PhoneState.getInstance().getRemoteIPs().size() ;i ++)
+                {
+                    Thread player =  new Thread(new AudioPlayer(mQueueList.get(i), imageList.get(i)  ,i));
+                    playerList.add(player);
+                    if (! (i == (PhoneState.getInstance().myIndex(mContext) -1))) {
+                        player.start();
+                    }
+                }
 
                 int BytesRead;
                 byte[] rawbuf = new byte[RAW_BUFFER_SIZE];
-                //byte[] gsmbuf = new byte[GSM_BUFFER_SIZE];
-                try {
-                    // Create a socket and start recording
-                    // DatagramSocket socket = new DatagramSocket();
-                    Recorder.startRecording();
-                    while (AudioIoThreadThreadRun) {
-                        // Capture audio from microphone and send
-                        BytesRead = Recorder.read(rawbuf, 0, RAW_BUFFER_SIZE);
 
-                        if (BytesRead == RAW_BUFFER_SIZE) {
-                            byte[] gsmbuf = mCodec.encode(rawbuf, 0, rawbuf.length);
-                            for (InetAddress remoteIp : remoteIPList) {
-                                    DatagramPacket packet = new DatagramPacket(gsmbuf, gsmbuf.length, remoteIp, NetworkConstants.VOIP_AUDIO_UDP_PORT);
-                                    sendUdpSocket.send(packet);
-                            }
-                        }
+                Recorder.startRecording();
+                long systemTime = System.currentTimeMillis();
+                int count=0;
+                while (AudioIoThreadThreadRun) {
+                    // Capture audio from microphone and send
+
+                    //   Log.i(LOG_TAG, "start record " + systemTime);
+                    BytesRead = Recorder.read(rawbuf, 0, RAW_BUFFER_SIZE);
+                    if (System.currentTimeMillis() - systemTime > 10000) {
+                        Log.i(LOG_TAG, "Check voice recorder frame : "+ (count /10));
+                        systemTime = System.currentTimeMillis();
+                        count= 0;
+                    } else {
+                        count++;
                     }
-                    Recorder.stop();
-                    Recorder.release();
-
-                    if (audioManager != null) audioManager.setMode(PreviousAudioManagerMode);
-                    Log.i(LOG_TAG, "Audio Thread Stopped");
-                } catch (SocketException e) {
-                    AudioIoThreadThreadRun = false;
-                    Log.e(LOG_TAG, "SocketException: " + e.toString());
-                } catch (UnknownHostException e) {
-                    AudioIoThreadThreadRun = false;
-                    Log.e(LOG_TAG, "UnknownHostException: " + e.toString());
-                } catch (IOException e) {
-                    AudioIoThreadThreadRun = false;
-                    Log.e(LOG_TAG, "IOException: " + e.toString());
+                    if (BytesRead == RAW_BUFFER_SIZE) {
+                        byte[] gsmbuf = mCodec.encode(rawbuf, 0, rawbuf.length);
+                        //    Log.i(LOG_TAG, "end record " + (System.currentTimeMillis() -systemTime));
+                        for (InetAddress remoteIp : remoteIPList) {
+                            udpSend(gsmbuf,remoteIp);
+//                                    DatagramPacket packet = new DatagramPacket(gsmbuf, gsmbuf.length, remoteIp, NetworkConstants.VOIP_AUDIO_UDP_PORT);
+//                                    sendUdpSocket.send(packet);
+                        }
+                        //  Log.i(LOG_TAG, "end record " + (System.currentTimeMillis() -systemTime));
+                    }
                 }
+                Recorder.stop();
+                Recorder.release();
+
+                if (audioManager != null) audioManager.setMode(PreviousAudioManagerMode);
+                Log.i(LOG_TAG, "Audio Thread Stopped");
             }
         });
         AudioIoThread.start();
     }
 
     static private Thread UdpReceiveAudioThread1;
+    static private Thread UdpReceiveAudioThread2;
+    static private Thread UdpReceiveAudioThread3;
+    static private Thread UdpReceiveAudioThread4;
+
     private boolean UdpVoipReceiveDataThreadRun = false;
     private void StartReceiveDataThread() {
         if ( UdpVoipReceiveDataThreadRun) return;
 
         UdpVoipReceiveDataThreadRun = true;
-        UdpReceiveAudioThread1 = new Thread(new CCRunnable());
-        UdpReceiveAudioThread1.start();
+
+        int count = PhoneState.getInstance().getRemoteIPs().size();
+        if (count >0) {
+            UdpReceiveAudioThread1 = new Thread(new CCRunnable(0));
+            UdpReceiveAudioThread1.start();
+            count --;
+        }
+        if (count >0) {
+            UdpReceiveAudioThread2 = new Thread(new CCRunnable(1));
+            UdpReceiveAudioThread2.start();
+            count --;
+        }
+        if (count >0) {
+            UdpReceiveAudioThread3 = new Thread(new CCRunnable(2));
+            UdpReceiveAudioThread3.start();
+            count --;
+        }
+        if (count >0) {
+            UdpReceiveAudioThread4 = new Thread(new CCRunnable(3));
+            UdpReceiveAudioThread4.start();
+            count --;
+        }
     }
+
+    int key  = -1;
 
     class AudioPlayer implements Runnable {
 
-        private LinkedBlockingQueue<byte[]> IncommingpacketQueue;
+        LinkedBlockingQueue<byte[]> IncommingpacketQueue;
         AudioTrack outTrack;
         ImageView mImageView;
-        boolean mSelf;
+        int mID;
 
-        public AudioPlayer(LinkedBlockingQueue<byte[]> queue,ImageView imageView,boolean self) {
+        public AudioPlayer(LinkedBlockingQueue<byte[]> queue,ImageView imageView, int ID) {
             IncommingpacketQueue = queue;
             mImageView = imageView;
-            mSelf = self;
+            mID = ID;
         }
 
         @Override
         public void run() {
             // Create an instance of AudioTrack, used for playing back audio
-            Log.i(LOG_TAG, "Receive Data Thread Started. Thread id: " + Thread.currentThread().getId());
+            Log.i(LOG_TAG, "Player Thread Started. Thread id: " + Thread.currentThread().getId());
+            Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO);
             try {
                 // Setup socket to receive the audio data
                 outTrack = new AudioTrack.Builder()
@@ -266,18 +313,47 @@ public class VoIPAudioIoCC {
 
                 outTrack.play();
                 IncommingpacketQueue.clear();
+                int frame = 0;
+                InputStream InputPlayFile = OpenSimVoice(mID);
+                long systemTime = System.currentTimeMillis();
+                int count = 0;
                 while (AudioIoThreadThreadRun) {
-                    if (IncommingpacketQueue.size() >0) {
-                        byte[] AudioOutputBufferBytes = IncommingpacketQueue.remove();
-                        if (AudioOutputBufferBytes.length > 160) {
-                            AudioOutputBufferBytes = Arrays.copyOf(AudioOutputBufferBytes, AudioOutputBufferBytes.length - 1);
-                            mContext.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mImageView.setVisibility(View.INVISIBLE);
-                                }
-                            });
-                        } else {
+                    frame++;
+                    if (System.currentTimeMillis() - systemTime > 10000) {
+                        Log.i(LOG_TAG, "Check play frame(" + mID + ")" + (count / 10) + " remaining - " + IncommingpacketQueue.size());
+                        systemTime = System.currentTimeMillis();
+                        count = 0;
+                    } else {
+                        count++;
+                    }
+//                    try {
+//                        byte[] rawbuf = new byte[RAW_BUFFER_SIZE];
+//                        int BytesRead;
+//                        if (InputPlayFile != null) {
+//                            BytesRead = InputPlayFile.read(rawbuf, 0, RAW_BUFFER_SIZE);
+//                            if (BytesRead != RAW_BUFFER_SIZE) {
+//                                InputPlayFile.close();
+//                                InputPlayFile = OpenSimVoice(mID);
+//                                BytesRead = InputPlayFile.read(rawbuf, 0, RAW_BUFFER_SIZE);
+//                            }
+//                        }
+//                        outTrack.write(rawbuf, 0, RAW_BUFFER_SIZE);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+
+                    //    if (IncommingpacketQueue.size() > 0) {
+                    byte[] AudioOutputBufferBytes = new byte[0];
+                    AudioOutputBufferBytes = IncommingpacketQueue.take();
+                    if (AudioOutputBufferBytes.length > 40) {
+                        synchronized (VoIPAudioIoCC.this) {
+                            if (key == -1) {
+                                key = mID;
+                            }
+                        }
+
+                        if (frame % 100 == 0) {
+                            frame = 0;
                             mContext.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -285,88 +361,138 @@ public class VoIPAudioIoCC {
                                 }
                             });
                         }
-                        if (!mSelf) {
-                            outTrack.write(AudioOutputBufferBytes, 0, RAW_BUFFER_SIZE);
-                        }
                     } else {
-                        try {
-                            Thread.sleep(10);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        if (frame % 100 == 0) {
+                            frame = 0;
+                            mContext.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mImageView.setVisibility(View.INVISIBLE);
+
+                                }
+                            });
                         }
                     }
+                    byte[] rawbuf = VoIPAudioIoCC.this.decodeAudio(AudioOutputBufferBytes, 0, AudioOutputBufferBytes.length);
+                    outTrack.write(rawbuf, 0, RAW_BUFFER_SIZE);
                 }
-            } finally {
-                outTrack.stop();
-                outTrack.flush();
-                outTrack.release();
+                    } catch (InterruptedException e) {
+                        Log.e(LOG_TAG, "InterruptedException", e);
+                    } finally {
+                        outTrack.stop();
+                        outTrack.flush();
+                        outTrack.release();
+                    }
             }
         }
-    }
 
-    class CCRunnable implements Runnable {
-        DatagramSocket recvAudioUdpSocket;
+            private InputStream OpenSimVoice(int SimVoice) {
+                InputStream VoiceFile = null;
+                switch (SimVoice) {
+//            case 0:
+//                break;
+                    case 0:
+                        VoiceFile = mContext.getResources().openRawResource(R.raw.t18k16bit);
+                        break;
+                    case 1:
+                        VoiceFile = mContext.getResources().openRawResource(R.raw.t28k16bit);
+                        break;
+                    case 2:
+                        VoiceFile = mContext.getResources().openRawResource(R.raw.t38k16bit);
+                        break;
+                    case 3:
+                        VoiceFile = mContext.getResources().openRawResource(R.raw.t48k16bit);
+                        break;
+                    default:
+                        break;
+                }
+                return VoiceFile;
+            }
 
-        public CCRunnable() {
-            for (int i=0;i<4 ;i++) {
+            protected synchronized byte[] decodeAudio(byte[] data, int offset, int length) {
+                byte[] result = mCodec.decode(data, offset, length);
+                return  result;
+            }
+
+            class CCRunnable implements Runnable {
+                DatagramSocket recvAudioUdpSocket;
+                byte [] mBuffer = new byte[164];
+                int mIndex;
+                boolean self;
                 LinkedBlockingQueue<byte[]> IncommingpacketQueue = new LinkedBlockingQueue<>(200);
-                mQueueList.add(IncommingpacketQueue);
-            }
-        }
+                public CCRunnable(int index) {
+                    mQueueList.add(IncommingpacketQueue);
+                    mIndex = index;
+                    self = (PhoneState.getInstance().myIndex(mContext) -1 == mIndex);
+                }
 
-        @Override
-        public void run() {
-            // Create an instance of AudioTrack, used for playing back audio
-            Log.i(LOG_TAG, "Receive Data Thread Started. Thread id: " + Thread.currentThread().getId());
-            try {
-                // Setup socket to receive the audio data
-                recvAudioUdpSocket = new DatagramSocket(null);
-                recvAudioUdpSocket.setReuseAddress(true);
-                recvAudioUdpSocket.bind(new InetSocketAddress(NetworkConstants.VOIP_AUDIO_UDP_PORT));
-
-                while (UdpVoipReceiveDataThreadRun) {
-                    byte [] mBuffer = new byte[8*1024];
-                    DatagramPacket packet = new DatagramPacket(mBuffer, mBuffer.length);
-                    recvAudioUdpSocket.receive(packet);
-
-                    byte[] rawbuf = mCodec.decode(packet.getData(), 0, packet.getLength());
-                    if (packet.getLength() <40) {
-                        rawbuf = Arrays.copyOf(rawbuf, rawbuf.length +1);
-
+                @Override
+                public void run() {
+                    if (self) {
+                        Log.i(LOG_TAG, "self finished receiver");
+                        return;
                     }
-
-                    String senderIP = packet.getAddress().getHostAddress();
-                    int index =0;
-                    for (int i=0; i< PhoneState.getInstance().getRemoteIPs().size() ;i++) {
-                        if (PhoneState.getInstance().getRemoteIPs().get(i).equals(senderIP)) {
-                            index =i;
-                            break;
-                        }
-                    }
+                    // Create an instance of AudioTrack, used for playing back audio
+                    Log.i(LOG_TAG, "Receive Data Thread Started. Thread id: " + Thread.currentThread().getId() + " for "+ (NetworkConstants.VOIP_AUDIO_UDP_PORT+mIndex));
                     try {
-                        LinkedBlockingQueue<byte[]> IncommingpacketQueue = mQueueList.get(index);
-                        if (IncommingpacketQueue.remainingCapacity() > 1) {
-                            IncommingpacketQueue.add(rawbuf);
+                        // Setup socket to receive the audio data
+                        recvAudioUdpSocket = new DatagramSocket(null);
+                        recvAudioUdpSocket.setReuseAddress(true);
+                        recvAudioUdpSocket.bind(new InetSocketAddress(NetworkConstants.VOIP_AUDIO_UDP_PORT+mIndex));
 
-                        } else {
-                            IncommingpacketQueue.remove();
-                            IncommingpacketQueue.add(rawbuf);
+                        long systemTime = System.currentTimeMillis();
+                        int count=0;
+                        while (UdpVoipReceiveDataThreadRun) {
+                            if (System.currentTimeMillis() - systemTime > 10000) {
+                                Log.i(LOG_TAG, "Check received frame("+mIndex+")"+ (count /10));
+                                systemTime = System.currentTimeMillis();
+                                count= 0;
+                            } else {
+                                count++;
+                            }
+
+                            DatagramPacket packet = new DatagramPacket(mBuffer, mBuffer.length);
+
+                            recvAudioUdpSocket.receive(packet);
+
+                            byte[] audio = Arrays.copyOf(packet.getData(), packet.getLength());
+
+                            if (IncommingpacketQueue.remainingCapacity() > 1) {
+                                IncommingpacketQueue.add(audio);
+                            } else {
+                                IncommingpacketQueue.remove();
+                                IncommingpacketQueue.add(audio);
+                            }
                         }
-                    } catch (IndexOutOfBoundsException e) {
-                        Log.e(LOG_TAG, "IndexError: " ,e);
+                    } catch (SocketException e) {
+                        Log.e(LOG_TAG, "SocketException: " ,e);
+                    } catch (IOException e) {
+                        Log.e(LOG_TAG, "IOException: " ,e);
+                    } finally {
+                        recvAudioUdpSocket.disconnect();
+                        recvAudioUdpSocket.close();
+                        recvAudioUdpSocket = null;
                     }
                 }
-            } catch (SocketException e) {
-                Log.e(LOG_TAG, "SocketException: " ,e);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "IOException: " ,e);
-            } finally {
-                recvAudioUdpSocket.disconnect();
-                recvAudioUdpSocket.close();
             }
-        }
-    }
 
-}
+            private void udpSend(final byte[] bytes, final InetAddress remoteIp) {
+                        if (remoteIp.getHostAddress().equals(PhoneState.getInstance().getPreviousIP(mContext))) {
+                            return;
+                        }
+                        try {
+                            int index = PhoneState.getInstance().myIndex(mContext)-1;
+                            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, remoteIp, (NetworkConstants.VOIP_AUDIO_UDP_PORT+index));
+                            sendUdpSocket.send(packet);
+                        } catch (SocketException e) {
+
+                            Log.e(LOG_TAG, "Failure. SocketException in UdpSend: " + e);
+                        } catch (IOException e) {
+
+                            Log.e(LOG_TAG, "Failure. IOException in UdpSend: " + e);
+                        }
+                    }
+
+        }
 
 

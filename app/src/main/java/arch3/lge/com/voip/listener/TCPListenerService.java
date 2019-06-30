@@ -117,7 +117,9 @@ public class TCPListenerService extends Service {
 
             case "/REFUSE/":
             case "/ENDCALL/":
-                CallController.finish();
+                if (sender.equals(PhoneState.getInstance().getRemoteIP())) {
+                    CallController.finish();
+                }
                 break;
             case "/BUSY/":
                 CallController.busy();

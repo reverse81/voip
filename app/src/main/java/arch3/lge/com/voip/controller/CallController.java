@@ -29,16 +29,6 @@ public class CallController {
         VoIPVideoIo io = VoIPVideoIo.getInstance(context);
         io.StartVideo(self);
         serverApi.getIP(context, object,io);
-//        {
-//            String ip = "10.0.1.2";
-//            io.attachIP(ip);
-//            Intent intent = new Intent();
-//            intent.setClassName(context.getPackageName(), TCPCmd.class.getName());
-//            intent.setAction(TCPCmd.GUI_VOIP_CTRL);
-//            intent.putExtra("message", "/CALL_BUTTON/");
-//            intent.putExtra("sender", ip);
-//            context.startService(intent);
-//        }
     }
 
     static public void acceptCall(Context context) {

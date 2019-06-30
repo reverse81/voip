@@ -119,10 +119,10 @@ public class BaseCallActivity extends AppCompatActivity {
                         byte[] jpegbuf = new byte[NetworkConstants.VIDEO_BUFFER_SIZE];
                         DatagramPacket packet = new DatagramPacket(jpegbuf, NetworkConstants.VIDEO_BUFFER_SIZE);
 
-
                         RecvVideoUdpSocket.receive(packet);
 
-                        if (packet.getAddress().getHostAddress() != PhoneState.getInstance().getRemoteIP()) {
+                        if (!packet.getAddress().getHostAddress().equals(PhoneState.getInstance().getRemoteIP())) {
+                            //Log.i(LOG_TAG, "Skipppppped"+packet.getAddress().getHostAddress()  + " vs "+PhoneState.getInstance().getRemoteIP());
                             continue;
                         }
                        // Log.i(LOG_TAG, ":"+packet.getLength());

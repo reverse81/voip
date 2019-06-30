@@ -75,7 +75,6 @@ public class VoIPAudioIo {
         mSock.closeSendSocket();
         mSock.setListener(null);
 
-
         Log.i(LOG_TAG, "Ending VoIp Audio");
         if (AudioIoThread != null && AudioIoThread.isAlive()) {
             AudioIoThreadThreadRun = false;
@@ -179,13 +178,32 @@ public class VoIPAudioIo {
                     Recorder.startRecording();
                     OutputTrack.play();
                     mAdaptiveBuffer.reset();
+                    long systemTime_record = System.currentTimeMillis();
+                    long systemTime_play = System.currentTimeMillis();
+                    int count_record=0;
+                    int count_play=0;
                     while (AudioIoThreadThreadRun) {
                         if (mAdaptiveBuffer.isEmpty() == false) {
+                            if (System.currentTimeMillis() - systemTime_play > 10000) {
+                                Log.i(LOG_TAG, "Check play frame()" + (count_play / 10));
+                                systemTime_play = System.currentTimeMillis();
+                                count_play = 0;
+                            } else {
+                                count_play++;
+                            }
                             byte[] AudioOutputBufferBytes = mAdaptiveBuffer.getQueue();
-                            OutputTrack.write(AudioOutputBufferBytes, 0, RAW_BUFFER_SIZE);
+                                OutputTrack.write(AudioOutputBufferBytes, 0, RAW_BUFFER_SIZE);
+                        }
+                        if (System.currentTimeMillis() - systemTime_record > 10000) {
+                            Log.i(LOG_TAG, "Check recorder frame()"+ (count_record /10));
+                            systemTime_record = System.currentTimeMillis();
+                            count_record= 0;
+                        } else {
+                            count_record++;
                         }
                         // Capture audio from microphone and send
                         BytesRead = Recorder.read(rawbuf, 0, RAW_BUFFER_SIZE);
+
                         if (BytesRead == RAW_BUFFER_SIZE) {
                             byte[] gsmbuf = mCodec.encode(rawbuf, 0, rawbuf.length);
                             byte [] pktData = mAdaptiveBuffer.writeHeader(gsmbuf);
