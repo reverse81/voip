@@ -35,33 +35,33 @@ public class ContactSelectActivity extends Activity {
             mContactType = CONTACT_NORMAL;
             setContentView(R.layout.activity_contact);
             listView = (ListView) findViewById(R.id.contact_list);
-            mAdapter.onCreate(this, listView);
+            mAdapter.onCreate(this, listView, contactType);
         }
         else if (contactType.equals("delete")) {
             mContactType = CONTACT_DELETE;
             setContentView(R.layout.activity_contact);
             listView = (ListView) findViewById(R.id.contact_list);
-            mAdapter.onCreate(this, listView);
+            mAdapter.onCreate(this, listView, contactType);
         }
         else if (contactType.equals("select")){
             Log.i("dhtest", "contact select type");
             mContactType = CONTACT_SELECT;
             setContentView(R.layout.activity_contact_select);
             listView = (ListView) findViewById(R.id.contact_list_select);
-            mAdapter.onCreate(this, listView);
+            mAdapter.onCreate(this, listView, contactType);
             mUserStr = intent.getExtras().getString("user");
         }
         else if (contactType.equals("edit")){
             mContactType = CONTACT_EDIT;
             setContentView(R.layout.activity_contact_select);
             listView = (ListView) findViewById(R.id.contact_list_select);
-            mAdapter.onCreate(this, listView);
+            mAdapter.onCreate(this, listView, contactType);
         }
         else{
             mContactType = CONTACT_NORMAL;
             setContentView(R.layout.activity_contact);
             listView = (ListView) findViewById(R.id.contact_list);
-            mAdapter.onCreate(this, listView);
+            mAdapter.onCreate(this, listView, contactType);
         }
 
         //Click listener
@@ -71,12 +71,12 @@ public class ContactSelectActivity extends Activity {
 
                 Log.i("dhtest", "Position:"+position+" id:"+id);
 
-                //String string = ((TextView)view).getText().toString();
-                String phoneString = ((TextView) view.findViewById(R.id.list_item_phone)).getText().toString();
-                String userString = ((TextView) view.findViewById(R.id.list_item_name)).getText().toString();
-                Log.i("dhtest", "phone:"+phoneString);
 
                 if (mContactType == CONTACT_SELECT){
+                    String phoneString = ((TextView) view.findViewById(R.id.list_item_phone)).getText().toString();
+                    String userString = ((TextView) view.findViewById(R.id.list_item_name)).getText().toString();
+                    Log.i("dhtest", "phone:"+phoneString);
+
                     Intent intent = new Intent(getApplicationContext(), ConferenceRegisterActivity.class);
                     intent.putExtra("phone",phoneString); /*송신*/
                     intent.putExtra("user",mUserStr); /*송신*/
@@ -85,6 +85,10 @@ public class ContactSelectActivity extends Activity {
                     finish();
                 }
                 else if(mContactType == CONTACT_NORMAL){
+                    String phoneString = ((TextView) view.findViewById(R.id.list_item_phone)).getText().toString();
+                    String userString = ((TextView) view.findViewById(R.id.list_item_name)).getText().toString();
+                    Log.i("dhtest", "phone:"+phoneString);
+
                     Intent intent = new Intent(getApplicationContext(), DialpadActivity.class);
                     intent.putExtra("phone",phoneString); /*송신*/
                     intent.putExtra("user",userString); /*송신*/
@@ -93,12 +97,16 @@ public class ContactSelectActivity extends Activity {
                     finish();
                 }
                 else if(mContactType == CONTACT_EDIT){
+                    String phoneString = ((TextView) view.findViewById(R.id.list_edit_item_phone)).getText().toString();
+                    String userString = ((TextView) view.findViewById(R.id.list_edit_item_name)).getText().toString();
+                    Log.i("dhtest", "phone:"+phoneString);
+
                     Intent intent = new Intent(getApplicationContext(), ContactListEditActivity.class);
                     intent.putExtra("phone",phoneString); /*송신*/
                     intent.putExtra("user",userString); /*송신*/
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
-                    finish();
+                    //finish();
                 }
 
                 // position이 클릭된 위치입니다.

@@ -60,7 +60,7 @@ public class ContactListDataHelper extends SQLiteOpenHelper {
     public void deleteContextList(String userName) {
         SQLiteDatabase db = getWritableDatabase();
         // 입력한 항목과 일치하는 행 삭제
-        db.execSQL("delete from "+tableName+" where user='" + userName + "';");
+        db.execSQL("delete from "+tableName+" where name='" + userName + "';");
         db.close();
     }
 
@@ -87,6 +87,8 @@ public class ContactListDataHelper extends SQLiteOpenHelper {
 
             SQLiteDatabase db = getWritableDatabase();
 
+            if (personList != null)
+                personList.clear();
 
             //SELECT문을 사용하여 테이블에 있는 데이터를 가져옵니다..
             Cursor c = db.rawQuery("SELECT * FROM " + tableName, null);
@@ -122,5 +124,33 @@ public class ContactListDataHelper extends SQLiteOpenHelper {
 
     }
 
+    public boolean isDuplicatedUser(String user){
+        boolean duplicatedUser = false;
+        try {
 
+            SQLiteDatabase db = getWritableDatabase();
+
+            //SELECT문을 사용하여 테이블에 있는 데이터를 가져옵니다..
+            Cursor c = db.rawQuery("SELECT * FROM " + tableName, null);
+
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    do {
+                        //테이블에서 두개의 컬럼값을 가져와서
+                        String Name = c.getString(c.getColumnIndex("name"));
+
+                        if (Name.equals(user)){
+                            duplicatedUser = true;
+                            break;
+                        }
+                    } while (c.moveToNext());
+                }
+            }
+            db.close();
+        } catch (SQLiteException se) {
+            Log.e("",  se.getMessage());
+        }
+
+        return duplicatedUser;
+    }
 }

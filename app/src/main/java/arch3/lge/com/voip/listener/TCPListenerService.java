@@ -144,7 +144,7 @@ public class TCPListenerService extends Service {
 
                         ConferenceDatabaseHelper ConferenceDB = new ConferenceDatabaseHelper(getApplicationContext());
                         ConferenceDB.insert(startTimeDB, endTimeDB, phoneNumber);
-                        ConferenceDB.showList();
+                        //ConferenceDB.showList();
 
                     } catch (JSONException e) {
                         Log.e(LOG_TAG, sender + " sent invalid message: " + messageIn,e);

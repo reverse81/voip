@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -22,6 +23,14 @@ public class ContactActivity extends MainTabActivity {
     String mUserStr;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        Log.i("dhtest", "Contact Resume");
+        mAdapter.onResume();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.tapSelect = CONTACTLIST_SELECT;
@@ -35,32 +44,32 @@ public class ContactActivity extends MainTabActivity {
             mContactType = CONTACT_NORMAL;
             setContentView(R.layout.activity_contact);
             listView = (ListView) findViewById(R.id.contact_list);
-            mAdapter.onCreate(this, listView);
+            mAdapter.onCreate(this, listView, contactType);
         }
         else if (contactType.equals("delete")) {
             mContactType = CONTACT_DELETE;
             setContentView(R.layout.activity_contact);
             listView = (ListView) findViewById(R.id.contact_list);
-            mAdapter.onCreate(this, listView);
+            mAdapter.onCreate(this, listView, contactType);
         }
         else if (contactType.equals("select")){
             mContactType = CONTACT_SELECT;
             setContentView(R.layout.activity_contact);
             listView = (ListView) findViewById(R.id.contact_list);
-            mAdapter.onCreate(this, listView);
+            mAdapter.onCreate(this, listView, contactType);
             mUserStr = intent.getExtras().getString("user");
         }
         else if (contactType.equals("edit")){
             mContactType = CONTACT_EDIT;
             setContentView(R.layout.activity_contact);
             listView = (ListView) findViewById(R.id.contact_list);
-            mAdapter.onCreate(this, listView);
+            mAdapter.onCreate(this, listView, contactType);
         }
         else{
             mContactType = CONTACT_NORMAL;
             setContentView(R.layout.activity_contact);
             listView = (ListView) findViewById(R.id.contact_list);
-            mAdapter.onCreate(this, listView);
+            mAdapter.onCreate(this, listView, contactType);
         }
 
         //Click listener

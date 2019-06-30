@@ -14,6 +14,12 @@ import arch3.lge.com.voip.R;
 public class ConferenceActivity extends MainTabActivity {
     ConferenceArrayAdapter mAdapter = new ConferenceArrayAdapter();
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAdapter.onResume();
+    }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conference);

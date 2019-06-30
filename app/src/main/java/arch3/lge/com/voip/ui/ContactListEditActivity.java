@@ -1,5 +1,6 @@
 package arch3.lge.com.voip.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,7 +13,7 @@ import android.widget.EditText;
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.model.database.ContactListDataHelper;
 
-public class ContactListEditActivity extends AppCompatActivity {
+public class ContactListEditActivity extends Activity {
 
     private EditText mUserName;
     private EditText mPhoneNum;
@@ -52,6 +53,25 @@ public class ContactListEditActivity extends AppCompatActivity {
 
                 ContactListDataHelper ContactDB = new ContactListDataHelper(getApplicationContext());
                 ContactDB.updateContextList(originalUserName, UserName, PhoneNum);
+                ContactDB.showList();
+                Log.v("dhtest", "data : "+ContactDB.personList.toString());
+
+                finish();
+            }
+        });
+
+        Button mDeleteContactList = (Button)findViewById(R.id.contact_edit_delete);
+        mDeleteContactList.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                UserName = mUserName.getText().toString();
+                PhoneNum = mPhoneNum.getText().toString();
+                Log.v("dhtest", "Click Add button of contact List");
+                Log.v("dhtest", "Name : "+UserName+" Phone : "+PhoneNum);
+
+                ContactListDataHelper ContactDB = new ContactListDataHelper(getApplicationContext());
+                ContactDB.deleteContextList(UserName);
                 ContactDB.showList();
                 Log.v("dhtest", "data : "+ContactDB.personList.toString());
 

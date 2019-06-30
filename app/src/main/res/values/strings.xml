@@ -52,4 +52,7 @@
     <string name="password_hint">Password Hint</string>
     <string name="password_forget">Forget PW</string>
     <string name="phone_number">Phone Number</string>
+    <string name="duplicated_phone">Duplicated Phone Number</string>
+    <string name="duplicated_user">Duplicated User</string>
+    <string name="new_contact">Add New Contact</string>
 </resources>
