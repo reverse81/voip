@@ -233,11 +233,16 @@ public class VoIPAudioIoCC {
                     }
                     if (BytesRead == RAW_BUFFER_SIZE) {
                         byte[] gsmbuf = mCodec.encode(rawbuf, 0, rawbuf.length);
+
                         //    Log.i(LOG_TAG, "end record " + (System.currentTimeMillis() -systemTime));
                         for (int i =0; i< remoteIPList.size() ;i++) {
                             InetAddress remoteIp = remoteIPList.get(i);
                             DatagramSocket socket = sendSocketList.get(i);
-                            udpSend(gsmbuf,remoteIp, socket);
+                           if (gsmbuf.length >40) {
+                               udpSend(rawbuf, remoteIp, socket);
+                           } else {
+                               udpSend(gsmbuf, remoteIp, socket);
+                           }
                         }
 
 //                        for (InetAddress remoteIp : remoteIPList) {
@@ -300,7 +305,6 @@ public class VoIPAudioIoCC {
         AudioTrack outTrack;
         ImageView mImageView;
         int mID;
-
         public AudioPlayer(LinkedBlockingQueue<byte[]> queue,ImageView imageView, int ID) {
             IncommingpacketQueue = queue;
             mImageView = imageView;
@@ -365,12 +369,6 @@ public class VoIPAudioIoCC {
                     byte[] AudioOutputBufferBytes = new byte[0];
                     AudioOutputBufferBytes = IncommingpacketQueue.take();
                     if (AudioOutputBufferBytes.length > 40) {
-                        synchronized (VoIPAudioIoCC.this) {
-                            if (key == -1) {
-                                key = mID;
-                            }
-                        }
-
                         if (frame % 100 == 0) {
                             frame = 0;
                             mContext.runOnUiThread(new Runnable() {
@@ -392,8 +390,13 @@ public class VoIPAudioIoCC {
                             });
                         }
                     }
-                    byte[] rawbuf = VoIPAudioIoCC.this.decodeAudio(AudioOutputBufferBytes, 0, AudioOutputBufferBytes.length);
-                    outTrack.write(rawbuf, 0, RAW_BUFFER_SIZE);
+                    if (AudioOutputBufferBytes.length != RAW_BUFFER_SIZE) {
+                        byte[] rawbuf =decodeAudio(AudioOutputBufferBytes, 0, AudioOutputBufferBytes.length);
+                        outTrack.write(rawbuf, 0, RAW_BUFFER_SIZE);
+                    } else  {
+                        outTrack.write(AudioOutputBufferBytes, 0, RAW_BUFFER_SIZE);
+                    }
+
                 }
                     } catch (InterruptedException e) {
                         Log.e(LOG_TAG, "InterruptedException", e);
@@ -427,7 +430,7 @@ public class VoIPAudioIoCC {
                 }
                 return VoiceFile;
             }
-
+//
             protected synchronized byte[] decodeAudio(byte[] data, int offset, int length) {
                 byte[] result = mCodec.decode(data, offset, length);
                 return  result;
@@ -503,10 +506,8 @@ public class VoIPAudioIoCC {
                             DatagramPacket packet = new DatagramPacket(bytes, bytes.length, remoteIp, (NetworkConstants.VOIP_AUDIO_UDP_PORT+index));
                             socket.send(packet);
                         } catch (SocketException e) {
-
                             Log.e(LOG_TAG, "Failure. SocketException in UdpSend: " + e);
                         } catch (IOException e) {
-
                             Log.e(LOG_TAG, "Failure. IOException in UdpSend: " + e);
                         }
                     }
