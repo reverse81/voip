@@ -77,6 +77,8 @@ public class ConferenceDatabaseHelper extends SQLiteOpenHelper {
 
             SQLiteDatabase db = getWritableDatabase();
 
+            if (conferenceList != null)
+                conferenceList.clear();
 
             //SELECT문을 사용하여 테이블에 있는 데이터를 가져옵니다..
             Cursor c = db.rawQuery("SELECT * FROM " + tableName, null);

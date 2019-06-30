@@ -80,7 +80,7 @@ public class MainTabActivity extends AppCompatActivity {
             case R.id.accountSetting:
                 Log.v("dae", "Menu option1");
                 Intent intent = new Intent(this, UserInfoActive.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                //intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
                 return true;
@@ -88,7 +88,7 @@ public class MainTabActivity extends AppCompatActivity {
             case R.id.edit_contactlist:
                 Log.v("dae", "Menu option1");
                 Intent intent2 = new Intent(this, ContactSelectActivity.class);
-                intent2.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                //intent2.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 intent2.putExtra("type","edit"); /*송신*/
                 startActivity(intent2);
@@ -99,6 +99,7 @@ public class MainTabActivity extends AppCompatActivity {
                 Intent intent3 = new Intent(this, LoginActivity.class);
                 intent3.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 intent3.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                intent3.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent3);
                 User.setLogout(getApplicationContext());
                 finish();

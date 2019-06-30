@@ -85,7 +85,7 @@ public class ServerApi {
 
                                 ApiParamBuilder param = new ApiParamBuilder();
                                 JSONObject SendObject =  param.requestConferenceInfo(phoneNumber);
-                                requestGetConference(context, SendObject);
+                                getConference(context, SendObject);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -446,7 +446,7 @@ public class ServerApi {
 
                                 ConferenceDatabaseHelper ConferenceDB = new ConferenceDatabaseHelper(activity);
                                 ConferenceDB.insert(startTimeDB, endTimeDB, phoneNumber);
-                                ConferenceDB.showList();
+                                //ConferenceDB.showList();
                                 Log.v("dae", "data : "+ConferenceDB.conferenceList.toString());
 
                                 //Toast.makeText(activity, "전송완료", Toast.LENGTH_SHORT).show();
@@ -478,7 +478,7 @@ public class ServerApi {
         }
     }
 
-    public void requestGetConference (final Context context, JSONObject object) {
+    public void getConference(final Context context, JSONObject object) {
         try {
 
             StringEntity entity = new StringEntity(object.toString(), "UTF-8");

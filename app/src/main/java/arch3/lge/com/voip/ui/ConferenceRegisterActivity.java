@@ -14,6 +14,7 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -42,7 +43,7 @@ public class ConferenceRegisterActivity extends Activity {
     private Calendar cal = new GregorianCalendar();
     private Calendar StartDatecal = new GregorianCalendar();
     private Calendar EndDatecal = new GregorianCalendar();
-
+    private boolean duplicatedPhone = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,28 +82,9 @@ public class ConferenceRegisterActivity extends Activity {
         UpdateNow();
 
         //Attendee info
-        if (mPhoneNum != null) {
-            if (mUserNum.equals("user1")) {
-                mPhoneNum1 = mPhoneNum;
-            } else if (mUserNum.equals("user2")) {
-                mPhoneNum2 = mPhoneNum;
-            } else if (mUserNum.equals("user3")) {
-                mPhoneNum3 = mPhoneNum;
-            }
+        AddAttendee();
 
-            if(mPhoneNum1 != null) {
-                TextView textview = (TextView) findViewById(R.id.conference_register_add1_txt);
-                textview.setText(mPhoneNum1);
-            }
-            if(mPhoneNum2 != null) {
-                TextView textview = (TextView) findViewById(R.id.conference_register_add2_txt);
-                textview.setText(mPhoneNum2);
-            }
-            if(mPhoneNum3 != null) {
-                TextView textview = (TextView) findViewById(R.id.conference_register_add3_txt);
-                textview.setText(mPhoneNum3);
-            }
-        }
+
 
         //Spinner
         Spinner s = (Spinner)findViewById(R.id.conference_register_endtime_btn);
@@ -160,6 +142,20 @@ public class ConferenceRegisterActivity extends Activity {
 
                 //ApiParamBuilder createParam = new ApiParamBuilder();
                 //JSONObject sendJsonObject = createParam.requestCC(user.getEmail(), user.getPassword());
+
+                //check
+                if (duplicatedPhone == true){
+                    String showTxt = getString(R.string.duplicated_phone);
+                    Toast.makeText(this, showTxt, Toast.LENGTH_SHORT).show();
+                    break;
+                }
+
+                if ((mPhoneNum1 == null) && (mPhoneNum2 == null) && (mPhoneNum3 == null)){
+                    TextView textview = (TextView) findViewById(R.id.conference_register_add1_txt);
+                    textview.setError(getString(R.string.error_field_required));
+                    textview.requestFocus();
+                    break;
+                }
 
                 String startTime = String.format("%d-%02d-%02dT%02d:%02d:00.000Z", mYear, mMonth+1, mDay, mStartHour, mStartMinute);
                 String endTime = String.format("%d-%02d-%02dT%02d:%02d:00.000Z", mYear, mMonth+1, mDay, mEndHour, mEndMinute);
@@ -329,6 +325,57 @@ public class ConferenceRegisterActivity extends Activity {
         if (mEndHour > 23){
             mEndHour -= 24;
             EndDatecal.add(Calendar.DAY_OF_MONTH, 1);
+        }
+    }
+
+    void AddAttendee(){
+        if (mPhoneNum != null) {
+            if (mUserNum.equals("user1")) {
+                mPhoneNum1 = mPhoneNum;
+            } else if (mUserNum.equals("user2")) {
+                mPhoneNum2 = mPhoneNum;
+            } else if (mUserNum.equals("user3")) {
+                mPhoneNum3 = mPhoneNum;
+            }
+
+            duplicatedPhone = false;
+
+            if(mPhoneNum1 != null) {
+                TextView textview = (TextView) findViewById(R.id.conference_register_add1_txt);
+                textview.setText(mPhoneNum1);
+
+                if (mUserNum.equals("user1")) {
+                    if (mPhoneNum1.equals(mPhoneNum2) || mPhoneNum1.equals(mPhoneNum3)) {
+                        textview.setError(getString(R.string.duplicated_phone));
+                        textview.requestFocus();
+                        duplicatedPhone = true;
+                    }
+                }
+            }
+            if(mPhoneNum2 != null) {
+                TextView textview = (TextView) findViewById(R.id.conference_register_add2_txt);
+                textview.setText(mPhoneNum2);
+
+                if (mUserNum.equals("user2")) {
+                    if (mPhoneNum2.equals(mPhoneNum1) || mPhoneNum2.equals(mPhoneNum3)) {
+                        textview.setError(getString(R.string.duplicated_phone));
+                        textview.requestFocus();
+                        duplicatedPhone = true;
+                    }
+                }
+            }
+            if(mPhoneNum3 != null) {
+                TextView textview = (TextView) findViewById(R.id.conference_register_add3_txt);
+                textview.setText(mPhoneNum3);
+
+                if (mUserNum.equals("user3")) {
+                    if ((mPhoneNum3.equals(mPhoneNum1) || mPhoneNum3.equals(mPhoneNum2))) {
+                        textview.setError(getString(R.string.duplicated_phone));
+                        textview.requestFocus();
+                        duplicatedPhone = true;
+                    }
+                }
+            }
         }
     }
 }

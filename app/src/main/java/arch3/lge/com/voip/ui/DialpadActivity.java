@@ -84,8 +84,6 @@ public class DialpadActivity  extends MainTabActivity {
         }
 
         if (phone.startsWith("070")) {
-
-
             screen.setClassName(this.getPackageName(), ConferenceCallingActivity.class.getName());
             screen.putExtra("phoneNumber",  phone);
             this.startActivity(screen);

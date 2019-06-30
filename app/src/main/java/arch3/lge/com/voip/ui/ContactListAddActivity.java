@@ -1,5 +1,6 @@
 package arch3.lge.com.voip.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,7 +13,7 @@ import android.widget.EditText;
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.model.database.ContactListDataHelper;
 
-public class ContactListAddActivity extends AppCompatActivity {
+public class ContactListAddActivity extends Activity {
     private String UserName;
     private String PhoneNum;
     private EditText mUserName;
@@ -40,17 +41,24 @@ public class ContactListAddActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                mUserName.setError(null);
+
                 UserName = mUserName.getText().toString();
                 PhoneNum = mPhoneNum.getText().toString();
                 Log.v("dae", "Click Add button of contact List");
                 Log.v("dae", "Name : "+UserName+" Phone : "+PhoneNum);
 
                 ContactListDataHelper ContactDB = new ContactListDataHelper(getApplicationContext());
-                ContactDB.insertContextList(UserName, PhoneNum);
-                ContactDB.showList();
-                Log.v("dae", "data : "+ContactDB.personList.toString());
+                if (ContactDB.isDuplicatedUser(UserName)){
+                    mUserName.setError(getString(R.string.duplicated_user));
+                    mUserName.requestFocus();
+                }else{
+                    ContactDB.insertContextList(UserName, PhoneNum);
+                    ContactDB.showList();
+                    Log.v("dae", "data : "+ContactDB.personList.toString());
 
-                finish();
+                    finish();
+                }
             }
         });
     }
