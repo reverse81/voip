@@ -1,5 +1,6 @@
 package arch3.lge.com.voip.ui;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.model.user.User;

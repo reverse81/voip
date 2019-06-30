@@ -1,11 +1,13 @@
 package arch3.lge.com.voip.ui;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.json.JSONObject;
 
@@ -14,11 +16,12 @@ import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
 import arch3.lge.com.voip.model.serverApi.ServerApi;
 import arch3.lge.com.voip.model.user.User;
 
-public class UserInfoActive extends AppCompatActivity {
+public class UserInfoActive extends Activity {
     final String TAG = "UserInfo";
 
     private EditText mEmailView;
-    private EditText mUserPhoneNumView;
+    private TextView mUserPhoneNumView;
+    private TextView mCurEmailView;
     private EditText mPasswordView;
     private EditText mNewPasswordView;
     private EditText mNewPasswordReTypeView;
@@ -44,7 +47,10 @@ public class UserInfoActive extends AppCompatActivity {
         mEmailView = (EditText) findViewById(R.id.user_info_email);
         mEmailView.setText(EmailText);
 
-        mUserPhoneNumView = (EditText) findViewById(R.id.user_info_phonenum);
+        mCurEmailView = (TextView)findViewById(R.id.user_info_cur_email);
+        mCurEmailView.setText(EmailText);
+
+        mUserPhoneNumView = (TextView) findViewById(R.id.user_info_cur_phone);
         mUserPhoneNumView.setText(UserPhoneNumText);
 
         mPasswordView = (EditText)findViewById(R.id.user_info_password);
@@ -59,6 +65,14 @@ public class UserInfoActive extends AppCompatActivity {
             public void onClick(View v) {
 
                 attemptUpdate();
+            }
+        });
+
+        Button cancelButton = (Button) findViewById(R.id.update_user_info_cancel);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 

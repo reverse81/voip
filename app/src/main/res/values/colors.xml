@@ -6,6 +6,6 @@
     <color name="colorCall">#0043B934</color>
     <color name="cardview_light_background">#FFFFFFFF</color>
     <color name="colorTransparency">#00000000</color>
-
+    <color name="main_color">#AB192D</color>
 
 </resources>

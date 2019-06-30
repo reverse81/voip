@@ -55,4 +55,7 @@
     <string name="duplicated_phone">Duplicated Phone Number</string>
     <string name="duplicated_user">Duplicated User</string>
     <string name="new_contact">Add New Contact</string>
+    <string name="change_new_email">New Email</string>
+    <string name="cancel">Cancel</string>
+
 </resources>

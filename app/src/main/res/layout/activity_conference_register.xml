@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:text = "  Conference Call"
-                android:textSize="26dp"
+                android:textSize="20dp"
                 android:gravity="center_vertical"
                 android:background="#868383"
                 android:textColor="#FFFFFF"/>
@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Schedule"
-                android:textSize="24dp"
+                android:textSize="20dp"
                 android:layout_marginLeft="10dp"/>
 
             <LinearLayout
@@ -45,7 +45,7 @@
                     android:id="@+id/conference_register_date_txt"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:textSize="24dp"
+                    android:textSize="20dp"
                     android:hint="Date"
                     android:textAlignment="center"
                     android:layout_gravity="center"/>
@@ -70,7 +70,7 @@
                     android:id="@+id/conference_register_starttime_txt"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:textSize="24dp"
+                    android:textSize="20dp"
                     android:hint="Start Time"
                     android:textAlignment="center"
                     android:layout_gravity="center"/>
@@ -95,7 +95,7 @@
                     android:id="@+id/conference_register_endtime_txt"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:textSize="24dp"
+                    android:textSize="20dp"
                     android:hint="End Time"
                     android:textAlignment="center"
                     android:layout_gravity="center"/>
@@ -112,7 +112,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Attendee"
-                android:textSize="24dp"
+                android:textSize="20dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="20dp"/>
 
@@ -126,18 +126,19 @@
                     android:id="@+id/conference_register_add1_txt"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:textSize="24dp"
+                    android:textSize="20dp"
                     android:hint = "@string/new_conference_attendee1"
                     android:textAlignment="center"
                     android:layout_gravity="center"/>
 
-                <Button
+                <ImageView
                     android:id="@+id/conference_register_add1_btn"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:onClick="mOnClick"
                     android:textSize="20dp"
-                    android:background="@drawable/add_user1"
+                    android:src="@drawable/add_user2_1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:layout_gravity="center"
                     android:layout_marginLeft="20dp"/>
 
@@ -151,17 +152,18 @@
                     android:id="@+id/conference_register_add2_txt"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:textSize="24dp"
+                    android:textSize="20dp"
                     android:hint="@string/new_conference_attendee2"
                     android:textAlignment="center"
                     android:layout_gravity="center"/>
-                <Button
+                <ImageView
                     android:id="@+id/conference_register_add2_btn"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:onClick="mOnClick"
                     android:textSize="20dp"
-                    android:background="@drawable/add_user1"
+                    android:src="@drawable/add_user2_1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:layout_gravity="center"
                     android:layout_marginLeft="20dp"/>
             </LinearLayout>
@@ -174,17 +176,17 @@
                     android:id="@+id/conference_register_add3_txt"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:textSize="24dp"
+                    android:textSize="20dp"
                     android:hint="@string/new_conference_attendee3"
                     android:textAlignment="center"
                     android:layout_gravity="center"/>
-                <Button
+                <ImageView
                     android:id="@+id/conference_register_add3_btn"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:onClick="mOnClick"
-                    android:textSize="20dp"
-                    android:background="@drawable/add_user1"
+                    android:src="@drawable/add_user2_1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:layout_gravity="center"
                     android:layout_marginLeft="20dp"/>
             </LinearLayout>
