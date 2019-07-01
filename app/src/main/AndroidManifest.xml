@@ -74,6 +74,8 @@
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".ui.ContactSelectActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".ui.RecoveryPwdActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".ui.ContactListEditActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.RecoveryActivity"/>

@@ -137,11 +137,11 @@
             android:background="?attr/selectableItemBackground">
 
             <ImageView
-                android:layout_height="50dp"
-                android:layout_width="50dp"
+                android:layout_height="60dp"
+                android:layout_width="60dp"
                 android:id="@+id/dialAdd"
                 android:onClick="onClickAdd"
-                android:src="@drawable/add_user2_1"
+                android:src="@drawable/add_user2_2"
                 android:background="?attr/selectableItemBackgroundBorderless"/>
 
             <!--
@@ -162,11 +162,11 @@
             android:gravity="center"
             android:layout_weight="1">
             <ImageView
-                android:layout_height="30dp"
-                android:layout_width="30dp"
+                android:layout_height="60dp"
+                android:layout_width="60dp"
                 android:id="@+id/dialCall"
                 android:onClick="onClickCall"
-                android:src="@drawable/phone_call2"
+                android:src="@drawable/phone_call3"
                 android:background="?attr/selectableItemBackgroundBorderless"/>
             <!--
             <Button

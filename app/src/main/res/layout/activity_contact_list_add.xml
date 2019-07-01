@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android.support.design="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
     <ScrollView
         android:layout_width="match_parent"
@@ -14,8 +16,8 @@
             android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#868383">
+                android:layout_height="50dp"
+                android:background="@drawable/main_tab2">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -29,7 +31,8 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="10dp"
+                android.support.design:hintTextAppearance="@style/hint_text_main_color">
                 <AutoCompleteTextView
                     android:id="@+id/contact_mgr_user"
                     android:layout_width="match_parent"
@@ -37,12 +40,14 @@
                     android:hint="Name"
                     android:textSize="18dp"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"/>
+                    android:layout_marginRight="10dp"
+                    android:theme="@style/EditTextStyle"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android.support.design:hintTextAppearance="@style/hint_text_main_color">
                 <AutoCompleteTextView
                     android:id="@+id/contact_mgr_phone"
                     android:layout_width="match_parent"
@@ -50,7 +55,8 @@
                     android:hint="Phone Number"
                     android:textSize="18dp"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"/>
+                    android:layout_marginRight="10dp"
+                    android:theme="@style/EditTextStyle"/>
             </android.support.design.widget.TextInputLayout>
 
             <Button

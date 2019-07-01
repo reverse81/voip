@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android.support.design="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
@@ -32,7 +33,8 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android.support.design:hintTextAppearance="@style/hint_text_main_color">
 
                 <AutoCompleteTextView
                     android:id="@+id/recovery_phonenum"
@@ -41,12 +43,14 @@
                     android:hint="@string/phone_number"
                     android:inputType="textAutoComplete"
                     android:maxLines="1"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:theme="@style/EditTextStyle"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android.support.design:hintTextAppearance="@style/hint_text_main_color">
 
                 <AutoCompleteTextView
                     android:id="@+id/recovery_email"
@@ -55,7 +59,8 @@
                     android:hint="@string/prompt_email"
                     android:inputType="textAutoComplete"
                     android:maxLines="1"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:theme="@style/EditTextStyle"/>
             </android.support.design.widget.TextInputLayout>
 
             <TextView
@@ -69,7 +74,8 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android.support.design:hintTextAppearance="@style/hint_text_main_color">
 
                 <AutoCompleteTextView
                     android:id="@+id/recovery_hint"
@@ -78,7 +84,8 @@
                     android:hint="@string/password_hint"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:theme="@style/EditTextStyle"/>
             </android.support.design.widget.TextInputLayout>
 
 

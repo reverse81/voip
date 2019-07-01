@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:android.support.design="http://schemas.android.com/apk/res-auto">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -18,35 +19,38 @@
                 android:text = "  Contact List"
                 android:textSize="20dp"
                 android:gravity="center_vertical"
-                android:background="#868383"
+                android:background="@drawable/main_tab2"
                 android:layout_marginBottom="10dp"
                 android:textColor="#FFFFFF"/>
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            <EditText
-                android:id="@+id/contact_edit_user"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="Name"
-                android:textSize="18dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"
-                />
+                android:layout_height="wrap_content"
+                android.support.design:hintTextAppearance="@style/hint_text_main_color">
+                <EditText
+                    android:id="@+id/contact_edit_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Name"
+                    android:textSize="18dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:theme="@style/EditTextStyle"/>
             </android.support.design.widget.TextInputLayout>
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            <EditText
-                android:id="@+id/contact_edit_phone"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="Phone Number"
-                android:textSize="18dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"/>
+                android:layout_height="wrap_content"
+                android.support.design:hintTextAppearance="@style/hint_text_main_color">
+                <EditText
+                    android:id="@+id/contact_edit_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Phone Number"
+                    android:textSize="18dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:theme="@style/EditTextStyle"/>
             </android.support.design.widget.TextInputLayout>
             <LinearLayout
                 android:layout_width="match_parent"

@@ -170,13 +170,13 @@ public class ConferenceRegisterActivity extends Activity {
 
                 TextView userview2 = (TextView) findViewById(R.id.conference_register_add2_txt);
                 if (userview2.length() > 0) {
-                    mPhoneNum2 = userview1.getText().toString();
+                    mPhoneNum2 = userview2.getText().toString();
                     arrayList.add(mPhoneNum2);
                 }
 
                 TextView userview3 = (TextView) findViewById(R.id.conference_register_add3_txt);
                 if (userview3.length() > 0) {
-                    mPhoneNum3 = userview1.getText().toString();
+                    mPhoneNum3 = userview3.getText().toString();
                     arrayList.add(mPhoneNum3);
                 }
 

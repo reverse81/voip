@@ -27,4 +27,11 @@
     <item name="android:textSize">20dp</item>
     </style>
 
+    <style name="hint_text_main_color" parent="@style/TextAppearance.AppCompat">
+        <item name="android:textColor">@color/main_color</item>
+    </style>
+
+    <style name="EditTextStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/main_color</item>
+    </style>
 </resources>
