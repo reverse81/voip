@@ -172,6 +172,7 @@ public class TCPListenerService extends Service {
             String ip =String.format(Locale.US, "%d.%d.%d.%d", (LocalIpAddressBin & 0xff), (LocalIpAddressBin >> 8 & 0xff), (LocalIpAddressBin >> 16 & 0xff), (LocalIpAddressBin >> 24 & 0xff));
           //  if (!PhoneState.getInstance().getPreviousIP(this).equals(ip)) {
                 if (PhoneState.getUpdatingIP() != LocalIpAddressBin ) {
+                    Log.i("LOG_TAG","we try update "+ ip);
                     PhoneState.setUpdatingIP(LocalIpAddressBin);
                     String phoneNumber = User.getPhoneNumber(this);
                     JSONObject object = param.setIP(ip, phoneNumber);
