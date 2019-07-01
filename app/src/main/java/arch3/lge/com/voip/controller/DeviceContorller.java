@@ -2,8 +2,10 @@ package arch3.lge.com.voip.controller;
 
 import android.content.Context;
 import android.media.AudioManager;
+import android.util.Log;
 
 public class DeviceContorller {
+    final static String LOG_TAG ="DeviceController";
 
     static public boolean  toggleSpeakerPhone(Context context) {
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
@@ -31,6 +33,7 @@ public class DeviceContorller {
             audioManager.stopBluetoothSco();
             return false;
         } else {
+            Log.i(LOG_TAG, "Bluetooth on");
             audioManager.setBluetoothScoOn(!audioManager.isBluetoothScoOn());
             audioManager.startBluetoothSco();
             return  true;
@@ -42,7 +45,6 @@ public class DeviceContorller {
         if (audioManager.isMicrophoneMute()) {
             audioManager.setMicrophoneMute(false);
                     return false;
-
         } else {
             audioManager.setMicrophoneMute(true);
             return true;

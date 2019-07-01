@@ -639,7 +639,7 @@ public class ServerApi {
 
 
                                 context.StartReceiveVideoThread();
-                                VoIPVideoIoCC.getInstance(context).startVideo();
+                             //   VoIPVideoIoCC.getInstance(context).startVideo();
                                 VoIPAudioIoCC.getInstance(context).StartAudio();
                             } catch (JSONException e) {
                                 e.printStackTrace();

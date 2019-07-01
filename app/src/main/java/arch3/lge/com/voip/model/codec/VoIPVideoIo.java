@@ -157,7 +157,7 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
 
         //Log.i(LOG_TAG,params.getPreviewFrameRate()+"" );
 
-        //        params.setPreviewSize(144, 176);
+    //   params.setPreviewSize(144, 176);
         params.setPreviewSize(240, 320);
         params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         mCamera.setParameters(params);
@@ -177,7 +177,7 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
         try {
             Bitmap black = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.black);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            black.compress(Bitmap.CompressFormat.JPEG,50,stream);
+            black.compress(Bitmap.CompressFormat.JPEG,10,stream);
 
             // Create a byte array from ByteArrayOutputStream
             byte[] byteArray = stream.toByteArray();
@@ -244,7 +244,7 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
             }
 
             if (remoteIp != null) {
-                Log.i(LOG_TAG, ":"+highBytes.length + " vs "+ lowBytes.length);
+               // Log.i(LOG_TAG, ":"+highBytes.length + " vs "+ lowBytes.length);
                 UdpSend(highBytes, lowBytes);
                // UdpSend(imageBytes);
             }

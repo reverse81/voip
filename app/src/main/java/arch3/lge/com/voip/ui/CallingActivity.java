@@ -75,13 +75,13 @@ public class CallingActivity extends BaseCallActivity {
             @Override
             public void onClick(View view) {
                 if (!VoIPVideoIo.getInstance(CallingActivity.this).isBanned()) {
-                    VoIPVideoIo.getInstance(CallingActivity.this).EndVideo();
                     VoIPVideoIo.getInstance(CallingActivity.this).setBanned(true);
+                    VoIPVideoIo.getInstance(CallingActivity.this).EndVideo();
                     video.setImageResource(R.drawable.video_off);
 
                 } else {
-                    VoIPVideoIo.getInstance(CallingActivity.this).restartVideo();
                     VoIPVideoIo.getInstance(CallingActivity.this).setBanned(false);
+                    VoIPVideoIo.getInstance(CallingActivity.this).restartVideo();
                     video.setImageResource(R.drawable.video_on);
                 }
             }
@@ -106,6 +106,7 @@ public class CallingActivity extends BaseCallActivity {
             @Override
             public void onClick(View view) {
                 boolean result =DeviceContorller.toggleBluetooth(CallingActivity.this);
+                Log.i(LOG_TAG , "bluetooth result : " + result);
                 if (result) {
                     speaker.setImageResource(R.drawable.speaker_mute);
                     bluetooth.setImageResource(R.drawable.bluetooth_on);

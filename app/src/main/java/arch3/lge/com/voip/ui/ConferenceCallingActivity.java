@@ -71,6 +71,7 @@ public class ConferenceCallingActivity extends AppCompatActivity {
         images.add((ImageView)findViewById(R.id.cc4_back));
         VoIPAudioIoCC.getInstance(this).attachImageView(images);
 
+
         String phoneNumber = getIntent().getStringExtra("phoneNumber");
 
         DeviceContorller.initDeviceForCC(this);
@@ -97,6 +98,7 @@ public class ConferenceCallingActivity extends AppCompatActivity {
                     SensorManager.SENSOR_DELAY_NORMAL);
         }
 
+        VoIPVideoIoCC.getInstance(ConferenceCallingActivity.this).setBanned(true);
         AudioManager audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         final ImageButton speaker = (ImageButton)findViewById(R.id.speaker);
         final ImageButton bluetooth = (ImageButton)findViewById(R.id.bluetooth);

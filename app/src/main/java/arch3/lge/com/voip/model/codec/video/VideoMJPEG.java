@@ -41,7 +41,7 @@ public class VideoMJPEG extends VideoCodec {
         Rect rect = new Rect(0, 0, width, height);
         ByteArrayOutputStream output_stream = new ByteArrayOutputStream();
 
-        yuv_image.compressToJpeg(rect, 50, output_stream);
+        yuv_image.compressToJpeg(rect, 100, output_stream);
         Matrix matrix = new Matrix();
         matrix.postRotate(-90);
         if (isOtherNetwork) {
@@ -53,7 +53,7 @@ public class VideoMJPEG extends VideoCodec {
         bitmap = Bitmap.createBitmap(bitmap, 0 , 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 
         ByteArrayOutputStream returnStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, returnStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 25, returnStream);
         return returnStream.toByteArray();
      //   return Bitmap.createBitmap(bitmap, 0 , 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 

@@ -62,13 +62,13 @@ public class ReceivedCallActivity extends BaseCallActivity {
             @Override
             public void onClick(View view) {
                 if (!VoIPVideoIo.getInstance(ReceivedCallActivity.this).isBanned()) {
-                    VoIPVideoIo.getInstance(ReceivedCallActivity.this).EndVideo();
                     VoIPVideoIo.getInstance(ReceivedCallActivity.this).setBanned(true);
+                    VoIPVideoIo.getInstance(ReceivedCallActivity.this).EndVideo();
                     video.setImageResource(R.drawable.video_off);
 
                 } else {
-                    VoIPVideoIo.getInstance(ReceivedCallActivity.this).restartVideo();
                     VoIPVideoIo.getInstance(ReceivedCallActivity.this).setBanned(false);
+                    VoIPVideoIo.getInstance(ReceivedCallActivity.this).restartVideo();
                     video.setImageResource(R.drawable.video_on);
                 }
             }
@@ -89,7 +89,7 @@ public class ReceivedCallActivity extends BaseCallActivity {
 
     private MediaPlayer ring;
     private Vibrator vibrator;
-    private final long[] vibratorPattern = {0, 200, 800};
+    private final long[] vibratorPattern = {0, 800, 900};
     private  int previousAudioManagerMode;
 
     private void StartRinger() {

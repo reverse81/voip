@@ -156,8 +156,10 @@ public class BaseCallActivity extends AppCompatActivity {
                             Log.i(LOG_TAG, "Invalid Packet LengthReceived: " + packet.getLength());
 
                         if (!VoIPVideoIo.getInstance(BaseCallActivity.this).isBanned() ) {
-                            if (AdaptiveBuffering.getPacketLoss() < AdaptiveBuffering.MIN_PACKET_LOSS) {
-                                VoIPVideoIo.getInstance(BaseCallActivity.this).restartVideo();
+                            if (wl !=null && !wl.isHeld()) {
+                                if (AdaptiveBuffering.getPacketLoss() < AdaptiveBuffering.MIN_PACKET_LOSS) {
+                                    VoIPVideoIo.getInstance(BaseCallActivity.this).restartVideo();
+                                }
                             }
                         }
 
@@ -224,17 +226,17 @@ public class BaseCallActivity extends AppCompatActivity {
             // TODO Auto-generated method stub
             if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
                 if (event.values[0] == 0) {
-                  // Log.i("Sensor", "nEEEEEEEEEEEEEEEEEEEr");
                     if (wl !=null && !wl.isHeld()) {
                         wl.acquire();
                         VoIPVideoIo.getInstance(BaseCallActivity.this).EndVideo();
                     }
                 } else {
-               //     Log.i("Sensor", "FAAAAAAAAAAAAAAAAAr");
                     if (wl !=null && wl.isHeld()) {
                         wl.release();
-                        if (!VoIPVideoIo.getInstance(BaseCallActivity.this).isBanned()) {
-                            VoIPVideoIo.getInstance(BaseCallActivity.this).restartVideo();
+                        if (AdaptiveBuffering.getPacketLoss() < AdaptiveBuffering.MIN_PACKET_LOSS) {
+                            if (!VoIPVideoIo.getInstance(BaseCallActivity.this).isBanned()) {
+                                VoIPVideoIo.getInstance(BaseCallActivity.this).restartVideo();
+                            }
                         }
                     }
                 }

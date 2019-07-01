@@ -133,11 +133,10 @@ public class VoIPVideoIoCC implements  Camera.PreviewCallback{
         }
 
         Camera.Parameters params = mCamera.getParameters();
-        params.setPreviewSize(320, 240);
+        params.setPreviewSize(176, 144);
         params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         mCamera.setParameters(params);
         mCamera.setPreviewCallbackWithBuffer(this);
-        //mCamera.setDisplayOrientation(180);
 
         mCamera.addCallbackBuffer(new byte[MAX_VIDEO_FRAME_SIZE]);
         mCamera.addCallbackBuffer(new byte[MAX_VIDEO_FRAME_SIZE]);
@@ -178,7 +177,7 @@ public class VoIPVideoIoCC implements  Camera.PreviewCallback{
            // byte[] encryptedImageBytes = encipher.encrypt(imageBytes);
 
             if (remoteIPList != null) {
-             Log.i(LOG_TAG, ":"+highBytes.length + " vs "+ lowBytes.length);
+           // Log.i(LOG_TAG, ":"+highBytes.length + " vs "+ lowBytes.length);
                 UdpSend(highBytes,lowBytes);
                // UdpSend(imageBytes);
             }

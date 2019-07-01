@@ -109,12 +109,10 @@ public class VoIPAudioIoCC {
             if (socket !=null) {
                 socket.disconnect();
                 socket.close();
-            } sendSocketList.clear();
+            }
+        }sendSocketList.clear();
 
-        }
-
-
-//        sendUdpSocket.disconnect();
+//        sendUdpS1ocket.disconnect();
 //        Util.safetyClose(sendUdpSocket);
 
         UdpVoipReceiveDataThreadRun = false;
