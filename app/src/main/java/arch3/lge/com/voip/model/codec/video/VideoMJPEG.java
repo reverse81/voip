@@ -45,7 +45,7 @@ public class VideoMJPEG extends VideoCodec {
         Matrix matrix = new Matrix();
         matrix.postRotate(-90);
         if (isOtherNetwork) {
-            matrix.postScale((float) 0.25, (float) 0.25);
+            matrix.postScale((float) 0.5, (float) 0.5);
         }
 
         byte[] bytes = output_stream.toByteArray();
