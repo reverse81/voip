@@ -19,6 +19,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import arch3.lge.com.voip.R;
+import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.utils.NetworkConstants;
 import arch3.lge.com.voip.utils.Util;
@@ -27,7 +28,7 @@ import arch3.lge.com.voip.utils.Util;
 public class VoIPVideoIo implements  Camera.PreviewCallback{
     private static final String LOG_TAG = "VoIPVideoIo";
 
-    private static final int MAX_VIDEO_FRAME_SIZE =144*176*4;
+    private static final int MAX_VIDEO_FRAME_SIZE =640*480*4;
     private DatagramSocket SendUdpSocket;
     private InetAddress remoteIp;                   // Address to call
 
@@ -152,12 +153,15 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
         }
 
         Camera.Parameters params = mCamera.getParameters();
+        params.setPreviewFrameRate(10);
 
-        params.setPreviewSize(144, 176);
+        //Log.i(LOG_TAG,params.getPreviewFrameRate()+"" );
+
+        //        params.setPreviewSize(144, 176);
+        params.setPreviewSize(480, 640);
         params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         mCamera.setParameters(params);
         mCamera.setPreviewCallbackWithBuffer(this);
-        //mCamera.setDisplayOrientation(180);
 
         mCamera.addCallbackBuffer(new byte[MAX_VIDEO_FRAME_SIZE]);
         mCamera.addCallbackBuffer(new byte[MAX_VIDEO_FRAME_SIZE]);
@@ -187,7 +191,7 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
                 //  Log.i(LOG_TAG, ":"+encryptedImageBytes.length + " vs "+ imageBytes.length);
               Log.i(LOG_TAG, "black image will be sent");
                 for (int i =0; i<3 ;i++) {
-                    UdpSend(byteArray);
+                    UdpSend(byteArray, byteArray);
                 }
                 // UdpSend(imageBytes);
             }
@@ -203,31 +207,45 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
         Util.safetyClose(SendUdpSocket);
         SendUdpSocket=null;
     }
-    
+    long systemTime_play =0;
+    int count_play =0;
     public void onPreviewFrame(byte[] data, Camera camera)
     {
+        if (systemTime_play ==0) {
+            systemTime_play = System.currentTimeMillis();
+        }
         frame++;
         if ((frame%2)!=0) {//only process every other frame;
             camera.addCallbackBuffer(data);
             return;
+        }
+        if (System.currentTimeMillis() - systemTime_play > 10000) {
+            Log.i(LOG_TAG, "Check record frame()" + (count_play / 10));
+            systemTime_play = System.currentTimeMillis();
+            count_play = 0;
+        } else {
+            count_play++;
         }
         Camera.Parameters parameters = camera.getParameters();
         int format = parameters.getPreviewFormat();
         //YUV formats require more conversion
         if (format == ImageFormat.NV21 || format == ImageFormat.YUY2 || format == ImageFormat.NV16) {
 
-            byte[] imageBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height);
+
+            byte[] lowBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height, true);
+            byte[] highBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height, false);
+         //   byte[] imageBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height);
 
         //   byte[] encryptedImageBytes = encipher.encrypt(imageBytes);
 
-            Bitmap image = mCodec.decode(imageBytes);
+            Bitmap image = mCodec.decode(highBytes);
             if (selfView!= null) {
                 selfView.setImageBitmap(image);
             }
 
             if (remoteIp != null) {
-              //  Log.i(LOG_TAG, ":"+encryptedImageBytes.length + " vs "+ imageBytes.length);
-                UdpSend(imageBytes);
+                Log.i(LOG_TAG, ":"+highBytes.length + " vs "+ lowBytes.length);
+                UdpSend(highBytes, lowBytes);
                // UdpSend(imageBytes);
             }
         }
@@ -237,15 +255,25 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
             EndVideo();
         }
     }
-    private void UdpSend(final byte[] bytes) {
+    private void UdpSend(final byte[] highByte, final byte[] lowByte) {
+
         Thread replyThread = new Thread(new Runnable() {
 
             @Override
             public void run() {
                 try {
                  //   Log.i(LOG_TAG, "Send UDP Video : " + bytes.length);
-                        DatagramPacket packet = new DatagramPacket(bytes, bytes.length, remoteIp, NetworkConstants.VOIP_VIDEO_UDP_PORT);
-                        SendUdpSocket.send(packet);
+
+
+                    String selfIP = PhoneState.getInstance().getPreviousIP(mContext);
+                    String subsetIP = selfIP.substring(0,selfIP.lastIndexOf(".")+1);
+                        if (remoteIp.getHostAddress().startsWith(subsetIP)) {
+                            DatagramPacket packet = new DatagramPacket(highByte, highByte.length, remoteIp, NetworkConstants.VOIP_VIDEO_UDP_PORT);
+                            SendUdpSocket.send(packet);
+                        } else {
+                            DatagramPacket packet = new DatagramPacket(lowByte, lowByte.length, remoteIp, NetworkConstants.VOIP_VIDEO_UDP_PORT);
+                            SendUdpSocket.send(packet);
+                        }
                 } catch (SocketException e) {
 
                     Log.e(LOG_TAG, "Failure. SocketException in UdpSend: " + e);

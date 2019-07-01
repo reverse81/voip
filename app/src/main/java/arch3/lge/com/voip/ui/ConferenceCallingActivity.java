@@ -20,8 +20,6 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -37,9 +35,6 @@ import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.codec.VoIPAudioIoCC;
 import arch3.lge.com.voip.model.codec.VoIPVideoIoCC;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
-import arch3.lge.com.voip.model.serverApi.ApiParamBuilder;
-import arch3.lge.com.voip.model.serverApi.ServerApi;
-import arch3.lge.com.voip.model.user.User;
 import arch3.lge.com.voip.utils.NetworkConstants;
 
 public class ConferenceCallingActivity extends AppCompatActivity {
@@ -313,11 +308,11 @@ public class ConferenceCallingActivity extends AppCompatActivity {
                         recvVideoUdpSocket.receive(packet);
                         if (packet.getLength() >0) {
 
-                            byte[] decrypt = encipher.decrypt(packet.getData(),0, packet.getLength());
-                            if (decrypt == null || decrypt.length == 0) {
-                                continue;
-                            }
-                            final Bitmap bitmap = BitmapFactory.decodeByteArray(decrypt, 0, decrypt.length);
+                           // byte[] decrypt = encipher.decrypt(packet.getData(),0, packet.getLength());
+//                            if (decrypt == null || decrypt.length == 0) {
+//                                continue;
+//                            }
+                            final Bitmap bitmap = BitmapFactory.decodeByteArray(packet.getData(), 0, packet.getLength());
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

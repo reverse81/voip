@@ -151,7 +151,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (checkSelfPermission(CAMERA) == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
-            requestPermissions(new String[]{CAMERA, RECORD_AUDIO}, REQUEST_READ_CONTACTS);
+            requestPermissions(new String[]{CAMERA, RECORD_AUDIO, READ_CONTACTS}, REQUEST_READ_CONTACTS);
 
         return false;
     }

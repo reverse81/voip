@@ -368,9 +368,9 @@ public class ServerApi {
                          //   String res = new String(responseBody);
 //                            Log.e("tag", "실패 : " + res);
 
-                            //Toast.makeText(context, "Wrong number", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Wrong number", Toast.LENGTH_SHORT).show();
                           //  Toast.makeText(context, res, Toast.LENGTH_LONG).show();
-                           // CallController.finish();
+                            CallController.finish();
                         }
                     }  );
 

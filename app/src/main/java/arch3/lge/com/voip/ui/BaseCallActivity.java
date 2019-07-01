@@ -172,8 +172,10 @@ public class BaseCallActivity extends AppCompatActivity {
                     UdpVoipReceiveVideoThreadRun = false;
                     Log.e(LOG_TAG, "IOException: " ,e);
                 } finally {
-                    RecvVideoUdpSocket.disconnect();
-                    RecvVideoUdpSocket.close();
+                    if (RecvVideoUdpSocket!=null) {
+                        RecvVideoUdpSocket.disconnect();
+                        RecvVideoUdpSocket.close();
+                    }
                     RecvVideoUdpSocket = null;
                 }
                 runOnUiThread(new Runnable() {

@@ -17,21 +17,23 @@ public class VideoMJPEG extends VideoCodec {
         return true;
     }
 
-    private Bitmap rotateBitmap(YuvImage yuvImage, int orientation, Rect rectangle)
-    {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        yuvImage.compressToJpeg(rectangle, 100, os);
-
-        Matrix matrix = new Matrix();
-        matrix.postRotate(orientation);
-        byte[] bytes = os.toByteArray();
-        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        return Bitmap.createBitmap(bitmap, 0 , 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-    }
+//    private Bitmap rotateBitmap(YuvImage yuvImage, int orientation, Rect rectangle)
+//    {
+//        ByteArrayOutputStream os = new ByteArrayOutputStream();
+//        yuvImage.compressToJpeg(rectangle, 100, os);
+//
+//        Matrix matrix = new Matrix();
+//        matrix.postRotate(orientation);
+//        matrix.postScale((float)0.5, (float)0.5);
+//        byte[] bytes = os.toByteArray();
+//        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//
+//        return Bitmap.createBitmap(bitmap, 0 , 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+//    }
 
 
     @Override
-    public byte [] encode(byte[] data, int format, int width, int height){
+    public byte [] encode(byte[] data, int format, int width, int height, boolean isOtherNetwork){
         // Get the YuV image
         YuvImage yuv_image = new YuvImage(data, format, width, height, null);
 
@@ -42,6 +44,9 @@ public class VideoMJPEG extends VideoCodec {
         yuv_image.compressToJpeg(rect, 50, output_stream);
         Matrix matrix = new Matrix();
         matrix.postRotate(-90);
+        if (isOtherNetwork) {
+            matrix.postScale((float) 0.25, (float) 0.25);
+        }
 
         byte[] bytes = output_stream.toByteArray();
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);

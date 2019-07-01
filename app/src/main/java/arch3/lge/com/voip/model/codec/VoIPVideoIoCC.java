@@ -26,7 +26,7 @@ import arch3.lge.com.voip.utils.Util;
 public class VoIPVideoIoCC implements  Camera.PreviewCallback{
     private static final String LOG_TAG = "VoIPVideoIo";
 
-    private static final int MAX_VIDEO_FRAME_SIZE =144*176*4;
+    private static final int MAX_VIDEO_FRAME_SIZE =320*240*4;
     private DatagramSocket SendUdpSocket;
     private ArrayList<InetAddress> remoteIPList = new ArrayList<>();                   // Address to call
     private boolean IsRunning = false;
@@ -133,7 +133,7 @@ public class VoIPVideoIoCC implements  Camera.PreviewCallback{
         }
 
         Camera.Parameters params = mCamera.getParameters();
-        params.setPreviewSize(176, 144);
+        params.setPreviewSize(320, 240);
         params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         mCamera.setParameters(params);
         mCamera.setPreviewCallbackWithBuffer(this);
@@ -169,22 +169,23 @@ public class VoIPVideoIoCC implements  Camera.PreviewCallback{
         //YUV formats require more conversion
         if (format == ImageFormat.NV21 || format == ImageFormat.YUY2 || format == ImageFormat.NV16) {
 
-            byte[] imageBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height);
-            Bitmap image = mCodec.decode(imageBytes);
+            byte[] lowBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height, true);
+            byte[] highBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height, false);
+            Bitmap image = mCodec.decode(highBytes);
             if (selfView!= null) {
                 selfView.setImageBitmap(image);
             }
-            byte[] encryptedImageBytes = encipher.encrypt(imageBytes);
+           // byte[] encryptedImageBytes = encipher.encrypt(imageBytes);
 
             if (remoteIPList != null) {
-              //  Log.i(LOG_TAG, ":"+encryptedImageBytes.length + " vs "+ imageBytes.length);
-                UdpSend(encryptedImageBytes);
+             Log.i(LOG_TAG, ":"+highBytes.length + " vs "+ lowBytes.length);
+                UdpSend(highBytes,lowBytes);
                // UdpSend(imageBytes);
             }
         }
         camera.addCallbackBuffer(data);
     }
-    private void UdpSend(final byte[] bytes) {
+    private void UdpSend(final byte[] highByte, final byte[] lowByte) {
         Thread replyThread = new Thread(new Runnable() {
 
             @Override
@@ -196,12 +197,19 @@ public class VoIPVideoIoCC implements  Camera.PreviewCallback{
                         return;
                     }
 
+                    String selfIP = PhoneState.getInstance().getPreviousIP(mContext);
+                    String subsetIP = selfIP.substring(0,selfIP.lastIndexOf("."));
                     for (InetAddress remoteIp : remoteIPList) {
-                        if (remoteIp.getHostAddress().equals(PhoneState.getInstance().getPreviousIP(mContext))) {
+                        if (remoteIp.getHostAddress().equals(selfIP)) {
                             continue;
                         }
-                        DatagramPacket packet = new DatagramPacket(bytes, bytes.length, remoteIp, NetworkConstants.VOIP_VIDEO_UDP_PORT + index);
-                        SendUdpSocket.send(packet);
+                        if (remoteIp.getHostAddress().startsWith(subsetIP)) {
+                            DatagramPacket packet = new DatagramPacket(highByte, highByte.length, remoteIp, NetworkConstants.VOIP_VIDEO_UDP_PORT + index);
+                            SendUdpSocket.send(packet);
+                        } else {
+                            DatagramPacket packet = new DatagramPacket(lowByte, lowByte.length, remoteIp, NetworkConstants.VOIP_VIDEO_UDP_PORT + index);
+                            SendUdpSocket.send(packet);
+                        }
                     }
                 } catch (SocketException e) {
 

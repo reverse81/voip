@@ -441,7 +441,7 @@ public class VoIPAudioIoCC {
                 byte [] mBuffer = new byte[200];
                 int mIndex;
                 boolean self;
-                LinkedBlockingQueue<byte[]> IncommingpacketQueue = new LinkedBlockingQueue<>(200);
+                LinkedBlockingQueue<byte[]> IncommingpacketQueue = new LinkedBlockingQueue<>(20);
                 public CCRunnable(int index) {
                     mQueueList.add(IncommingpacketQueue);
                     mIndex = index;
@@ -490,8 +490,10 @@ public class VoIPAudioIoCC {
                     } catch (IOException e) {
                         Log.e(LOG_TAG, "IOException: " ,e);
                     } finally {
-                        recvAudioUdpSocket.disconnect();
-                        recvAudioUdpSocket.close();
+                        if (recvAudioUdpSocket!=null) {
+                            recvAudioUdpSocket.disconnect();
+                            recvAudioUdpSocket.close();
+                        }
                         recvAudioUdpSocket = null;
                     }
                 }
