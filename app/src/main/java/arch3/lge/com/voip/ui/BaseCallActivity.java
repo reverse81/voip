@@ -24,6 +24,7 @@ import java.net.SocketException;
 import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.model.call.PhoneState;
 import arch3.lge.com.voip.model.codec.AdaptiveBuffering;
+import arch3.lge.com.voip.model.codec.VoIPAudioIo;
 import arch3.lge.com.voip.model.codec.VoIPVideoIo;
 import arch3.lge.com.voip.model.encrypt.MyEncrypt;
 import arch3.lge.com.voip.utils.NetworkConstants;
@@ -130,11 +131,11 @@ public class BaseCallActivity extends AppCompatActivity {
 
                         if (packet.getLength() >0) {
 
-                            byte[] decrypt = encipher.decrypt(packet.getData(),0, packet.getLength());
-                            if (decrypt == null || decrypt.length == 0) {
-                                continue;
-                            }
-                            final Bitmap bitmap = BitmapFactory.decodeByteArray(decrypt, 0, decrypt.length);
+//                            byte[] decrypt = encipher.decrypt(packet.getData(),0, packet.getLength());
+//                            if (decrypt == null || decrypt.length == 0) {
+//                                continue;
+//                            }
+                            final Bitmap bitmap = BitmapFactory.decodeByteArray(packet.getData(), 0, packet.getLength());
                           //  final Bitmap bitmap = BitmapFactory.decodeByteArray(packet.getData(), 0, packet.getLength());
 //                            final Matrix mtx = new Matrix();
 //                           // mtx.postRotate(-90);
@@ -154,9 +155,12 @@ public class BaseCallActivity extends AppCompatActivity {
                         } else
                             Log.i(LOG_TAG, "Invalid Packet LengthReceived: " + packet.getLength());
 
-                        if(AdaptiveBuffering.getPacketLoss() < AdaptiveBuffering.MIN_PACKET_LOSS ){
-                            VoIPVideoIo.getInstance(BaseCallActivity.this).restartVideo();
+                        if (!VoIPVideoIo.getInstance(BaseCallActivity.this).isBanned() ) {
+                            if (AdaptiveBuffering.getPacketLoss() < AdaptiveBuffering.MIN_PACKET_LOSS) {
+                                VoIPVideoIo.getInstance(BaseCallActivity.this).restartVideo();
+                            }
                         }
+
 
                     }
                     // close socket

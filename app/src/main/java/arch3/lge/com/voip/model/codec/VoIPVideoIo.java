@@ -27,7 +27,7 @@ import arch3.lge.com.voip.utils.Util;
 public class VoIPVideoIo implements  Camera.PreviewCallback{
     private static final String LOG_TAG = "VoIPVideoIo";
 
-    private static final int MAX_VIDEO_FRAME_SIZE =640*480*4;
+    private static final int MAX_VIDEO_FRAME_SIZE =144*176*4;
     private DatagramSocket SendUdpSocket;
     private InetAddress remoteIp;                   // Address to call
 
@@ -153,7 +153,7 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
 
         Camera.Parameters params = mCamera.getParameters();
 
-        params.setPreviewSize(480, 640);
+        params.setPreviewSize(144, 176);
         params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         mCamera.setParameters(params);
         mCamera.setPreviewCallbackWithBuffer(this);
@@ -177,7 +177,7 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
 
             // Create a byte array from ByteArrayOutputStream
             byte[] byteArray = stream.toByteArray();
-            byte[] encryptedImageBytes = encipher.encrypt(byteArray);
+          //  byte[] encryptedImageBytes = encipher.encrypt(byteArray);
 
             if (selfView!= null) {
                 selfView.setImageResource(R.drawable.black);
@@ -187,7 +187,7 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
                 //  Log.i(LOG_TAG, ":"+encryptedImageBytes.length + " vs "+ imageBytes.length);
               Log.i(LOG_TAG, "black image will be sent");
                 for (int i =0; i<3 ;i++) {
-                    UdpSend(encryptedImageBytes);
+                    UdpSend(byteArray);
                 }
                 // UdpSend(imageBytes);
             }
@@ -218,7 +218,7 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
 
             byte[] imageBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height);
 
-            byte[] encryptedImageBytes = encipher.encrypt(imageBytes);
+        //   byte[] encryptedImageBytes = encipher.encrypt(imageBytes);
 
             Bitmap image = mCodec.decode(imageBytes);
             if (selfView!= null) {
@@ -227,7 +227,7 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
 
             if (remoteIp != null) {
               //  Log.i(LOG_TAG, ":"+encryptedImageBytes.length + " vs "+ imageBytes.length);
-                UdpSend(encryptedImageBytes);
+                UdpSend(imageBytes);
                // UdpSend(imageBytes);
             }
         }
