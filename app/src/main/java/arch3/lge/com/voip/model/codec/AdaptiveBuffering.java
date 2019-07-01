@@ -13,7 +13,7 @@ public class AdaptiveBuffering {
     private static short mSequenceNumber = 0;
     private LinkedBlockingQueue<byte[]> mPacketQueue = new LinkedBlockingQueue<>(1024);
     private int mQueueCapacity = 16;
-    private int mLastSequence = 0;
+    private short mLastSequence = 0;
     private byte [] mLastPacket;
 
     private final static long COEF_A = 100;
