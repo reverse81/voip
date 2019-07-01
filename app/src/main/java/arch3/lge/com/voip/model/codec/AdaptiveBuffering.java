@@ -114,6 +114,8 @@ public class AdaptiveBuffering {
         }
         return null;
     }
+    byte [] take() throws InterruptedException
+    { return getQueue();}
 
     boolean isEmpty(){
         return mPacketQueue.isEmpty();
@@ -121,4 +123,8 @@ public class AdaptiveBuffering {
     void reset(){
         mPacketQueue.clear();
     }
+    void clear(){
+        mPacketQueue.clear();
+    }
+    int size() { return mPacketQueue.size(); }
 }
