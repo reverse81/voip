@@ -22,6 +22,13 @@ public class ContactSelectActivity extends Activity {
     String mUserStr;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("dhtest", "Contact Resume");
+        mAdapter.onResume();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final ListView listView;

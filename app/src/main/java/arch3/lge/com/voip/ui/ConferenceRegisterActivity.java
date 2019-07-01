@@ -77,6 +77,7 @@ public class ConferenceRegisterActivity extends Activity {
             mPhoneNum3 = null;
             endTimeSelectValue = null;
             endTimeSelectPosition = 0;
+            duplicatedPhone = false;
             Log.v("dae", "Initialize conference data");
         }
         UpdateNow();
@@ -150,12 +151,6 @@ public class ConferenceRegisterActivity extends Activity {
                     break;
                 }
 
-                if ((mPhoneNum1 == null) && (mPhoneNum2 == null) && (mPhoneNum3 == null)){
-                    TextView textview = (TextView) findViewById(R.id.conference_register_add1_txt);
-                    textview.setError(getString(R.string.error_field_required));
-                    textview.requestFocus();
-                    break;
-                }
 
                 String startTime = String.format("%d-%02d-%02dT%02d:%02d:00.000Z", mYear, mMonth+1, mDay, mStartHour, mStartMinute);
                 String endTime = String.format("%d-%02d-%02dT%02d:%02d:00.000Z", mYear, mMonth+1, mDay, mEndHour, mEndMinute);
@@ -169,17 +164,27 @@ public class ConferenceRegisterActivity extends Activity {
 
                 TextView userview1 = (TextView) findViewById(R.id.conference_register_add1_txt);
                 if (userview1.length() > 0) {
-                    arrayList.add(userview1.getText().toString());
+                    mPhoneNum1 = userview1.getText().toString();
+                    arrayList.add(mPhoneNum1);
                 }
 
                 TextView userview2 = (TextView) findViewById(R.id.conference_register_add2_txt);
                 if (userview2.length() > 0) {
-                    arrayList.add(userview2.getText().toString());
+                    mPhoneNum2 = userview1.getText().toString();
+                    arrayList.add(mPhoneNum2);
                 }
 
                 TextView userview3 = (TextView) findViewById(R.id.conference_register_add3_txt);
                 if (userview3.length() > 0) {
-                    arrayList.add(userview3.getText().toString());
+                    mPhoneNum3 = userview1.getText().toString();
+                    arrayList.add(mPhoneNum3);
+                }
+
+                if ((mPhoneNum1 == null) && (mPhoneNum2 == null) && (mPhoneNum3 == null)){
+                    TextView textview = (TextView) findViewById(R.id.conference_register_add1_txt);
+                    textview.setError(getString(R.string.error_field_required));
+                    textview.requestFocus();
+                    break;
                 }
 
 //                if (mPhoneNum1 != null) {
@@ -348,6 +353,7 @@ public class ConferenceRegisterActivity extends Activity {
                     if (mPhoneNum1.equals(mPhoneNum2) || mPhoneNum1.equals(mPhoneNum3)) {
                         textview.setError(getString(R.string.duplicated_phone));
                         textview.requestFocus();
+                        Log.i("dhtest", "duplicated user1");
                         duplicatedPhone = true;
                     }
                 }
@@ -360,6 +366,7 @@ public class ConferenceRegisterActivity extends Activity {
                     if (mPhoneNum2.equals(mPhoneNum1) || mPhoneNum2.equals(mPhoneNum3)) {
                         textview.setError(getString(R.string.duplicated_phone));
                         textview.requestFocus();
+                        Log.i("dhtest", "duplicated user2");
                         duplicatedPhone = true;
                     }
                 }
@@ -372,6 +379,7 @@ public class ConferenceRegisterActivity extends Activity {
                     if ((mPhoneNum3.equals(mPhoneNum1) || mPhoneNum3.equals(mPhoneNum2))) {
                         textview.setError(getString(R.string.duplicated_phone));
                         textview.requestFocus();
+                        Log.i("dhtest", "duplicated user3");
                         duplicatedPhone = true;
                     }
                 }

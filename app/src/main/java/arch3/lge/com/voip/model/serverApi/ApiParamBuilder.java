@@ -114,7 +114,8 @@ public class ApiParamBuilder {
         JSONObject mMandatoryParam = new JSONObject();
         try {
             mMandatoryParam.put(KEY_PHONENUMBER,phoneNum);
-            mMandatoryParam.put(KEY_EMAIL,email);
+            if(email != null)
+                mMandatoryParam.put(KEY_EMAIL,email);
             mMandatoryParam.put(KEY_PASSWORD,password);
             if (newPassword != null)
                 mMandatoryParam.put(KEY_PASSWORD_NEW, newPassword);

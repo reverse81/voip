@@ -6,6 +6,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -141,6 +142,9 @@ public class TCPListenerService extends Service {
                         String endTimeDB = to.substring(0, 10) + " " + to.substring(11, 16);
                         //dhtest
                         Log.i("dhtest","TCP listener phone : "+phoneNumber+" from : "+startTimeDB+" to : "+endTimeDB);
+
+
+                        //Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_LONG).show();
 
                         ConferenceDatabaseHelper ConferenceDB = new ConferenceDatabaseHelper(getApplicationContext());
                         ConferenceDB.insert(startTimeDB, endTimeDB, phoneNumber);

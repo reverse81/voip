@@ -46,6 +46,10 @@ public class ConferenceDatabaseHelper extends SQLiteOpenHelper {
     public void insert(String StartTime, String EndTime, String phoneNum) {
         String TimeInfo = (StartTime+" ~ "+EndTime);
 
+        if (isDuplicated(phoneNum)){
+            return;
+        }
+
         // 읽고 쓰기가 가능하게 DB 열기
         SQLiteDatabase db = getWritableDatabase();
         //db.execSQL("insert into contact_table (name, phone) values(?,?)", new String[userName, phoneNum]);
@@ -121,5 +125,34 @@ public class ConferenceDatabaseHelper extends SQLiteOpenHelper {
         // DB 모든 정보 삭제
         db.execSQL("DELETE FROM "+ tableName);
         db.close();
+    }
+
+    public boolean isDuplicated(String phone){
+        boolean duplicatedUser = false;
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+
+            //SELECT문을 사용하여 테이블에 있는 데이터를 가져옵니다..
+            Cursor c = db.rawQuery("SELECT * FROM " + tableName, null);
+
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    do {
+                        //테이블에서 두개의 컬럼값을 가져와서
+                        String Phone = c.getString(c.getColumnIndex("phone"));
+
+                        if (Phone.equals(phone)){
+                            duplicatedUser = true;
+                            break;
+                        }
+                    } while (c.moveToNext());
+                }
+            }
+            db.close();
+        } catch (SQLiteException se) {
+            Log.e("",  se.getMessage());
+        }
+
+        return duplicatedUser;
     }
 }

@@ -32,6 +32,8 @@ import arch3.lge.com.voip.ui.ConferenceActivity;
 import arch3.lge.com.voip.ui.ConferenceCallingActivity;
 import arch3.lge.com.voip.ui.DialpadActivity;
 import arch3.lge.com.voip.ui.LoginActivity;
+import arch3.lge.com.voip.ui.RecoveryPwdActivity;
+import arch3.lge.com.voip.ui.UserInfoActive;
 import arch3.lge.com.voip.utils.NetworkConstants;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
@@ -47,6 +49,7 @@ public class ServerApi {
     public final static String API_GET_CC = "schedule/myschedule";  // get
     public final static String API_CREATE = "users/create";   //post
     public final static String API_UPDATE = "users/update";   //post
+    public final static String API_UPDATE_PWD = "users/update_recovery";   //post
     public final static String API_GET_IP_CC= "schedule/IP";  // get
 
     public void login (final Context context, String source,final String email) {
@@ -83,6 +86,7 @@ public class ServerApi {
 
                                 Intent intent = new Intent(context, DialpadActivity.class);
                                 context.startActivity(intent);
+
                                 Log.i("dhtest", "Success Transmit res : "+res);//dhtest
 
                                 ApiParamBuilder param = new ApiParamBuilder();
@@ -121,7 +125,7 @@ public class ServerApi {
         }
     }
 
-    public void recovery (final Context context, JSONObject object) {
+    public void recovery (final Activity activity, JSONObject object) {
         try {
 
             StringEntity entity = new StringEntity(object.toString(), "UTF-8");
@@ -131,7 +135,7 @@ public class ServerApi {
             client.addHeader("client","app");
             //client.addHeader("Authorization", "Bearer "+User.getLogin(context));
 
-            client.post(context,  NetworkConstants.serverAddress + API_RECOVERY
+            client.post(activity,  NetworkConstants.serverAddress + API_RECOVERY
                     , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -139,11 +143,15 @@ public class ServerApi {
                             Log.e(LOG_TAG, "응답 RES = " + res);
                             try {
                                 JSONObject object = new JSONObject(res);
-                                String pwd = object.getString("pwd");
+                                String pwd = object.getString("newPassword");
                                 String showTxt = "Password : "+pwd;
 
                                 //Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
-                                Toast.makeText(context, showTxt, Toast.LENGTH_LONG).show();
+                                Toast.makeText(activity, showTxt, Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(activity, RecoveryPwdActivity.class);
+                                intent.putExtra("pwd",pwd);
+                                activity.startActivity(intent);
+                                activity.finish();
 
                             }catch (JSONException e) {
                                 e.printStackTrace();
@@ -155,7 +163,7 @@ public class ServerApi {
                             String res = new String(responseBody);
                             Log.e(LOG_TAG, "실패 : " + res);
                             //Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
-                            Toast.makeText(context, res, Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
                         }
                     }  );
 
@@ -269,6 +277,55 @@ public class ServerApi {
         }
     }
 
+    public void update_password (final Activity activity, JSONObject object, final String email) {
+        try {
+
+            StringEntity entity = new StringEntity(object.toString(), "UTF-8");
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.setMaxRetriesAndTimeout(MAX_RETRY,TIMEOUT);
+            client.addHeader("project","voip");
+            client.addHeader("client","app");
+            //client.addHeader("Authorization", "Bearer "+User.getLogin(activity));
+
+            client.post(activity,  NetworkConstants.serverAddress + API_UPDATE_PWD
+                    , entity, NetworkConstants.ContentsType,  new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            String res = new String(responseBody);
+                            String duplicated = "User duplicated.";
+                            Log.e("tag", "응답 RES = " + res);
+
+                            if (res.equals(duplicated)) {
+                                //Toast.makeText(activity, "Duplicated the e-mail", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
+                            }else {
+                                //Toast.makeText(activity, "Complete update...", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
+                                User.saveLogin(activity, null, email, null);
+
+                                Intent intent = new Intent(activity, LoginActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                activity.startActivity(intent);
+                                activity.finish();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            String res = new String(responseBody);
+                            Log.e("tag", "실패 : " + res);
+                            //Toast.makeText(activity, "전송실패", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
+                        }
+                    }  );
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void getIP (final Context context, JSONObject object,final VoIPVideoIo io) {
         try {
@@ -440,7 +497,7 @@ public class ServerApi {
 
                                 //Toast.makeText(activity, "전송완료", Toast.LENGTH_SHORT).show();
                                 String showTxt = "Success : " + phoneNumber;
-                                Toast.makeText(activity, showTxt, Toast.LENGTH_LONG).show();
+                                //Toast.makeText(activity, showTxt, Toast.LENGTH_LONG).show();
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -455,9 +512,18 @@ public class ServerApi {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                             String res = new String(responseBody);
+
                             Log.e("tag", "실패 : " + res);
-                            //Toast.makeText(activity, "전송실패", Toast.LENGTH_SHORT).show();
-                            Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
+
+                            try {
+                                JSONObject object = new JSONObject(res);
+                                String errorTxt = object.getString("error");
+
+                                //Toast.makeText(activity, "전송실패", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(activity, errorTxt, Toast.LENGTH_LONG).show();
+                            }catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }  );
 
