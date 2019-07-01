@@ -9,11 +9,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class AdaptiveBuffering {
     private final static String LOG_TAG = "AdaptiveBuffering";
 
-    private final static int HDR_SIZE = Integer.BYTES + Long.BYTES;
-    private static int mSequenceNumber = 0;
+    private final static int HDR_SIZE = Short.BYTES + Integer.BYTES;
+    private static short mSequenceNumber = 0;
     private LinkedBlockingQueue<byte[]> mPacketQueue = new LinkedBlockingQueue<>(1024);
     private int mQueueCapacity = 16;
-    private int mLastSequence = 0;
+    private short mLastSequence = 0;
     private byte [] mLastPacket;
 
     private final static long COEF_A = 100;
@@ -32,9 +32,9 @@ public class AdaptiveBuffering {
 
     static byte [] writeHeader(byte [] data){
         ByteBuffer byteBuffer = ByteBuffer.allocate(HDR_SIZE + data.length);
-        byteBuffer.putInt(mSequenceNumber);
+        byteBuffer.putShort(mSequenceNumber);
         mSequenceNumber ++;
-        byteBuffer.putLong(System.currentTimeMillis());
+        byteBuffer.putInt((int)System.currentTimeMillis());
         byteBuffer.put(data);
         return byteBuffer.array();
     }
@@ -42,9 +42,9 @@ public class AdaptiveBuffering {
     int readHeader(byte [] data){
         ByteBuffer byteBuffer = ByteBuffer.wrap(data, 0, HDR_SIZE);
 
-        int index = byteBuffer.getInt();
+        short index = byteBuffer.getShort();
 
-        long delay = System.currentTimeMillis() - byteBuffer.getLong();
+        int delay = (int)System.currentTimeMillis() - byteBuffer.getInt();
 //        Log.d(LOG_TAG, "indx ="+ index+  " delay ="+ delay);
         calculateBufferSize(delay);
         calculatePacketLoss(index);
@@ -53,7 +53,7 @@ public class AdaptiveBuffering {
         return HDR_SIZE;
     }
 
-    private void calculateBufferSize(long delay){
+    private void calculateBufferSize(int delay){
         mAveDi = (mAveDi*(COEF_A-1) + delay) / COEF_A;
         mAveVi = (mAveVi*(COEF_A-1) + Math.abs(mAveDi - delay)) / COEF_A;
         int nBuffering = (int)(40 + COEF_B*mAveVi)/10;
@@ -67,12 +67,12 @@ public class AdaptiveBuffering {
         }
     }
 
-    private void calculatePacketLoss(int index){
-        if(index - mLastSequence < 0 ){
+    private void calculatePacketLoss(short index){
+        if(index - mLastSequence <= 0 ){
             Log.d(LOG_TAG, "Revert sequence : index = "+ index + ", last = "+mLastSequence);
             return;
         }
-        if(index - mLastSequence > 40){
+        if(index - mLastSequence > 10){
             Log.d(LOG_TAG, "Too big sequence gap : index = "+ index + ", last = "+mLastSequence);
             return;
         }
