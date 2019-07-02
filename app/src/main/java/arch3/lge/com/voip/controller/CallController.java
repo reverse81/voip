@@ -99,6 +99,7 @@ public class CallController {
     static public void finish () {
         PhoneState.getInstance().setCallState(PhoneState.CallState.LISTENING);
         if (mCurrent != null) {
+            VoIPVideoIo.getInstance(mCurrent).setBanned(false);
             DeviceContorller.initDevice(mCurrent);
             mCurrent.StopReceiveVideoThread();
             VoIPVideoIo.getInstance(mCurrent).EndVideo();
