@@ -233,14 +233,18 @@ public class VoIPAudioIoCC {
                         byte[] gsmbuf = mCodec.encode(rawbuf, 0, rawbuf.length);
 
                         //    Log.i(LOG_TAG, "end record " + (System.currentTimeMillis() -systemTime));
-                        for (int i =0; i< remoteIPList.size() ;i++) {
-                            InetAddress remoteIp = remoteIPList.get(i);
-                            DatagramSocket socket = sendSocketList.get(i);
-                           if (gsmbuf.length >40) {
-                               udpSend(rawbuf, remoteIp, socket);
-                           } else {
-                               udpSend(gsmbuf, remoteIp, socket);
-                           }
+                        try {
+                            for (int i = 0; i < remoteIPList.size(); i++) {
+                                InetAddress remoteIp = remoteIPList.get(i);
+                                DatagramSocket socket = sendSocketList.get(i);
+                                if (gsmbuf.length > 40) {
+                                    udpSend(rawbuf, remoteIp, socket);
+                                } else {
+                                    udpSend(gsmbuf, remoteIp, socket);
+                                }
+                            }
+                        } catch (IndexOutOfBoundsException e) {
+                            ///////////////////////////////////////
                         }
 
 //                        for (InetAddress remoteIp : remoteIPList) {
