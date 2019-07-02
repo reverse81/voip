@@ -1,6 +1,7 @@
 package arch3.lge.com.voip.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +30,9 @@ public class ConferenceActivity extends MainTabActivity {
 
         ListView listView = (ListView) findViewById(R.id.conference_list);
         mAdapter.onCreate(this, listView);
+
+        TextView tabText = (TextView)findViewById(R.id.conference_tab);
+        tabText.setTextColor(Color.parseColor("#ffffff"));
 
         Button registerButton = (Button) findViewById(R.id.conference_new_btn);
         registerButton.setOnClickListener(new View.OnClickListener() {

@@ -26,6 +26,7 @@ public class RecoveryActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recovery);
+        getSupportActionBar().hide();
 
         Intent intent = new Intent(this.getIntent());
         String email = intent.getStringExtra("email");

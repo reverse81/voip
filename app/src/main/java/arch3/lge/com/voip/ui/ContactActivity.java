@@ -1,6 +1,7 @@
 package arch3.lge.com.voip.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -72,6 +73,9 @@ public class ContactActivity extends MainTabActivity {
             listView = (ListView) findViewById(R.id.contact_list);
             mAdapter.onCreate(this, listView, contactType);
         }
+
+        TextView tabText = (TextView)findViewById(R.id.contact_tab);
+        tabText.setTextColor(Color.parseColor("#ffffff"));
 
         //Click listener
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

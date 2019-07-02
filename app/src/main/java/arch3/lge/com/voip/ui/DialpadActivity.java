@@ -42,6 +42,10 @@ public class DialpadActivity  extends MainTabActivity {
         mNumberView = (TextView)findViewById(R.id.dialInput);
         mNumberView.setText(mNumberString);
 
+        TextView tabText = (TextView)findViewById(R.id.dialpad_tab);
+        tabText.setTextColor(Color.parseColor("#ffffff"));
+
+
         {
             Intent serviceIntent = new Intent(this, TCPListenerService.class);
             this.startService(serviceIntent);

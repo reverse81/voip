@@ -2,27 +2,45 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="36dp"
     android:orientation="horizontal"
     android:weightSum="3"
     android:layout_weight="1"
-    android:theme="@style/AppTheme">
-    <Button
-        style="@style/MainTab"
-        android:id="@+id/dialpad_tab"
-        android:onClick="onClickDialpad"
-        android:text="@string/dialpad"
-        android:textSize="14dp"/>
-    <Button
-        style="@style/MainTab"
-        android:id="@+id/contact_tab"
-        android:onClick="onClickContact"
-        android:text="@string/contact"
-        android:textSize="14dp"/>
-    <Button
-        style="@style/MainTab"
-        android:id="@+id/conference_tab"
-        android:onClick="onClickConfirence"
-        android:text="@string/conference"
-        android:textSize="14dp"/>
+    android:theme="@style/AppTheme"
+    android:background="@drawable/tab_design_bg">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:orientation="horizontal"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="18dp">
+        <TextView
+            style="@style/MainTab"
+            android:id="@+id/dialpad_tab"
+            android:onClick="onClickDialpad"
+            android:text="@string/dialpad"
+            android:textSize="18dp"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:textColor="@color/color_tab_normal"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+        <TextView
+            style="@style/MainTab"
+            android:id="@+id/contact_tab"
+            android:onClick="onClickContact"
+            android:text="@string/contact"
+            android:textSize="18dp"
+            android:gravity="center"
+            android:textColor="@color/color_tab_normal"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+        <TextView
+            style="@style/MainTab"
+            android:id="@+id/conference_tab"
+            android:onClick="onClickConfirence"
+            android:text="@string/conference"
+            android:textSize="18dp"
+            android:gravity="center"
+            android:textColor="@color/color_tab_normal"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+    </LinearLayout>
 </LinearLayout>
