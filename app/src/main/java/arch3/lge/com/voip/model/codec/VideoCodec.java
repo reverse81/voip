@@ -6,7 +6,7 @@ public abstract class VideoCodec {
 
     public abstract boolean open();
 
-    public abstract byte [] encode(byte[] data, int format, int width, int height, boolean isOther);
+    public abstract byte [] encode(byte[] data, int format, int width, int height, int  mode);
 
     public abstract Bitmap decode(byte[] data, int offset, int length);
 

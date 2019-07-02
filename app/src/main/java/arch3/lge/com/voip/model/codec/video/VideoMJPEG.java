@@ -33,7 +33,7 @@ public class VideoMJPEG extends VideoCodec {
 
 
     @Override
-    public byte [] encode(byte[] data, int format, int width, int height, boolean isOtherNetwork){
+    public byte [] encode(byte[] data, int format, int width, int height, int mode){
         // Get the YuV image
         YuvImage yuv_image = new YuvImage(data, format, width, height, null);
 
@@ -44,8 +44,12 @@ public class VideoMJPEG extends VideoCodec {
         yuv_image.compressToJpeg(rect, 100, output_stream);
         Matrix matrix = new Matrix();
         matrix.postRotate(-90);
-        if (isOtherNetwork) {
+        if (mode ==1 ) {
             matrix.postScale((float) 0.5, (float) 0.5);
+        } else if (mode == 2) {
+            matrix.postScale((float) 0.2, (float) 0.2);
+        } else {
+
         }
 
         byte[] bytes = output_stream.toByteArray();

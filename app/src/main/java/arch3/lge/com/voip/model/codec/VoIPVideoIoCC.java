@@ -159,17 +159,18 @@ public class VoIPVideoIoCC implements  Camera.PreviewCallback{
     public void onPreviewFrame(byte[] data, Camera camera)
     {
         frame++;
-        if ((frame%2)!=0) {//only process every other frame;
+        if ((frame%3)!=0) {//only process every other frame;
             camera.addCallbackBuffer(data);
             return;
         }
+        frame = 0;
         Camera.Parameters parameters = camera.getParameters();
         int format = parameters.getPreviewFormat();
         //YUV formats require more conversion
         if (format == ImageFormat.NV21 || format == ImageFormat.YUY2 || format == ImageFormat.NV16) {
 
-            byte[] lowBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height, true);
-            byte[] highBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height, false);
+            byte[] lowBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height, 2);
+            byte[] highBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height, 0);
             Bitmap image = mCodec.decode(highBytes);
             if (selfView!= null) {
                 selfView.setImageBitmap(image);

@@ -232,8 +232,8 @@ public class VoIPVideoIo implements  Camera.PreviewCallback{
         if (format == ImageFormat.NV21 || format == ImageFormat.YUY2 || format == ImageFormat.NV16) {
 
 
-            byte[] lowBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height, true);
-            byte[] highBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height, false);
+            byte[] lowBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height, 1);
+            byte[] highBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height, 0);
          //   byte[] imageBytes = mCodec.encode(data, format, parameters.getPreviewSize().width, parameters.getPreviewSize().height);
 
         //   byte[] encryptedImageBytes = encipher.encrypt(imageBytes);
