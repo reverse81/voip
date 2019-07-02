@@ -52,7 +52,7 @@ public class ServerApi {
     public final static String API_UPDATE_PWD = "users/update_recovery";   //post
     public final static String API_GET_IP_CC= "schedule/IP";  // get
 
-    public void login (final Context context, String source,final String email) {
+    public void login (final Activity activity, String source,final String email) {
         try {
             MyEncrypt encipher = new MyEncrypt();
             String text = encipher.encrypt(source);
@@ -67,7 +67,7 @@ public class ServerApi {
             params.put("hashed_string", text);
             Log.i(LOG_TAG,             params.toString() );
 
-            client.post(context,  NetworkConstants.serverAddress + API_LOGIN
+            client.post(activity,  NetworkConstants.serverAddress + API_LOGIN
                     , params,  new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -78,27 +78,29 @@ public class ServerApi {
                                 JSONObject object = new JSONObject(res);
                                 String token = object.getString("token");
                                 String phoneNumber = object.getString("phone");
-                                User.saveLogin(context, token, email,phoneNumber);
+                                User.saveLogin(activity, token, email,phoneNumber);
 
-                                Intent serviceIntent = new Intent(context, TCPListenerService.class);
-                                context.startService(serviceIntent);
+                                Intent serviceIntent = new Intent(activity, TCPListenerService.class);
+                                activity.startService(serviceIntent);
                                 Log.e(LOG_TAG, "Started TCPListenerService.class");
 
-                                Intent intent = new Intent(context, DialpadActivity.class);
-                                context.startActivity(intent);
+                                Intent intent = new Intent(activity, DialpadActivity.class);
+                                activity.startActivity(intent);
+                                //activity.finish();
+
 
                                 Log.i("dhtest", "Success Transmit res : "+res);//dhtest
 
                                 ApiParamBuilder param = new ApiParamBuilder();
                                 JSONObject SendObject =  param.requestConferenceInfo(phoneNumber);
-                                getConference(context, SendObject);
+                                getConference(activity, SendObject);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
 
                             //CharSequence sendTxt = res;
-                            Toast.makeText(context, res, Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
                             //Toast.makeText(context, "전송완료", Toast.LENGTH_SHORT).show();
 
 
@@ -115,7 +117,7 @@ public class ServerApi {
                             String res = new String(responseBody);
                             Log.e(LOG_TAG, "실패 : " + res);
                             //Toast.makeText(context, "전송실패", Toast.LENGTH_SHORT).show();
-                            Toast.makeText(context, res, Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity, res, Toast.LENGTH_LONG).show();
                         }
                     }  );
 
@@ -258,7 +260,16 @@ public class ServerApi {
                                 User.saveLogin(activity, null, email, null);
                                 //Intent intent = new Intent(activity, LoginActivity.class);
                                 //activity.startActivity(intent);
+
                                 activity.finish();
+
+                                User.setLogout(activity.getApplicationContext());
+
+                                Intent intent = new Intent(activity, LoginActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                activity.startActivity(intent);
+
+
                             }
                         }
 
@@ -503,8 +514,8 @@ public class ServerApi {
                                 e.printStackTrace();
                             }
 
-                            Intent intent1 = new Intent(activity, ConferenceActivity.class);
-                            activity.startActivity(intent1);
+                            //Intent intent1 = new Intent(activity, ConferenceActivity.class);
+                            //activity.startActivity(intent1);
                             activity.finish();
 
                         }

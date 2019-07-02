@@ -26,10 +26,10 @@ public class UserController {
 
     }
 
-    static public void login(String email, String password,Context context) {
-        JSONObject object = param.getLogin(email, password);
-        serverApi.login(context, object.toString(), email);
-    }
+//    static public void login(String email, String password,Context context) {
+//        JSONObject object = param.getLogin(email, password);
+//        serverApi.login(context, object.toString(), email);
+//    }
 
     static public void logout(String phonenumber) {
 

@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:weightSum="3"
-    android:layout_weight="1">
+    android:layout_weight="1"
+    android:theme="@style/AppTheme">
     <Button
         style="@style/MainTab"
         android:id="@+id/dialpad_tab"

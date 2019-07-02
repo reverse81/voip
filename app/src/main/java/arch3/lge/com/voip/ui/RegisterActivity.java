@@ -36,7 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
         emailText = (AutoCompleteTextView)findViewById(R.id.email);
         emailText.setText(email);
 
-        nameText = (AutoCompleteTextView)findViewById(R.id.name);
+//        nameText = (AutoCompleteTextView)findViewById(R.id.name);
         passwordText = (EditText)findViewById(R.id.password);
         retypeText = (EditText)findViewById(R.id.retype);
         passwordHintText = (AutoCompleteTextView)findViewById(R.id.password_hint);

@@ -1,10 +1,17 @@
 package arch3.lge.com.voip.listener;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -20,6 +27,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Locale;
 
+import arch3.lge.com.voip.R;
 import arch3.lge.com.voip.controller.CallController;
 import arch3.lge.com.voip.model.UDPnetwork.TCPCmd;
 import arch3.lge.com.voip.model.call.PhoneState;
@@ -30,6 +38,7 @@ import arch3.lge.com.voip.model.serverApi.ServerApi;
 import arch3.lge.com.voip.model.user.User;
 import arch3.lge.com.voip.ui.BaseCallActivity;
 import arch3.lge.com.voip.ui.CallingActivity;
+import arch3.lge.com.voip.ui.ConferenceActivity;
 import arch3.lge.com.voip.ui.ReceivedCallActivity;
 import arch3.lge.com.voip.utils.NetworkConstants;
 import arch3.lge.com.voip.utils.Util;
@@ -40,8 +49,9 @@ public class TCPListenerService extends Service {
     private boolean UdpListenerThreadRun = false;
 
     private ServerSocket serverSocket;
-    private  static ApiParamBuilder param = new ApiParamBuilder();
+    private static ApiParamBuilder param = new ApiParamBuilder();
     private static ServerApi serverApi = new ServerApi();
+    private String notificationText;
 
     private void startListenerForTCP() {
         UdpListenerThreadRun = true;
@@ -140,6 +150,7 @@ public class TCPListenerService extends Service {
                         String to = schedule.getString("to");
                         String startTimeDB = from.substring(0, 10) + " " + from.substring(11, 16);
                         String endTimeDB = to.substring(0, 10) + " " + to.substring(11, 16);
+                        notificationText = phoneNumber + ", "+startTimeDB;
                         //dhtest
                         Log.i("dhtest","TCP listener phone : "+phoneNumber+" from : "+startTimeDB+" to : "+endTimeDB);
 
@@ -147,6 +158,9 @@ public class TCPListenerService extends Service {
                         //Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_LONG).show();
 
                         ConferenceDatabaseHelper ConferenceDB = new ConferenceDatabaseHelper(getApplicationContext());
+
+                        notificationConfernece();
+
                         ConferenceDB.insert(startTimeDB, endTimeDB, phoneNumber);
                         //ConferenceDB.showList();
 
@@ -253,4 +267,40 @@ public class TCPListenerService extends Service {
 
     //@TODO
     // job 스케쥴러를 쓸까 말까 고민 중
+
+    private void notificationConfernece(){
+        Resources res = getResources();
+
+        Intent notificationIntent = new Intent(this, ConferenceActivity.class);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        notificationIntent.putExtra("notificationId", 9999); //전달할 값
+        notificationIntent.setAction(Intent.ACTION_MAIN);
+        notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+
+        builder.setContentTitle("New Conference Call Schedule")
+                .setContentText(notificationText)
+                .setTicker("상태바 한줄 메시지")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(res, R.mipmap.ic_launcher))
+                .setContentIntent(contentIntent)
+                .setAutoCancel(true)
+                .setWhen(System.currentTimeMillis())
+                .setDefaults(Notification.DEFAULT_ALL);
+
+
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            builder.setCategory(Notification.CATEGORY_MESSAGE)
+                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setVisibility(Notification.VISIBILITY_PUBLIC);
+        }
+
+        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.notify(1234, builder.build());
+    }
 }

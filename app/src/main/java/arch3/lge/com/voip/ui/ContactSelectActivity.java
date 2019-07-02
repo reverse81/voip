@@ -112,6 +112,7 @@ public class ContactSelectActivity extends Activity {
                     intent.putExtra("phone",phoneString); /*송신*/
                     intent.putExtra("user",userString); /*송신*/
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);
                     //finish();
                 }

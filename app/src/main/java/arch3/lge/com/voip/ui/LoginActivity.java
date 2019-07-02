@@ -76,6 +76,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        getSupportActionBar().hide();
+
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         mEmailView.setText(User.getEmail(this));
@@ -132,7 +134,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             Intent intent = new Intent(this, DialpadActivity.class);
             this.startActivity(intent);
-            finish();
+            //finish();
         }
     }
 
@@ -225,7 +227,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             ApiParamBuilder param = new ApiParamBuilder();
             ServerApi server = new ServerApi();
             JSONObject object = param.getLogin(email,password);
-            server.login(getApplicationContext(), object.toString(), email);
+            server.login(this, object.toString(), email);
             Log.i("dhtest", "email : "+email+" Password : "+password);
         }
     }
@@ -369,7 +371,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             try {
                 // Simulate network access.
-                Thread.sleep(2000);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 return false;
             }
